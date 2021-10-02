@@ -1,7 +1,7 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, View, Text } from 'react-native';
 
-const NewsScreen = (props) => {
+const NewsScreen = () => {
   return (
     <View style={styles.container}>
       <Text>News screen</Text>

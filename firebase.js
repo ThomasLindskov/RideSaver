@@ -7,6 +7,8 @@ import * as firebase from 'firebase';
 const firebaseConfig = {
   apiKey: 'AIzaSyBE-92DxJK4ihRwMio9vN049LDWRkNtKHo',
   authDomain: 'secret-fff0d.firebaseapp.com',
+  databaseURL:
+    'https://secret-fff0d-default-rtdb.europe-west1.firebasedatabase.app',
   projectId: 'secret-fff0d',
   storageBucket: 'secret-fff0d.appspot.com',
   messagingSenderId: '962298843369',

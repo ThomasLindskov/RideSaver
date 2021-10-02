@@ -1,24 +1,26 @@
 import React from 'react';
-import { Button, StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text } from 'react-native';
 import firebase from 'firebase';
+import Tags from './Tags';
 
 const ProfileScreen = () => {
-  const handleLogOut = async () => {
-    await firebase.auth().signOut();
-  };
-
   if (!firebase.auth().currentUser) {
     return (
-      <View>
-        <Text>Not found</Text>
+      <View style={styles.container}>
+        <Text>
+          HEY! You should not have access to this site as you are not logged in
+        </Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text>Current user: {firebase.auth().currentUser.email}</Text>
-      <Button onPress={() => handleLogOut()} title='Log out' />
+      <Text style={styles.text}>
+        This is the profilescreen of: {firebase.auth().currentUser.email}
+      </Text>
+      <Text>Choose tags to get news customized for you</Text>
+      <Tags />
     </View>
   );
 };
@@ -28,8 +30,13 @@ export default ProfileScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  text: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 30,
+    textAlign: 'center',
   },
 });
