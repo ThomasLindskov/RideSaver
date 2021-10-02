@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   KeyboardAvoidingView,
+  Platform,
   StyleSheet,
   Text,
   TextInput,
@@ -44,8 +45,12 @@ const LoginScreen = () => {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.container} behavior='padding'>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+    >
       <View style={styles.inputContainer}>
+        <Text style={styles.header}>Welcome to Scrolly, please log in!</Text>
         <TextInput
           placeholder='Email'
           value={email}
@@ -126,5 +131,11 @@ const styles = StyleSheet.create({
     color: '#0782F9',
     fontWeight: '700',
     fontSize: 16,
+  },
+  header: {
+    alignItems: 'center',
+    fontWeight: 'bold',
+    paddingBottom: 20,
+    fontSize: 18,
   },
 });
