@@ -4,7 +4,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
-import TabNavigator from './navigation/TabNavigator';
+import TabNavigator from './Components/navigation/TabNavigator';
+import GetNews from './screens/GetNews';
+import WebViewComponent from './Components/WebViewComponent';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -22,6 +24,12 @@ export default function App() {
           name='HomeScreen'
           component={TabNavigator}
         />
+        <Stack.Screen name='GetNews' component={GetNews} />
+        <Stack.Screen
+          name='WebView'
+          component={WebViewComponent}
+          options={{ headerShown: false }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -30,7 +38,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#FFFBFF',
     alignItems: 'center',
     justifyContent: 'center',
   },

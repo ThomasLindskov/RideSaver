@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/core';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth } from '../firebase';
+import Categories from '../Components/Categories';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -17,6 +18,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Text style={styles.header}>Homescreen</Text>
       <Text>
         You are now logged in with the email: {auth.currentUser?.email}
       </Text>
@@ -34,9 +36,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFFBFF',
   },
   button: {
-    backgroundColor: '#0782F9',
+    backgroundColor: '#CE8964',
     width: '60%',
     padding: 15,
     borderRadius: 10,
@@ -44,8 +47,14 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   buttonText: {
-    color: 'white',
+    color: '#FFFBFF',
     fontWeight: '700',
     fontSize: 16,
+  },
+  header: {
+    color: '#CE8964',
+    fontWeight: 'bold',
+    fontSize: 30,
+    textAlign: 'center',
   },
 });
