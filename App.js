@@ -6,7 +6,7 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import TabNavigator from './Components/navigation/TabNavigator';
 import GetNews from './screens/GetNews';
-import WebViewComponent from './Components/WebViewComponent';
+import WebViewComponent from './Components/WebView';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -27,6 +27,7 @@ export default function App() {
         <Stack.Screen name='GetNews' component={GetNews} />
         <Stack.Screen
           name='WebView'
+          screenOptions={{ animationEnabled: false }}
           component={WebViewComponent}
           options={{ headerShown: false }}
         />
