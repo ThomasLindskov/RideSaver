@@ -15,15 +15,13 @@ import config from '../config';
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 
-class TestScreen extends Component {
-  render() {
+const TestScreen = ({navigation}) => {
     return (
       <View style={{ backgroundColor: '#FFFBFF' }}>
         <Text style={styles.header}>Testscreen</Text>
-        <Categories navigation={this.props.navigation} />
+        <Categories navigation={navigation} />
       </View>
     );
-  }
 }
 
 const styles = StyleSheet.create({
