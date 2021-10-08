@@ -6,8 +6,7 @@ import { Dimensions, View } from 'react-native';
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 
-class WebViewComponent extends Component {
-  render() {
+const WebViewComponent = () => {
     return (
       <WebView
         source={{ uri: `${this.props.route.params.url}` }}
@@ -18,7 +17,6 @@ class WebViewComponent extends Component {
         }}
       />
     );
-  }
 }
 
 export default WebViewComponent;
