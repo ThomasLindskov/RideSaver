@@ -1,7 +1,7 @@
 import React, { useState, Component } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import config from '../config/config';
+import config from '../config';
 
 class TrendingNews extends Component {
   //   const [news] = useState([]);
@@ -12,7 +12,7 @@ class TrendingNews extends Component {
 
   componentDidMount() {
     fetch(
-      `https://newsapi.org/v2/top-headlines?country=us&apiKey=${config.API_KEY}`
+      `https://newsapi.org/v2/top-headlines?country=us&apiKey=${config}`
     )
       .then((res) => res.json())
       .then((response) => {

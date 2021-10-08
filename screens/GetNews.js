@@ -8,7 +8,7 @@ import {
   Alert,
 } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import config from '../config/config';
+import config from '../config';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
@@ -23,7 +23,7 @@ class GetNews extends Component {
     });
 
     fetch(
-      `https://newsapi.org/v2/top-headlines?category=${this.props.route.params.category}&country=us&apiKey=${config.API_KEY}`
+      `https://newsapi.org/v2/top-headlines?category=${this.props.route.params.category}&country=us&apiKey=${config}`
     )
       .then((res) => res.json())
       .then((response) => {

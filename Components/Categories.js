@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -11,25 +11,23 @@ const categories = [
   'Sports',
 ];
 
-class Categories extends Component {
-  render() {
-    return (
-      <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
-        {categories.map((category, index) => (
-          <TouchableOpacity
-            key={index}
-            onPress={() =>
-              this.props.navigation.navigate('GetNews', { category })
-            }
-          >
-            <View>
-              <Text style={styles.categories}>{category}</Text>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-    );
-  }
+const Categories = ({navigation}) => {
+  return (
+    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      {categories.map((category, index) => (
+        <TouchableOpacity
+          key={index}
+          onPress={() =>
+            navigation.navigate('GetNews', { category })
+          }
+        >
+          <View>
+            <Text style={styles.categories}>{category}</Text>
+          </View>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  );
 }
 
 export default Categories;

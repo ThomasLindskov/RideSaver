@@ -10,7 +10,7 @@ import {
 } from 'react-native';
 import Categories from '../Components/Categories';
 import TrendingNews from '../Components/TrendingNews';
-import config from '../config/config';
+import config from '../config';
 
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;

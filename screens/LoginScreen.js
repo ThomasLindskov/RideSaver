@@ -26,7 +26,7 @@ const LoginScreen = () => {
     return unsubscribe;
   }, []);
 
-  handleSignUp = () => {
+  const handleSignUp = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((userCredetials) => {
@@ -37,8 +37,8 @@ const LoginScreen = () => {
   };
 
   const handleLogin = () => {
-    auth.signInWithEmailAndPassword(email, password);
-    then((userCredetials) => {
+    auth.signInWithEmailAndPassword(email, password)
+        .then((userCredetials) => {
       const user = userCredetials.user;
       console.log('Logged in with: ', user.email);
     }).catch((error) => alert(error.message));
