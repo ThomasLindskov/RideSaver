@@ -11,26 +11,18 @@ import {
 import { auth } from '../firebase';
 import { useNavigation } from '@react-navigation/core';
 
-const LoginScreen = () => {
+const LoginScreen = ( {navigation} ) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const navigation = useNavigation();
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        navigation.replace('HomeScreen');
-      }
-    });
-    return unsubscribe;
-  }, []);
+
 
   const handleSignUp = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
-      .then((userCredetials) => {
-        const user = userCredetials.user;
+      .then((userCredentials) => {
+        const user = userCredentials.user;
         console.log('Registered user with email: ', user.email);
       })
       .catch((error) => alert(error.message));
@@ -38,8 +30,8 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     auth.signInWithEmailAndPassword(email, password)
-        .then((userCredetials) => {
-      const user = userCredetials.user;
+        .then((userCredentials) => {
+      const user = userCredentials.user;
       console.log('Logged in with: ', user.email);
     }).catch((error) => alert(error.message));
   };
