@@ -13,7 +13,7 @@ const categories = [
 
 const Categories = ({navigation}) => {
   return (
-    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+    <ScrollView>
       {categories.map((category, index) => (
         <TouchableOpacity
           key={index}

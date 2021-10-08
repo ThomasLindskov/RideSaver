@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -6,11 +6,101 @@ import NewsScreen from '../../screens/NewsScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
 import HomeScreen from '../../screens/HomeScreen';
 import TestScreen from '../../screens/TestScreen';
+import LoginScreen from "../../screens/LoginScreen";
+import { auth } from "../../firebase";
+import {Button} from "react-native";
 
 const Tab = createBottomTabNavigator();
 
-const TabNavigator = () => {
-  return (
+
+
+
+
+const TabNavigator = ({navigation}) => {
+    const [user, setUser] = useState({ loggedIn: false });
+
+
+    function onAuthStateChange(callback) {
+        return auth.onAuthStateChanged(user => {
+            if (user) {
+                callback({loggedIn: true, user: user});
+            } else {
+                callback({loggedIn: false});
+            }
+        });
+    }
+
+//Heri aktiverer vi vores listener i form af onAuthStateChanged, så vi dynamisk observerer om brugeren er aktiv eller ej.
+    useEffect(() => {
+        const unsubscribe = onAuthStateChange(setUser);
+        return () => {
+            unsubscribe();
+        };
+    }, []);
+
+
+
+    const loginTab = () => {
+        if (!user.loggedIn) {
+            return (
+                <Tab.Screen
+                    name='Log In'
+                    component={LoginScreen}
+                    options={{
+                        headerTintColor: '#E7C4B1',
+                        headerTitleAlign: 'center',
+                        headerStyle: {
+                            backgroundColor: '#131200',
+                        },
+                        headerRight: () => (
+                            LogoutButton()
+                        ),
+                        tabBarIcon: () => <Ionicons name='home-outline' size={20}/>,
+                    }}
+                />
+            )
+        } else {
+            return(
+            <Tab.Screen
+                name='Profile'
+                component={ProfileScreen}
+                options={{
+                    headerTintColor: '#E7C4B1',
+                    headerTitleAlign: 'center',
+                    headerStyle: {
+                        backgroundColor: '#131200',
+                    },
+                    headerRight: () => (
+                        LogoutButton()
+                    ),
+                    tabBarIcon: () => <Ionicons name='person-circle-outline' size={20} />,
+                }}
+            />
+            )
+        }
+    }
+
+    const LogoutButton = () => {
+        if (user.loggedIn) {
+            return (
+                <Button
+                    onPress={() => {
+                        auth
+                            .signOut()
+                            .then(() => {
+                                navigation.replace('HomeScreen');
+                            })
+                            .catch((error) => alert(error.message));
+                    }}
+                    title="Logout"
+                    color="#000"
+                />
+            )
+        }
+    }
+
+
+    return (
     <Tab.Navigator screenOptions={{ tabBarActiveTintColor: '#CE8964' }}>
       <Tab.Screen
         name='Home'
@@ -21,9 +111,13 @@ const TabNavigator = () => {
           headerStyle: {
             backgroundColor: '#131200',
           },
+            headerRight: () => (
+                LogoutButton()
+            ),
           tabBarIcon: () => <Ionicons name='home-outline' size={20} />,
         }}
       />
+
       <Tab.Screen
         name='News'
         component={NewsScreen}
@@ -33,21 +127,13 @@ const TabNavigator = () => {
           headerStyle: {
             backgroundColor: '#131200',
           },
+            headerRight: () => (
+                LogoutButton()
+            ),
           tabBarIcon: () => <Ionicons name='newspaper-outline' size={20} />,
         }}
       />
-      <Tab.Screen
-        name='Profile'
-        component={ProfileScreen}
-        options={{
-          headerTintColor: '#E7C4B1',
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#131200',
-          },
-          tabBarIcon: () => <Ionicons name='person-circle-outline' size={20} />,
-        }}
-      />
+        {loginTab()}
       <Tab.Screen
         name='Test'
         component={TestScreen}
@@ -57,6 +143,9 @@ const TabNavigator = () => {
           headerStyle: {
             backgroundColor: '#131200',
           },
+            headerRight: () => (
+                LogoutButton()
+            ),
           tabBarIcon: () => <Ionicons name='settings-outline' size={20} />,
         }}
       />

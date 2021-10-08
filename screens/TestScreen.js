@@ -21,7 +21,6 @@ class TestScreen extends Component {
       <View style={{ backgroundColor: '#FFFBFF' }}>
         <Text style={styles.header}>Testscreen</Text>
         <Categories navigation={this.props.navigation} />
-        <TrendingNews navigation={this.props.navigation} />
       </View>
     );
   }

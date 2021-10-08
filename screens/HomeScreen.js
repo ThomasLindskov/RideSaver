@@ -3,18 +3,14 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth } from '../firebase';
 import Categories from '../Components/Categories';
+import TrendingNews from "../Components/TrendingNews";
 
 const HomeScreen = ({navigation}) => {
 
-
-
-
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Homescreen</Text>
-      <Text>
-        You are now logged in with the email: {auth.currentUser?.email}
-      </Text>
+      <Text style={styles.header}>Trending news</Text>
+      <TrendingNews navigation={navigation} />
     </View>
   );
 };
@@ -46,5 +42,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 30,
     textAlign: 'center',
+    marginTop: 20,
   },
+
 });

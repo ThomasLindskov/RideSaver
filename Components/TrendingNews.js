@@ -31,7 +31,6 @@ class TrendingNews extends Component {
   render() {
     return (
       <View>
-          <Categories navigation={this.props.navigation} />
           {this.state.news.length === 0 ? (
           <ActivityIndicator color='#131200' size='large' />
         ) : (
