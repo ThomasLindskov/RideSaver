@@ -6,14 +6,13 @@ import { Dimensions, View } from 'react-native';
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 
-const WebViewComponent = () => {
+const WebViewComponent = ({ route }) => {
     return (
       <WebView
-        source={{ uri: `${this.props.route.params.url}` }}
+        source={{ uri: `${route.params.url}` }}
         style={{
           width: deviceWidth,
           height: deviceHeight,
-          marginTop: 50,
         }}
       />
     );

@@ -2,9 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './screens/LoginScreen';
-import HomeScreen from './screens/HomeScreen';
-import TabNavigator from './Components/navigation/TabNavigator';
+import TabNavigator from "./Components/Navigation/TabNavigator";
 import GetNews from './screens/GetNews';
 import WebViewComponent from './Components/WebView';
 
@@ -24,7 +22,7 @@ export default function App() {
           name='WebView'
           screenOptions={{ animationEnabled: false }}
           component={WebViewComponent}
-          options={{ headerShown: false }}
+          options={{ headerShown: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>
