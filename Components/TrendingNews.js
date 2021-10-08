@@ -2,6 +2,7 @@ import React, { useState, Component } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import config from '../config';
+import Categories from "./Categories";
 
 class TrendingNews extends Component {
   //   const [news] = useState([]);
@@ -30,10 +31,11 @@ class TrendingNews extends Component {
   render() {
     return (
       <View>
-        {this.state.news.length === 0 ? (
+          <Categories navigation={this.props.navigation} />
+          {this.state.news.length === 0 ? (
           <ActivityIndicator color='#131200' size='large' />
         ) : (
-          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+          <ScrollView>
             {this.state.news.map((news, index) => (
               <TouchableOpacity
                 key={index}

@@ -7,14 +7,7 @@ import Categories from '../Components/Categories';
 const HomeScreen = ({navigation}) => {
 
 
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace('HomeScreen');
-      })
-      .catch((error) => alert(error.message));
-  };
+
 
   return (
     <View style={styles.container}>
@@ -22,9 +15,6 @@ const HomeScreen = ({navigation}) => {
       <Text>
         You are now logged in with the email: {auth.currentUser?.email}
       </Text>
-      <TouchableOpacity onPress={handleSignOut} style={styles.button}>
-        <Text style={styles.buttonText}>Sign out</Text>
-      </TouchableOpacity>
     </View>
   );
 };
