@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import NewsScreen from '../../screens/NewsScreen';
+import NewsScreen from '../../screens/Notused/NewsScreen'
 import ProfileScreen from '../../screens/ProfileScreen';
 import HomeScreen from '../../screens/HomeScreen';
 import TestScreen from '../../screens/TestScreen';
@@ -129,21 +129,6 @@ const TabNavigator = ({navigation}) => {
         }}
       />
         {loginTab()}
-      <Tab.Screen
-        name='Test'
-        component={NewsScreen}
-        options={{
-          headerTintColor: '#E7C4B1',
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#131200',
-          },
-            headerRight: () => (
-                LogoutButton()
-            ),
-          tabBarIcon: () => <Ionicons name='settings-outline' size={20} />,
-        }}
-      />
     </Tab.Navigator>
   );
 };
