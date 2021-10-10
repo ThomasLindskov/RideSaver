@@ -1,45 +1,42 @@
-import React, { useState, Component } from 'react';
+import React, {useState,  useEffect} from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import config from '../config';
-import Categories from "./Categories";
 
-class TrendingNews extends Component {
-  //   const [news] = useState([]);
+const TrendingNews = ({navigation}) =>  {
+  const [news, setNews] = useState([]);
 
-  state = {
-    news: [],
-  };
+  useEffect(() => {
+      fetch(
+          `https://newsapi.org/v2/top-headlines?country=us&apiKey=${config}`
+      )
+          .then((res) => res.json())
+          .then((response) => {
+            setNews(response.articles);
+            console.log(
+                'The total amount of articles is: ',
+                news.length
+            );
+          })
+          .catch((error) => {
+            console.log(error);
+          });
 
-  componentDidMount() {
-    fetch(
-      `https://newsapi.org/v2/top-headlines?country=us&apiKey=${config}`
-    )
-      .then((res) => res.json())
-      .then((response) => {
-        this.setState({ news: response.articles });
-        console.log(
-          'The total amount of articles is: ',
-          this.state.news.length
-        );
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  }, []);
 
-  render() {
+
+
     return (
       <View>
-          {this.state.news.length === 0 ? (
+          {news.length === 0 ? (
           <ActivityIndicator color='#131200' size='large' />
         ) : (
           <ScrollView>
-            {this.state.news.map((news, index) => (
+            {news.map((news, index) => (
               <TouchableOpacity
                 key={index}
                 onPress={() =>
-                  this.props.navigation.navigate('WebView', { url: news.url })
+                  navigation.navigate('WebView', { url: news.url })
                 }
               >
                 <View style={{ margin: 10 }}>
@@ -57,7 +54,6 @@ class TrendingNews extends Component {
         )}
       </View>
     );
-  }
 }
 
 export default TrendingNews;

@@ -1,6 +1,5 @@
 import React, {useEffect, useState} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import NewsScreen from '../../screens/NewsScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
@@ -11,10 +10,6 @@ import { auth } from "../../firebase";
 import {Button} from "react-native";
 
 const Tab = createBottomTabNavigator();
-
-
-
-
 
 const TabNavigator = ({navigation}) => {
     const [user, setUser] = useState({ loggedIn: false });
@@ -120,7 +115,7 @@ const TabNavigator = ({navigation}) => {
 
       <Tab.Screen
         name='News'
-        component={NewsScreen}
+        component={TestScreen}
         options={{
           headerTintColor: '#E7C4B1',
           headerTitleAlign: 'center',
@@ -136,7 +131,7 @@ const TabNavigator = ({navigation}) => {
         {loginTab()}
       <Tab.Screen
         name='Test'
-        component={TestScreen}
+        component={NewsScreen}
         options={{
           headerTintColor: '#E7C4B1',
           headerTitleAlign: 'center',

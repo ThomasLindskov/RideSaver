@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Text,
@@ -13,44 +13,45 @@ import config from '../config';
 const deviceHeight = Dimensions.get('window').height;
 const deviceWidth = Dimensions.get('window').width;
 
-class GetNews extends Component {
-  state = {
-    news: [],
-  };
-  componentDidMount() {
-    this.props.navigation.setOptions({
-      title: this.props.route.params.category,
+const GetNews = (props) => {
+  const [news, setNews] = useState([]);
+
+  useEffect(() => {
+    props.navigation.setOptions({
+      title: props.route.params.category,
     });
 
     fetch(
-      `https://newsapi.org/v2/top-headlines?category=${this.props.route.params.category}&country=us&apiKey=${config}`
+        `https://newsapi.org/v2/top-headlines?category=${props.route.params.category}&country=us&apiKey=${config}`
     )
-      .then((res) => res.json())
-      .then((response) => {
-        if (response.articles.length !== 0) {
-          this.setState({ news: response.articles });
-          console.log(
-            'The total amount of articles is: ',
-            this.state.news.length
-          );
-        } else {
-          Alert.alert('Sorry, no articles in this category').then(
-            navigation.navigate('TrendingNews')
-          );
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-  render() {
+        .then((res) => res.json())
+        .then((response) => {
+          if (response.articles.length !== 0) {
+            setNews(response.articles);
+            console.log(
+                'The total amount of articles is: ',
+                news.length
+            );
+          } else {
+            Alert.alert('Sorry, no articles in this category').then(
+                props.navigation.navigate('TrendingNews')
+            );
+          }
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+
+  }, []);
+
+
     return (
       <View style={{ alignItems: 'center', backgroundColor: '#E7C4B1' }}>
-        {this.state.news.length === 0 ? (
+        {news.length === 0 ? (
           <ActivityIndicator
             style={{
               height: deviceHeight,
-              width: deviceHeight,
+              width: deviceWidth,
               justifyContent: 'center',
               alignItems: 'center',
               color: '#131200',
@@ -60,12 +61,12 @@ class GetNews extends Component {
           />
         ) : (
           <ScrollView showsVerticalScrollIndicator={false}>
-            {this.state.news.map((news, index) =>
+            {news.map((news, index) =>
               news.urlToImage ? (
                 <TouchableOpacity
                   key={index}
                   onPress={() =>
-                    this.props.navigation.navigate('WebView', { url: news.url })
+                    props.navigation.navigate('WebView', { url: news.url })
                   }
                 >
                   <View
@@ -99,10 +100,10 @@ class GetNews extends Component {
           </ScrollView>
         )}
 
-        <Text> {this.props.route.params.category} </Text>
+        <Text> {props.route.params.category} </Text>
       </View>
     );
-  }
+
 }
 
 export default GetNews;
