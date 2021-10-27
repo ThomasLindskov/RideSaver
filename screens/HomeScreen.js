@@ -3,10 +3,9 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth } from '../firebase';
 import Categories from '../Components/Categories';
-import TrendingNews from "../Components/TrendingNews";
+import TrendingNews from '../Components/TrendingNews';
 
-const HomeScreen = ({navigation}) => {
-
+const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Trending news</Text>
@@ -44,5 +43,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 20,
   },
-
 });

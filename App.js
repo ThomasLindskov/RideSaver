@@ -2,9 +2,9 @@ import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TabNavigator from "./Components/Navigation/TabNavigator";
 import GetNews from './screens/GetNews';
 import WebViewComponent from './Components/WebView';
+import TabNavigator from './Components/Navigation/TabNavigator';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -14,12 +14,12 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen
           options={{ headerShown: false }}
-          name='HomeScreen'
+          name="HomeScreen"
           component={TabNavigator}
         />
-        <Stack.Screen name='GetNews' component={GetNews} />
+        <Stack.Screen name="GetNews" component={GetNews} />
         <Stack.Screen
-          name='WebView'
+          name="WebView"
           screenOptions={{ animationEnabled: false }}
           component={WebViewComponent}
           options={{ headerShown: true }}
