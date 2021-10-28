@@ -9,6 +9,7 @@ import LoginScreen from '../../screens/LoginScreen';
 import { auth } from '../../firebase';
 import { Button } from 'react-native';
 import MapScreen from '../../screens/MapScreen';
+import CoordinateStackNavigator from './CoordinateStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -130,6 +131,19 @@ const TabNavigator = ({ navigation }) => {
           },
           headerRight: () => LogoutButton(),
           tabBarIcon: () => <Ionicons name="globe" size={20} />,
+        }}
+      />
+      <Tab.Screen
+        name="Coordinates"
+        component={CoordinateStackNavigator}
+        options={{
+          headerTintColor: '#E7C4B1',
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#131200',
+          },
+          headerRight: () => LogoutButton(),
+          tabBarIcon: () => <Ionicons name="location-outline" size={20} />,
         }}
       />
       {loginTab()}
