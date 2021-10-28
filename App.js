@@ -1,9 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import GetNews from './screens/GetNews';
-import WebViewComponent from './Components/WebView';
 import TabNavigator from './Components/Navigation/TabNavigator';
 
 export default function App() {
@@ -16,13 +14,6 @@ export default function App() {
           options={{ headerShown: false }}
           name="HomeScreen"
           component={TabNavigator}
-        />
-        <Stack.Screen name="GetNews" component={GetNews} />
-        <Stack.Screen
-          name="WebView"
-          screenOptions={{ animationEnabled: false }}
-          component={WebViewComponent}
-          options={{ headerShown: true }}
         />
       </Stack.Navigator>
     </NavigationContainer>

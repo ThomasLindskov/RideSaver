@@ -3,7 +3,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth } from '../firebase';
 import Categories from '../Components/Categories';
-import TrendingNews from '../Components/TrendingNews';
+import TrendingNews from '../Components/Notused/TrendingNews';
 
 const HomeScreen = ({ navigation }) => {
   return (

@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import NewsScreen from '../../screens/Notused/NewsScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
 import HomeScreen from '../../screens/HomeScreen';
-import TestScreen from '../../screens/TestScreen';
 import LoginScreen from '../../screens/LoginScreen';
 import { auth } from '../../firebase';
 import { Button } from 'react-native';
@@ -107,19 +105,6 @@ const TabNavigator = ({ navigation }) => {
         }}
       />
 
-      <Tab.Screen
-        name="News"
-        component={TestScreen}
-        options={{
-          headerTintColor: '#E7C4B1',
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#131200',
-          },
-          headerRight: () => LogoutButton(),
-          tabBarIcon: () => <Ionicons name="newspaper-outline" size={20} />,
-        }}
-      />
       <Tab.Screen
         name="Map"
         component={MapScreen}
