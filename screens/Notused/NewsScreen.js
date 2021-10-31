@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import Categories from '../../Components/Categories';
-import TrendingNews from '../../Components/TrendingNews';
+import TrendingNews from '../../Components/Notused/TrendingNews';
 
 const NewsScreen = () => {
   return (

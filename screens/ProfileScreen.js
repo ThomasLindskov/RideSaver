@@ -1,7 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import firebase from 'firebase';
-import Tags from '../Components/Tags';
+import Tags from '../Components/Notused/Tags';
 
 const ProfileScreen = () => {
   if (!firebase.auth().currentUser) {

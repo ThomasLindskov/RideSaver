@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Categories from '../Components/Categories';
-import TrendingNews from '../Components/TrendingNews';
+import TrendingNews from '../Components/Notused/TrendingNews';
 import config from '../config';
 
 const deviceHeight = Dimensions.get('window').height;

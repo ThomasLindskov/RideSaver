@@ -1,7 +1,7 @@
 import React, {useState,  useEffect} from 'react';
 import { ActivityIndicator, StyleSheet, Text, View, Image } from 'react-native';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
-import config from '../config';
+import config from '../../config';
 
 const TrendingNews = ({navigation}) =>  {
   const [news, setNews] = useState([]);
