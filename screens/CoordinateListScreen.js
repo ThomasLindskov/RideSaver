@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import firebase from 'firebase';
 
 const CoordinateListScreen = ({ navigation }) => {
   const [coordinates, setCoordinates] = useState();

@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import TabNavigator from './Components/Navigation/TabNavigator';
+import TabNavigator from './Components/navigation/TabNavigator';
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -12,7 +12,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen
           options={{ headerShown: false }}
-          name="HomeScreen"
+          name='HomeScreen'
           component={TabNavigator}
         />
       </Stack.Navigator>

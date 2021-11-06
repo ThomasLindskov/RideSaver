@@ -11,15 +11,13 @@ const categories = [
   'Sports',
 ];
 
-const Categories = ({navigation}) => {
+const Categories = ({ navigation }) => {
   return (
     <ScrollView>
       {categories.map((category, index) => (
         <TouchableOpacity
           key={index}
-          onPress={() =>
-            navigation.navigate('GetNews', { category })
-          }
+          onPress={() => navigation.navigate('GetNews', { category })}
         >
           <View>
             <Text style={styles.categories}>{category}</Text>
@@ -28,7 +26,7 @@ const Categories = ({navigation}) => {
       ))}
     </ScrollView>
   );
-}
+};
 
 export default Categories;
 
