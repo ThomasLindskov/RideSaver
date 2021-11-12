@@ -1,3 +1,4 @@
+// Importing modules, components and screens
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -8,6 +9,7 @@ import CoordinateDetails from '../CoordinateDetails';
 const CoordinateStackNavigator = () => {
   const Stack = createStackNavigator();
 
+  // CoordinateStackNavigator which shows list for coordinates, details and the add/edit coordinate component
   return (
     <Stack.Navigator>
       <Stack.Screen name="Coordinate List" component={CoordinateListScreen} />

@@ -1,8 +1,9 @@
+// Importing modules and components
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import firebase from 'firebase';
-import Tags from '../Components/Notused/Tags';
 
+// Profilescreen if a user is not logged in
 const ProfileScreen = () => {
   if (!firebase.auth().currentUser) {
     return (
@@ -14,14 +15,13 @@ const ProfileScreen = () => {
     );
   }
 
+  // If a user is logged in they wiil se this screen with their email
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Profilescreen</Text>
       <Text>
         This is the profilescreen of: {firebase.auth().currentUser.email}
       </Text>
-      <Text>Choose tags below to get news customized for you:</Text>
-      <Tags />
     </View>
   );
 };

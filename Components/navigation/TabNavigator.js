@@ -1,3 +1,4 @@
+// Importing modules, screens and components used for the bootom tab navigator
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -11,9 +12,12 @@ import CoordinateStackNavigator from './CoordinateStackNavigator';
 
 const Tab = createBottomTabNavigator();
 
+// Is passed navigation as state
 const TabNavigator = ({ navigation }) => {
+  // We set an initial state of loggedIn to false, to use firebase to check whether a user is logged in or not
   const [user, setUser] = useState({ loggedIn: false });
 
+  // Check the login state of a user - This is code from firebase
   function onAuthStateChange(callback) {
     return auth.onAuthStateChanged((user) => {
       if (user) {
@@ -24,7 +28,7 @@ const TabNavigator = ({ navigation }) => {
     });
   }
 
-  //Heri aktiverer vi vores listener i form af onAuthStateChanged, så vi dynamisk observerer om brugeren er aktiv eller ej.
+  //useEffect hook, which listens for onAuthChanged to know if the user is active or not or unsubscribes them (log out)
   useEffect(() => {
     const unsubscribe = onAuthStateChange(setUser);
     return () => {
@@ -32,6 +36,7 @@ const TabNavigator = ({ navigation }) => {
     };
   }, []);
 
+  //TabScreen for loggin in, which is only shown if loggedIn: false
   const loginTab = () => {
     if (!user.loggedIn) {
       return (
@@ -50,6 +55,7 @@ const TabNavigator = ({ navigation }) => {
         />
       );
     } else {
+      // If loggedIn is not false, a TabScreen is shown for the profile screen.
       return (
         <Tab.Screen
           name="Profile"
@@ -70,6 +76,7 @@ const TabNavigator = ({ navigation }) => {
     }
   };
 
+  // The logout button is shown if a user is logged in and changes the loggedIn state if pressed, and navigates to homescreen
   const LogoutButton = () => {
     if (user.loggedIn) {
       return (
@@ -89,6 +96,7 @@ const TabNavigator = ({ navigation }) => {
     }
   };
 
+  //Show Homescreen, MapScreen and CoordinateStackNavigator regardless of loggedIn status
   return (
     <Tab.Navigator screenOptions={{ tabBarActiveTintColor: '#CE8964' }}>
       <Tab.Screen
