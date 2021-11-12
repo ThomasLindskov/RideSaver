@@ -2,25 +2,14 @@ import { useNavigation } from '@react-navigation/core';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { auth } from '../firebase';
+import Categories from '../Components/Notused/Categories';
+import TrendingNews from '../Components/Notused/TrendingNews';
 
-const HomeScreen = () => {
-  const navigation = useNavigation();
-
-  const handleSignOut = () => {
-    auth
-      .signOut()
-      .then(() => {
-        navigation.replace('Login');
-      })
-      .catch((error) => alert(error.message));
-  };
-
+const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
-      <Text>Email: {auth.currentUser?.email}</Text>
-      <TouchableOpacity onPress={handleSignOut} style={styles.button}>
-        <Text style={styles.buttonText}>Sign out</Text>
-      </TouchableOpacity>
+      <Text style={styles.header}>Trending news</Text>
+      <TrendingNews navigation={navigation} />
     </View>
   );
 };
@@ -32,9 +21,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFFBFF',
   },
   button: {
-    backgroundColor: '#0782F9',
+    backgroundColor: '#CE8964',
     width: '60%',
     padding: 15,
     borderRadius: 10,
@@ -42,8 +32,15 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   buttonText: {
-    color: 'white',
+    color: '#FFFBFF',
     fontWeight: '700',
     fontSize: 16,
+  },
+  header: {
+    color: '#CE8964',
+    fontWeight: 'bold',
+    fontSize: 30,
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
