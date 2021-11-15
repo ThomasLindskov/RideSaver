@@ -1,3 +1,4 @@
+// Importing modules and components
 import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
@@ -20,6 +21,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
 
 const MapScreen = () => {
+  // State for creating markers on the map, setting the default location etc.
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
   const [userMarkerCoordinates, setUserMarkerCoordinates] = useState([]);
@@ -48,16 +50,21 @@ const MapScreen = () => {
     { label: 5, value: 5 },
   ]);
 
+  // Alerts user to give locationpermission
   const getLocationPermission = async () => {
     await Location.requestForegroundPermissionsAsync().then((item) => {
       setHasLocationPermission(item.granted);
     });
   };
 
+  // The useEffect hook runs everytime the page updates, which means if something happens,
+  // getLocationPermission will run again to check if we have location permission
   useEffect(() => {
     const response = getLocationPermission();
   });
 
+  // Only used for getting coordinates from current location shown on map not a marker
+  // Maybe remove this function xx
   const updateLocation = async () => {
     await Location.getCurrentPositionAsync({
       accuracy: Accuracy.Balanced,
@@ -66,15 +73,18 @@ const MapScreen = () => {
     });
   };
 
+  // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
   const handleLongPress = (event) => {
     const coordinate = event.nativeEvent.coordinate;
     setUserMarkerCoordinates((userMarkerCoordinates) => [
       ...userMarkerCoordinates,
       coordinate,
     ]);
+    // Haptics creates a vibration for longpress
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
   };
 
+  // When creating a new coordinate this sets a selectedadress which is run on line 130-136
   const handleSelectMarker = async (coordinate) => {
     setSelectedCoordinate(coordinate);
     await Location.reverseGeocodeAsync(coordinate).then((data) => {
@@ -82,9 +92,13 @@ const MapScreen = () => {
     });
   };
 
+  // Close infobox for specific coordinate.
   const closeInfoBox = () =>
     setSelectedCoordinate(null) && setSelectedAddress(null);
 
+  // If no hasLocationPermission === null we return null
+  // If there is an error we return a text asking to change settings
+  // Otherwise the button for update location is shown (which is the function we might not need xx)
   const RenderCurrentLocation = (props) => {
     if (props.hasLocationPermission === null) {
       return null;
@@ -164,6 +178,8 @@ const MapScreen = () => {
   //             keyboardType='numeric'
   //           />
 
+
+    // RenderCurrentLocation might not be needed xx
   return (
     <SafeAreaView style={styles.container}>
       <RenderCurrentLocation
@@ -172,6 +188,7 @@ const MapScreen = () => {
           currentLocation: currentLocation,
         }}
       />
+      {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
           latitude: location.latitude,
@@ -195,6 +212,7 @@ const MapScreen = () => {
         }}
         onLongPress={handleLongPress}
       >
+        {/* 3 predefined markers */}
         <Marker
           title='Hjem'
           description='Her bor jeg'
@@ -219,6 +237,8 @@ const MapScreen = () => {
             longitude: 12.560422585260284,
           }}
         />
+        {/* Mapping through userMarkerCoordinates array and outputs each one, this should be updated to not be an empty array,
+        but import existing coordinates from firebase. */}
         {userMarkerCoordinates.map((coordinate, index) => (
           <Marker
             coordinate={coordinate}
@@ -296,7 +316,7 @@ const MapScreen = () => {
       >
         <Text style={styles.textStyle}>Create Ride</Text>
       </Pressable>
-
+{/* Shows info about a selected coordinate, and closes onPress of button*/}
       {selectedCoordinate && selectedAddress && (
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
