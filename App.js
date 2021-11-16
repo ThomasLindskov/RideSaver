@@ -1,3 +1,4 @@
+//Importing modules and components
 import React from 'react';
 import { StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
@@ -7,6 +8,7 @@ import TabNavigator from './Components/Navigation/TabNavigator';
 export default function App() {
   const Stack = createNativeStackNavigator();
 
+  // Stacknavigator, that uses the TabNavigator component to navigate between screens in the bottom.
   return (
     <NavigationContainer>
       <Stack.Navigator>
