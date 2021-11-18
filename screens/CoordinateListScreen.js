@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import firebase from 'firebase';
+import { auth , db } from '../firebase';  
 
 // Is passed navigation as a prop as it is used in the CoordinateStackNavigator
 const CoordinateListScreen = ({ navigation }) => {
@@ -10,8 +11,7 @@ const CoordinateListScreen = ({ navigation }) => {
   // useEffect hook updates on change and checks if any coordinates are in the firebase database
   useEffect(() => {
     if (!coordinates) {
-      firebase
-        .database()
+      db
         .ref('/Coordinates')
         .on('value', (snapshot) => {
           setCoordinates(snapshot.val());

@@ -6,6 +6,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './Components/Navigation/TabNavigator';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen'
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Setting a timer']);
+
 
 export default function App() {
   const Stack = createNativeStackNavigator();

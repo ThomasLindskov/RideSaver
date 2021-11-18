@@ -7,10 +7,9 @@ import {
   SafeAreaView,
   Dimensions,
   Button,
-  Modal,
   Pressable,
   TouchableOpacity,
-  Picker,
+  TextInput,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -19,12 +18,17 @@ import * as Haptics from 'expo-haptics';
 import Constants from 'expo-constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import DropDownPicker from 'react-native-dropdown-picker';
+import Modal from "react-native-modal";
+import { auth , db } from '../firebase';  
+import { useDrawerStatus } from '@react-navigation/drawer';
+import { set } from 'react-native-reanimated';
 
-const MapScreen = () => {
+const MapScreen = ({route}) => {
   // State for creating markers on the map, setting the default location etc.
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
-  const [userMarkerCoordinates, setUserMarkerCoordinates] = useState([]);
+  const [userMarkerCoordinate, setUserMarkerCoordinate] = useState(null);
+
   const [selectedCoordinate, setSelectedCoordinate] = useState(null);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [location, setLocation] = useState({
@@ -33,10 +37,14 @@ const MapScreen = () => {
   });
 
   const [modalVisible, setModalVisible] = useState(false);
-
-  const [date, setDate] = useState(new Date());
+  const [coordinates, setCoordinates] = useState([]);
+  const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
+  const [availableSeats, setAvailableSeats] = useState();
+  const [groupCoordinates, setGroupCoordinates] = useState();
+
+
 
   //State for dropdownpicker
   const [open, setOpen] = useState(false);
@@ -60,8 +68,48 @@ const MapScreen = () => {
   // The useEffect hook runs everytime the page updates, which means if something happens,
   // getLocationPermission will run again to check if we have location permission
   useEffect(() => {
-    const response = getLocationPermission();
-  });
+    const response = getLocationPermission();     
+    getCoordinates(); 
+    }, [])
+
+   
+    const getCoordinates = async () => {
+      let groupid;
+
+     await db.ref('userData/' + auth.currentUser.uid).get().then(snapshot => {
+        if (snapshot.exists()) { 
+          groupid = snapshot.val().group
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+
+      let coordinates = []
+      await db.ref('coordinates/').get().then(snapshot => {
+        if (snapshot.exists()) {
+          snapshot.forEach(coordinate => {
+            if(coordinate.val().groupId == groupid){
+              coordinates.push(coordinate.val())
+            }
+           
+          })
+        } else {
+          console.log("No data available");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+
+      setCoordinates(coordinates)
+
+    }
+
+    
+
 
   // Only used for getting coordinates from current location shown on map not a marker
   // Maybe remove this function xx
@@ -76,12 +124,44 @@ const MapScreen = () => {
   // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
   const handleLongPress = (event) => {
     const coordinate = event.nativeEvent.coordinate;
-    setUserMarkerCoordinates((userMarkerCoordinates) => [
-      ...userMarkerCoordinates,
-      coordinate,
-    ]);
+
+
+    setUserMarkerCoordinate(coordinate)
     // Haptics creates a vibration for longpress
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setModalVisible(true)
+  };
+
+  const createRide = async (event) => {
+    setModalVisible(false)
+    let groupid;
+
+    await db.ref('userData/' + auth.currentUser.uid).get().then(snapshot => {
+       if (snapshot.exists()) { 
+         groupid = snapshot.val().group
+       } else {
+         console.log("No data available");
+       }
+     })
+     .catch((error) => {
+       console.error(error);
+     })
+
+     let newDate = JSON.stringify(userDate)
+     try {
+      db.ref('coordinates/').push({
+        lat: userMarkerCoordinate.latitude,
+        long: userMarkerCoordinate.longitude,
+        userid: auth.currentUser.uid,
+        availableSeats: availableSeats,
+        groupId: groupid,
+        date: newDate
+      })
+    } catch (error) {
+      console.log(`Error: ${error.message}`);
+    }
+
+    getCoordinates();
   };
 
   // When creating a new coordinate this sets a selectedadress which is run on line 130-136
@@ -99,7 +179,7 @@ const MapScreen = () => {
   // If no hasLocationPermission === null we return null
   // If there is an error we return a text asking to change settings
   // Otherwise the button for update location is shown (which is the function we might not need xx)
-  const RenderCurrentLocation = (props) => {
+  /*const RenderCurrentLocation = (props) => {
     if (props.hasLocationPermission === null) {
       return null;
     }
@@ -120,12 +200,12 @@ const MapScreen = () => {
         )}
       </View>
     );
-  };
+  };*/
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
+    const currentDate = selectedDate || userDate;
     setShow(Platform.OS === 'ios');
-    setDate(currentDate);
+    setUserDate(currentDate);
   };
 
   const showMode = (currentMode) => {
@@ -140,6 +220,26 @@ const MapScreen = () => {
   const showTimepicker = () => {
     showMode('time');
   };
+
+  const getPinColor = (userid) => {
+    if(userid == auth.currentUser.uid){
+      return "blue"
+    }else {
+      return "red"
+    }
+   
+  };
+
+
+  const userMarker = userMarkerCoordinate != null ? (
+      <Marker
+        title='Custom ting'
+        description='Sindssyg custom ting'
+        coordinate= {userMarkerCoordinate}
+      />): null;
+
+
+
 
   //   const handleChangeText = (name, event) => {
   //     setUserMarkerCoordinates({ ...userMarkerCoordinates, [name]: event });
@@ -177,17 +277,19 @@ const MapScreen = () => {
   //             onChangeText={onChangeNumber}
   //             keyboardType='numeric'
   //           />
-
+ 
 
     // RenderCurrentLocation might not be needed xx
+  
   return (
     <SafeAreaView style={styles.container}>
-      <RenderCurrentLocation
+      
+      {/*<RenderCurrentLocation
         props={{
           hasLocationPermission: hasLocationPermission,
           currentLocation: currentLocation,
         }}
-      />
+      />*/}
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
@@ -233,89 +335,104 @@ const MapScreen = () => {
           title='Spunk'
           description='ad'
           coordinate={{
-            latitude: 55.6713715888453,
+            latitude: 55.6813715888453,
             longitude: 12.560422585260284,
           }}
         />
+
+        { coordinates.map((coordinate, index) => (
+            <Marker
+            key={index}
+            pinColor = {getPinColor(coordinate.userid)} 
+            coordinate={{
+              title: coordinate.date,
+              latitude: coordinate.lat,
+              longitude: coordinate.long,
+            }}
+          />
+          ))
+        } 
         {/* Mapping through userMarkerCoordinates array and outputs each one, this should be updated to not be an empty array,
         but import existing coordinates from firebase. */}
-        {userMarkerCoordinates.map((coordinate, index) => (
-          <Marker
-            coordinate={coordinate}
-            key={index.toString()}
-            onPress={() => handleSelectMarker(coordinate)}
-          />
-        ))}
+        {userMarker}
       </MapView>
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text
-              style={{
-                textAlign: 'center',
-                marginTop: 10,
-                marginBottom: 10,
-                fontSize: 25,
-                fontWeight: 'bold',
-              }}
-            >
-              Create Ride
-            </Text>
-            <Text style={styles.modalText}>Departure Time</Text>
-            <View style={styles.pickedDateContainer}>
-              <Text>{date.toString().split(' ').splice(0, 5).join(' ')}</Text>
-            </View>
-            <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
-              <Text>Choose date</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
-              <Text>Choose departure time</Text>
-            </TouchableOpacity>
+      <View>
+        <Modal
+          visible={modalVisible}
+          animationType='slide'
+          transparent={true}
+          onRequestClose={() => {
+             setModalVisible(!modalVisible);
+          }}
+        >
+            <View style={styles.modalView}>
+              <Text
+                style={{
+                  textAlign: 'center',
+                  marginTop: 10,
+                  marginBottom: 10,
+                  fontSize: 25,
+                  fontWeight: 'bold',
+                }}
+              >
+                Create Ride
+              </Text>
+              <Text style={styles.modalText}>Departure Time</Text>
+              <View style={styles.pickedDateContainer}>
+                <Text>{userDate.toString().split(' ').splice(0, 5).join(' ')}</Text>
+              </View>
+              <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
+                <Text>Choose date</Text>
+              </TouchableOpacity>
+              <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
+                <Text>Choose departure time</Text>
+              </TouchableOpacity>
 
-            {show && (
-              <DateTimePicker
-                testID='dateTimePicker'
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display='default'
-                onChange={onChange}
+              {show && (
+                <DateTimePicker
+                  testID='dateTimePicker'
+                  value={userDate}
+                  mode={mode}
+                  is24Hour={true}
+                  display='default'
+                  onChange={onChange}
+                />
+              )} 
+              {/* Det er den her der ødelægger modallen.
+              <Text style={styles.modalText}>Number of seats</Text>
+              <DropDownPicker
+                open={open}
+                value={value}
+                numSeats={numSeats}
+                min={1}
+                setOpen={setOpen}
+                setValue={setValue}
+                setNumSeats={setNumSeats}
+              />*/}
+               <TextInput
+              style={styles.input}
+              onChangeText={setAvailableSeats}
+              value={availableSeats}
+              placeholder="Seats in car"
+              keyboardType="numeric"
               />
-            )}
 
-            <Text style={styles.modalText}>Number of seats</Text>
-            <DropDownPicker
-              open={open}
-              value={value}
-              numSeats={numSeats}
-              min={1}
-              setOpen={setOpen}
-              setValue={setValue}
-              setNumSeats={setNumSeats}
-            />
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={styles.textStyle}>Close</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-      <Pressable
-        style={[styles.button, styles.buttonOpen]}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.textStyle}>Create Ride</Text>
-      </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setModalVisible(!modalVisible)}
+              >
+                <Text style={styles.textStyle}>Close</Text>
+              </Pressable>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => createRide()}
+              >
+                <Text style={styles.textStyle}>Create ride</Text>
+              </Pressable>
+            </View>
+        </Modal>
+      </View>
+
 {/* Shows info about a selected coordinate, and closes onPress of button*/}
       {selectedCoordinate && selectedAddress && (
         <View style={styles.infoBox}>
@@ -338,8 +455,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 8,
-    paddingTop: Constants.statusBarHeight,
+    padding: 0,
+    
   },
   map: {
     flex: 1,

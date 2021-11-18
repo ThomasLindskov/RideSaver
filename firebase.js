@@ -2,6 +2,7 @@
 // Import firebase
 import firebase from 'firebase';
 
+
 // Setting up admin access to the firebase database so we can access it without constantly updating the rules
 /*const { initializeApp } = require('firebase-admin/app');
 
@@ -34,5 +35,7 @@ if (firebase.apps.length === 0) {
 }
 
 const auth = firebase.auth();
+const db = firebase.database();
 
-export { auth };
+
+export { auth, db };

@@ -8,7 +8,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { auth } from '../firebase';
+import { auth , db } from '../firebase';  
+
 
 const LoginScreen = ( {navigation} ) => {
   const [email, setEmail] = useState('');
@@ -29,13 +30,23 @@ const LoginScreen = ( {navigation} ) => {
       .createUserWithEmailAndPassword(email, password)
       .then((user) => {
         const userCredentials = user.user;
-        console.log('Registered user with email: ', userCredentials.email);
+        if(user && name){
+            try {
+                db.ref('userData/' + userCredentials.uid).set({
+                    name: name,
+                    groups: [1]
+                }) 
+              } catch (error) {
+                console.log(`Error: ${error.message}`);
+              }
+        }
+        console.log('Registered user with email: ', userCredentials.uid);
       })
       .catch((error) => alert(error.message));
   };
 
   const handleLogin = () => {
-    navigation.navigation('SignUp');
+    navigation.navigate('Login');
   };
 
   return (
@@ -50,7 +61,6 @@ const LoginScreen = ( {navigation} ) => {
           value={name}
           onChangeText={(text) => setName(text)}
           style={styles.input}
-          secureTextEntry
         />
         <TextInput
           placeholder='Email'
@@ -68,16 +78,17 @@ const LoginScreen = ( {navigation} ) => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
+      <TouchableOpacity
           onPress={handleSignUp}
           style={[styles.button, styles.buttonOutline]}
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+
       </View>
     </KeyboardAvoidingView>
   );
