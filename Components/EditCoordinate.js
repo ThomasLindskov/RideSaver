@@ -14,7 +14,7 @@ import firebase from 'firebase';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
-const AddCoordinate = (props) => {
+const EditCoordinate = (props) => {
   const { navigation, route } = props;
 
   // Initial state oject with 4 basic attributes and state for adding a new coordinate
@@ -109,7 +109,7 @@ const AddCoordinate = (props) => {
   );
 };
 
-export default AddCoordinate;
+export default EditCoordinate;
 
 const styles = StyleSheet.create({
   container: {

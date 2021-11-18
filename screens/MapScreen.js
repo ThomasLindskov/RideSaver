@@ -15,13 +15,10 @@ import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { Accuracy } from 'expo-location';
 import * as Haptics from 'expo-haptics';
-import Constants from 'expo-constants';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
 import Modal from "react-native-modal";
 import { auth , db } from '../firebase';  
-import { useDrawerStatus } from '@react-navigation/drawer';
-import { set } from 'react-native-reanimated';
+
 
 const MapScreen = ({route}) => {
   // State for creating markers on the map, setting the default location etc.
@@ -46,17 +43,7 @@ const MapScreen = ({route}) => {
 
 
 
-  //State for dropdownpicker
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [numSeats, setNumSeats] = useState([
-    { label: 0, value: 0 },
-    { label: 1, value: 1 },
-    { label: 2, value: 2 },
-    { label: 3, value: 3 },
-    { label: 4, value: 4 },
-    { label: 5, value: 5 },
-  ]);
+
 
   // Alerts user to give locationpermission
   const getLocationPermission = async () => {
@@ -227,14 +214,16 @@ const MapScreen = ({route}) => {
     }else {
       return "red"
     }
-   
   };
+
+
 
 
   const userMarker = userMarkerCoordinate != null ? (
       <Marker
         title='Custom ting'
         description='Sindssyg custom ting'
+        pinColor = 'yellow'
         coordinate= {userMarkerCoordinate}
       />): null;
 
@@ -279,17 +268,18 @@ const MapScreen = ({route}) => {
   //           />
  
 
-    // RenderCurrentLocation might not be needed xx
+   
   
   return (
     <SafeAreaView style={styles.container}>
+      <Button
+        onPress={getCoordinates}
+        title="Reload map (Test button)"
+        color="#841584"
+        accessibilityLabel="Reload map"
+      />
       
-      {/*<RenderCurrentLocation
-        props={{
-          hasLocationPermission: hasLocationPermission,
-          currentLocation: currentLocation,
-        }}
-      />*/}
+     
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
@@ -313,16 +303,8 @@ const MapScreen = ({route}) => {
           });
         }}
         onLongPress={handleLongPress}
-      >
-        {/* 3 predefined markers */}
-        <Marker
-          title='Hjem'
-          description='Her bor jeg'
-          coordinate={{
-            latitude: 55.66663192214644,
-            longitude: 12.623913456074268,
-          }}
-        />
+        >
+        {/* 2 predefined markers */}
         <Marker
           title='Babistan'
           description='bab'
@@ -331,21 +313,13 @@ const MapScreen = ({route}) => {
             longitude: 12.548816787109843,
           }}
         />
-        <Marker
-          title='Spunk'
-          description='ad'
-          coordinate={{
-            latitude: 55.6813715888453,
-            longitude: 12.560422585260284,
-          }}
-        />
-
-        { coordinates.map((coordinate, index) => (
+        {coordinates.map((coordinate, index) => (
             <Marker
+            title = {coordinate.date}
+            description = 'This is a coordinate.'
             key={index}
             pinColor = {getPinColor(coordinate.userid)} 
             coordinate={{
-              title: coordinate.date,
               latitude: coordinate.lat,
               longitude: coordinate.long,
             }}

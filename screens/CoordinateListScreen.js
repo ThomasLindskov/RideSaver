@@ -1,23 +1,55 @@
 // Importing modules
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import firebase from 'firebase';
 import { auth , db } from '../firebase';  
 
 // Is passed navigation as a prop as it is used in the CoordinateStackNavigator
 const CoordinateListScreen = ({ navigation }) => {
-  const [coordinates, setCoordinates] = useState();
+  const [coordinates, setCoordinates] = useState([]);
 
   // useEffect hook updates on change and checks if any coordinates are in the firebase database
   useEffect(() => {
-    if (!coordinates) {
-      db
-        .ref('/Coordinates')
-        .on('value', (snapshot) => {
-          setCoordinates(snapshot.val());
-        });
-    }
+    getCoordinates();
   }, []);
+
+  const getCoordinates = async () => {
+    let groupid;
+
+   await db.ref('userData/' + auth.currentUser.uid).get().then(snapshot => {
+      if (snapshot.exists()) { 
+        groupid = snapshot.val().group
+      } else {
+        console.log("No data available");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+
+    let coordinates = []
+    await db.ref('coordinates/').get().then(snapshot => {
+      if (snapshot.exists()) {
+        snapshot.forEach(coordinate => {
+          if(coordinate.val().groupId == groupid){
+            coordinates.push(coordinate.val())
+          }
+         
+        })
+      } else {
+        console.log("No data available");
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    })
+
+    setCoordinates(coordinates)
+
+  }
+
+  
+
+  
 
   // If no coordinates return loading
   if (!coordinates) {
@@ -47,7 +79,7 @@ const CoordinateListScreen = ({ navigation }) => {
             onPress={() => handleSelectCoordinate(coordinateKeys[index])}
           >
             <Text>
-              {item.leaveTime} {item.availableSeats}
+              {item.date} {item.lat} {item.long} 
             </Text>
           </TouchableOpacity>
         );
