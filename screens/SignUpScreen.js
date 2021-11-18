@@ -13,6 +13,7 @@ import { auth } from '../firebase';
 const LoginScreen = ( {navigation} ) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -24,15 +25,17 @@ const LoginScreen = ( {navigation} ) => {
   }, []);
 
   const handleSignUp = () => {
-    navigation.navigation('SignUp');
+    auth
+      .createUserWithEmailAndPassword(email, password)
+      .then((user) => {
+        const userCredentials = user.user;
+        console.log('Registered user with email: ', userCredentials.email);
+      })
+      .catch((error) => alert(error.message));
   };
 
   const handleLogin = () => {
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredentials) => {
-      const user = userCredentials.user;
-      console.log('Logged in with: ', user.email);
-    }).catch((error) => alert(error.message));
+    navigation.navigation('SignUp');
   };
 
   return (
@@ -41,7 +44,14 @@ const LoginScreen = ( {navigation} ) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.inputContainer}>
-        <Text style={styles.header}>Welcome to RideSaver, please log in!</Text>
+        <Text style={styles.header}>Welcome to RideSaver, please register!</Text>
+        <TextInput
+          placeholder='Name'
+          value={name}
+          onChangeText={(text) => setName(text)}
+          style={styles.input}
+          secureTextEntry
+        />
         <TextInput
           placeholder='Email'
           value={email}
@@ -55,7 +65,6 @@ const LoginScreen = ( {navigation} ) => {
           style={styles.input}
           secureTextEntry
         />
-        
       </View>
 
       <View style={styles.buttonContainer}>

@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ProfileScreen from '../../screens/ProfileScreen';
-import HomeScreen from '../../screens/HomeScreen';
+import ProfileScreen from '../../screens/Notused/ProfileScreen';
+import HomeScreen from '../../screens/Notused/HomeScreen';
 import LoginScreen from '../../screens/LoginScreen';
 import { auth } from '../../firebase';
 import { Button } from 'react-native';
@@ -36,45 +36,6 @@ const TabNavigator = ({ navigation }) => {
     };
   }, []);
 
-  //TabScreen for loggin in, which is only shown if loggedIn: false
-  const loginTab = () => {
-    if (!user.loggedIn) {
-      return (
-        <Tab.Screen
-          name="Log In"
-          component={LoginScreen}
-          options={{
-            headerTintColor: '#E7C4B1',
-            headerTitleAlign: 'center',
-            headerStyle: {
-              backgroundColor: '#131200',
-            },
-            headerRight: () => LogoutButton(),
-            tabBarIcon: () => <Ionicons name="home-outline" size={20} />,
-          }}
-        />
-      );
-    } else {
-      // If loggedIn is not false, a TabScreen is shown for the profile screen.
-      return (
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerTintColor: '#E7C4B1',
-            headerTitleAlign: 'center',
-            headerStyle: {
-              backgroundColor: '#131200',
-            },
-            headerRight: () => LogoutButton(),
-            tabBarIcon: () => (
-              <Ionicons name="person-circle-outline" size={20} />
-            ),
-          }}
-        />
-      );
-    }
-  };
 
   // The logout button is shown if a user is logged in and changes the loggedIn state if pressed, and navigates to homescreen
   const LogoutButton = () => {
@@ -139,7 +100,21 @@ const TabNavigator = ({ navigation }) => {
           tabBarIcon: () => <Ionicons name="location-outline" size={20} />,
         }}
       />
-      {loginTab()}
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerTintColor: '#E7C4B1',
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: '#131200',
+          },
+          headerRight: () => LogoutButton(),
+          tabBarIcon: () => (
+            <Ionicons name="person-circle-outline" size={20} />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 };

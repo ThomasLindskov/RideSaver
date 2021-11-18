@@ -3,14 +3,14 @@
 import firebase from 'firebase';
 
 // Setting up admin access to the firebase database so we can access it without constantly updating the rules
-const { initializeApp } = require('firebase-admin/app');
+/*const { initializeApp } = require('firebase-admin/app');
 
 // Not done with this - xx https://firebase.google.com/docs/admin/setup#windows
 
 initializeApp({
   credential: applicationDefault(),
   databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'
-});
+});*/
 
 
 // Firebase configuration for project
