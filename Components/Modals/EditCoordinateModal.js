@@ -10,12 +10,12 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import { auth , db } from '../firebase';  
-
+import { auth , db } from '../../firebase';  
+import Modal from "react-native-modal";
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
-const EditCoordinate = ( {route, navigation}) => {
+const EditCoordinateModal = ( {route, navigation}) => {
 
   // Initial state oject with 4 basic attributes and state for adding a new coordinate
   const initialState = { lat: '', long: '', date: '', availableSeats: '' };
@@ -69,40 +69,74 @@ const EditCoordinate = ( {route, navigation}) => {
     // If we don't want to edit, but to add new coordinate, this will run
   } 
 
+    // Alert to either cancel or accept deletion of coordinate, will run handleDelete if Delete is pressed
+    const confirmDelete = () => {
+      if (Platform.OS === 'ios' || Platform.OS === 'android') {
+        Alert.alert('Are you sure?', 'Do you want to delete the coordinate?', [
+          { text: 'Cancel', style: 'cancel' },
+          { text: 'Delete', style: 'destructive', onPress: () => handleDelete() },
+        ]);
+      }
+    };
+  
+    // Removes coordinate from firebase database and navigates back or catch an error and alerts the message
+    const handleDelete = () => {
+      const id = coordinate.id;
+      try {
+        db.ref(`coordinates/` + id).remove();
+        onClose();
+      } catch (error) {
+        console.log(error.message);
+      }
+    };
+
   
   if(!newCoordinate){
-    return <Text>Loading...</Text>;
+    return (
+      <Modal 
+    visible={open}
+    animationType='slide'
+    transparent={true}
+    onRequestClose={() => {
+       onClose();
+    }}>
+      <Text>Loading...</Text>
+      <Button title="Close" onPress={() => onClose()} /> 
+    </Modal>
+    )
   }
   // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
   return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        {Object.keys(initialState).map((key, index) => {
-          if(typeof newCoordinate[key] == 'number'){
-            newCoordinate[key] = newCoordinate[key].toString();
-          }
-          return (
-            <View style={styles.row} key={index}>
-              <Text style={styles.label}>{key}</Text>
-              <TextInput
-                value={newCoordinate[key]}
-                onChangeText={(event) => changeTextInput(key, event)}
-                style={styles.input}
-              />
-            </View>
-          );
-        })}
-        {/* Only show this button, if route prop was 'Edit Coordinate'*/}
-        <Button
-          title={'Save changes'}
-          onPress={() => handleSave()}
-        />
-      </ScrollView>
-    </SafeAreaView>
+    <Modal>
+      <SafeAreaView style={styles.container}>
+        <ScrollView>
+          {Object.keys(initialState).map((key, index) => {
+            if(typeof newCoordinate[key] == 'number'){
+              newCoordinate[key] = newCoordinate[key].toString();
+            }
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <TextInput
+                  value={newCoordinate[key]}
+                  onChangeText={(event) => changeTextInput(key, event)}
+                  style={styles.input}
+                />
+              </View>
+            );
+          })}
+          {/* Only show this button, if route prop was 'Edit Coordinate'*/}
+          <Button
+            title={'Save changes'}
+            onPress={() => handleSave()}
+          />
+        </ScrollView>
+      </SafeAreaView>
+    </Modal>
   );
 };
 
-export default EditCoordinate;
+export default EditCoordinateModal;
 
 const styles = StyleSheet.create({
   container: {

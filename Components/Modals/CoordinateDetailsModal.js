@@ -1,54 +1,26 @@
 // Importing modules and firebase to acces data
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
-import { auth , db } from '../firebase';  
+import { auth , db } from '../../firebase';  
+import Modal from "react-native-modal";
 
 
 // Passed props which are deconstructed to acces navigation and route
-const CoordinateDetails = (props) => {
-  const { navigation, route } = props;
+const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
   const initialState = { lat: '', long: '', date: '', availableSeats: '' };
-  const [coordinate, setCoordinate] = useState(initialState);
   const [joinedUsers, setjoinedUsers] = useState([])
 
   
 
   // useEffect hook will set the coordinate state from the passed route prop and return an empty object xx
   useEffect(() => {
-    setCoordinate(route.params.coordinate[1]);
-    if(route.params.coordinate[1].userjoined){
-      setjoinedUsers(Object.keys(route.params.coordinate[1].userjoined))
+    if(coordinate.userjoined){
+      setjoinedUsers(Object.keys(coordinate.userjoined))
     }
   }, []);
 
 
 
-  // Navigating to Edit Coordinate which does not exist xx - I think its AddCoordinate.js
-  const handleEdit = () => {
-    const coordinate = route.params.coordinate;
-    navigation.navigate('Edit Coordinate', { coordinate });
-  };
-
-  // Alert to either cancel or accept deletion of coordinate, will run handleDelete if Delete is pressed
-  const confirmDelete = () => {
-    if (Platform.OS === 'ios' || Platform.OS === 'android') {
-      Alert.alert('Are you sure?', 'Do you want to delete the coordinate?', [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', style: 'destructive', onPress: () => handleDelete() },
-      ]);
-    }
-  };
-
-  // Removes coordinate from firebase database and navigates back or catch an error and alerts the message
-  const handleDelete = () => {
-    const id = coordinate.id;
-    try {
-      db.ref(`coordinates/` + id).remove();
-      navigation.goBack({changed: true});
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
 
   const handleJoinRide = () => {
     const id = coordinate.id;
@@ -80,7 +52,7 @@ const CoordinateDetails = (props) => {
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
-    navigation.navigate('Coordinate List');
+    onClose();
 
   };
 
@@ -119,7 +91,7 @@ const CoordinateDetails = (props) => {
       console.log(`Error: ${error.message}`);
     }
 
-    navigation.navigate('Coordinate List');
+    onClose();
     
   };
 
@@ -127,19 +99,22 @@ const CoordinateDetails = (props) => {
 
   // If no coordinates it shows this
   if (!coordinate) {
-    return <Text>No data</Text>;
+    return (
+      <Modal 
+    visible={open}
+    animationType='slide'
+    transparent={true}
+    onRequestClose={() => {
+       onClose();
+    }}>
+      <Text>Loading...</Text>
+      <Button title="Close" onPress={() => onClose()} /> 
+    </Modal>
+    )
   }
 
   const buttons = () => {
-    if(auth.currentUser.uid == coordinate.userid) {
-      return (
-        <View>
-      <Button title="Edit" onPress={() => handleEdit()} />
-      <Button title="Delete" onPress={() => confirmDelete()} /> 
-        </View>
-      )
-      //
-    } else if (joinedUsers.includes(auth.currentUser.uid)) {
+    if (joinedUsers.includes(auth.currentUser.uid)) {
       return(
         <View>
           <Button title="cancel seat" onPress={() => handleRemoveRide()} />
@@ -156,22 +131,31 @@ const CoordinateDetails = (props) => {
   // When we have a coordinate it shows and edit or delete button and all items under that coordinate (lat, long, leaveTime and availableSeats)
   // Why is the button on top and on the bottom? xx
   return (
-    
-    <View style={styles.container}>
-       {Object.keys(initialState).map((key, index) => {
-          return (
-            <View style={styles.row} key={index}>
-              <Text style={styles.label}>{key}</Text>
-              <Text style={styles.label}> {coordinate[key]} </Text>
-            </View>
-          );
-        })}
-      {buttons()}
-    </View>
+    <Modal 
+    visible={open}
+    animationType='slide'
+    transparent={true}
+    onRequestClose={() => {
+      onClose();
+    }}>
+      <View style={styles.container}>
+        {Object.keys(initialState).map((key, index) => {
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <Text style={styles.label}> {coordinate[key]} </Text>
+              </View>
+            );
+          })}
+        {buttons()}
+        <Button title="Close" onPress={() => onClose()} /> 
+
+      </View>
+    </Modal>
   );
 };
 
-export default CoordinateDetails;
+export default CoordinateDetailsModal;
 
 const styles = StyleSheet.create({
   container: { flex: 1, justifyContent: 'flex-start' },
