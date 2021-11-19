@@ -7,10 +7,12 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  Image,
 } from 'react-native';
 import { auth } from '../firebase';
+import { GlobalStyles, Colors } from '../styles/GlobalStyles';
 
-const LoginScreen = ( {navigation} ) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -28,11 +30,13 @@ const LoginScreen = ( {navigation} ) => {
   };
 
   const handleLogin = () => {
-    auth.signInWithEmailAndPassword(email, password)
-        .then((userCredentials) => {
-      const user = userCredentials.user;
-      console.log('Logged in with: ', user.email);
-    }).catch((error) => alert(error.message));
+    auth
+      .signInWithEmailAndPassword(email, password)
+      .then((userCredentials) => {
+        const user = userCredentials.user;
+        console.log('Logged in with: ', user.email);
+      })
+      .catch((error) => alert(error.message));
   };
 
   return (
@@ -41,6 +45,16 @@ const LoginScreen = ( {navigation} ) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.inputContainer}>
+        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+          <Image
+            source={require('../assets/RideSaverLogo.png')}
+            style={{
+              height: 32,
+              width: 228,
+              margin: 10,
+            }}
+          />
+        </View>
         <Text style={styles.header}>Welcome to RideSaver, please log in!</Text>
         <TextInput
           placeholder='Email'
@@ -55,7 +69,6 @@ const LoginScreen = ( {navigation} ) => {
           style={styles.input}
           secureTextEntry
         />
-        
       </View>
 
       <View style={styles.buttonContainer}>
@@ -81,7 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     flex: 1,
-    backgroundColor: '#67697C',
+    backgroundColor: '#0b3143',
   },
   inputContainer: {
     width: '80%',

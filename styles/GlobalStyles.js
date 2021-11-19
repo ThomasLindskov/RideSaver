@@ -2,6 +2,8 @@ import { StyleSheet } from 'react-native';
 
 export const Colors = {
   bck: '#CAE9FF', // Light/white blue
+  hdb: 'purple', // Header background xx find color
+  shb: 'pink', // Subheader color xx find color
   prm: '#1B4965', // Dark blue
   scn: '#62B6CB', // Colorful blue (more turkish)
   trt: '#CB7762', // Random orange
