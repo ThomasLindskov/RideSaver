@@ -303,6 +303,9 @@ const MapScreen = ({ route }) => {
             longitude: 12.548816787109843,
           }}
         />
+
+        {/* Maybe import EditCoordinate if you own it (change it to a modal) else coordinate details so you can join.  */}
+
         {coordinates.map((coordinate, index) => (
           <Marker
             title={coordinate.date}

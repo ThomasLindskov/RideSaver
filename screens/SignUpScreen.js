@@ -58,6 +58,9 @@ const LoginScreen = ({ navigation }) => {
         <Text style={GlobalStyles.header}>
           Welcome to RideSaver, please register!
         </Text>
+        <Text style={styles.buttonOutlineText}>
+          Use your company email when signing up!
+        </Text>
         <TextInput
           placeholder='Name'
           value={name}
@@ -102,13 +105,13 @@ const styles = StyleSheet.create({
     width: '80%',
   },
   input: {
-    backgroundColor: '#FFFBFF',
+    backgroundColor: Colors.wht,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 5,
-    color: '#131200',
-    borderColor: '#E7C4B1',
+    color: Colors.blk,
+    borderColor: Colors.scn,
     borderWidth: 2,
   },
 
@@ -119,7 +122,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    backgroundColor: '#CE8964',
+    backgroundColor: Colors.hov,
     width: '100%',
     padding: 15,
     borderRadius: 10,
@@ -127,19 +130,20 @@ const styles = StyleSheet.create({
   },
 
   buttonOutline: {
-    backgroundColor: '#FFFBFF',
+    backgroundColor: Colors.wht,
     marginTop: 5,
-    borderColor: '#CE8964',
+    marginBottom: 5,
+    borderColor: Colors.hov,
     borderWidth: 2,
   },
 
   buttonText: {
-    color: '#FFFBFF',
+    color: Colors.wht,
     fontWeight: '700',
     fontSize: 16,
   },
   buttonOutlineText: {
-    color: '#CE8964',
+    color: Colors.hov,
     fontWeight: '700',
     fontSize: 16,
   },

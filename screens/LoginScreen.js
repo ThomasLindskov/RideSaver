@@ -47,10 +47,10 @@ const LoginScreen = ({ navigation }) => {
       <View style={styles.inputContainer}>
         <View style={{ justifyContent: 'center', alignItems: 'center' }}>
           <Image
-            source={require('../assets/RideSaverLogo.png')}
+            source={require('../assets/Logo.png')}
             style={{
-              height: 32,
-              width: 228,
+              height: 64,
+              width: 456,
               margin: 10,
             }}
           />
@@ -91,22 +91,20 @@ export default LoginScreen;
 
 const styles = StyleSheet.create({
   container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    backgroundColor: '#0b3143',
+    ...GlobalStyles.container,
+    backgroundColor: Colors.prm,
   },
   inputContainer: {
     width: '80%',
   },
   input: {
-    backgroundColor: '#FFFBFF',
+    backgroundColor: Colors.wht,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 5,
-    color: '#131200',
-    borderColor: '#E7C4B1',
+    color: Colors.blk,
+    borderColor: Colors.hov,
     borderWidth: 2,
   },
 
@@ -117,7 +115,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    backgroundColor: '#CE8964',
+    backgroundColor: Colors.scn,
     width: '100%',
     padding: 15,
     borderRadius: 10,
@@ -125,19 +123,19 @@ const styles = StyleSheet.create({
   },
 
   buttonOutline: {
-    backgroundColor: '#FFFBFF',
+    backgroundColor: Colors.wht,
     marginTop: 5,
-    borderColor: '#CE8964',
+    borderColor: Colors.scn,
     borderWidth: 2,
   },
 
   buttonText: {
-    color: '#FFFBFF',
+    color: Colors.wht,
     fontWeight: '700',
     fontSize: 16,
   },
   buttonOutlineText: {
-    color: '#CE8964',
+    color: Colors.scn,
     fontWeight: '700',
     fontSize: 16,
   },
@@ -146,6 +144,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingBottom: 20,
     fontSize: 18,
-    color: '#FFFBFF',
+    color: Colors.wht,
   },
 });
