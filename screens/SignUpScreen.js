@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { auth , db } from '../firebase';  
+import { auth, db } from '../firebase';
+import { GlobalStyles, Colors } from '../styles/GlobalStyles';
 
-
-const LoginScreen = ( {navigation} ) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
@@ -30,15 +30,15 @@ const LoginScreen = ( {navigation} ) => {
       .createUserWithEmailAndPassword(email, password)
       .then((user) => {
         const userCredentials = user.user;
-        if(user && name){
-            try {
-                db.ref('userData/' + userCredentials.uid).set({
-                    name: name,
-                    groups: [1]
-                }) 
-              } catch (error) {
-                console.log(`Error: ${error.message}`);
-              }
+        if (user && name) {
+          try {
+            db.ref('userData/' + userCredentials.uid).set({
+              name: name,
+              groups: [1],
+            });
+          } catch (error) {
+            console.log(`Error: ${error.message}`);
+          }
         }
         console.log('Registered user with email: ', userCredentials.uid);
       })
@@ -51,11 +51,13 @@ const LoginScreen = ( {navigation} ) => {
 
   return (
     <KeyboardAvoidingView
-      style={styles.container}
+      style={GlobalStyles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.inputContainer}>
-        <Text style={styles.header}>Welcome to RideSaver, please register!</Text>
+        <Text style={GlobalStyles.header}>
+          Welcome to RideSaver, please register!
+        </Text>
         <TextInput
           placeholder='Name'
           value={name}
@@ -78,7 +80,7 @@ const LoginScreen = ( {navigation} ) => {
       </View>
 
       <View style={styles.buttonContainer}>
-      <TouchableOpacity
+        <TouchableOpacity
           onPress={handleSignUp}
           style={[styles.button, styles.buttonOutline]}
         >
@@ -88,7 +90,6 @@ const LoginScreen = ( {navigation} ) => {
         <TouchableOpacity onPress={handleLogin} style={styles.button}>
           <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
-
       </View>
     </KeyboardAvoidingView>
   );
@@ -97,12 +98,6 @@ const LoginScreen = ( {navigation} ) => {
 export default LoginScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-    backgroundColor: '#67697C',
-  },
   inputContainer: {
     width: '80%',
   },
@@ -147,12 +142,5 @@ const styles = StyleSheet.create({
     color: '#CE8964',
     fontWeight: '700',
     fontSize: 16,
-  },
-  header: {
-    alignItems: 'center',
-    fontWeight: 'bold',
-    paddingBottom: 20,
-    fontSize: 18,
-    color: '#FFFBFF',
   },
 });

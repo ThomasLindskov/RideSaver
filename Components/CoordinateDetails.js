@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
 import firebase from 'firebase';
+import { GlobalStyles, Colors } from '../styles/GlobalStyles';
 
 // Passed props which are deconstructed to acces navigation and route
 const CoordinateDetails = (props) => {
@@ -53,8 +54,12 @@ const CoordinateDetails = (props) => {
   // Why is the button on top and on the bottom? xx
   return (
     <View style={styles.container}>
-      <Button title="Edit" onPress={() => handleEdit()} />
-      <Button title="Delete" onPress={() => confirmDelete()} />
+      <Button title='Edit' color={Colors.scn} onPress={() => handleEdit()} />
+      <Button
+        title='Delete'
+        color={Colors.dgr}
+        onPress={() => confirmDelete()}
+      />
       {Object.entries(coordinate).map((item, index) => {
         return (
           <View style={styles.row} key={index}>
@@ -63,8 +68,12 @@ const CoordinateDetails = (props) => {
           </View>
         );
       })}
-      <Button title="Edit" onPress={() => handleEdit()} />
-      <Button title="Delete" onPress={() => handleDelete()} />
+      <Button title='Edit' color={Colors.scn} onPress={() => handleEdit()} />
+      <Button
+        title='Delete'
+        color={Colors.dgr}
+        onPress={() => handleDelete()}
+      />
     </View>
   );
 };
@@ -78,6 +87,9 @@ const styles = StyleSheet.create({
     padding: 5,
     flexDirection: 'row',
   },
-  label: { width: 100, fontWeight: 'bold' },
+  label: {
+    fontWeight: 'bold',
+    width: 100,
+  },
   value: { flex: 1 },
 });

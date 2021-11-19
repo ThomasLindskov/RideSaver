@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import firebase from 'firebase';
+import { GlobalStyles, Colors } from '../styles/GlobalStyles';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
@@ -90,11 +91,11 @@ const EditCoordinate = (props) => {
         {Object.keys(initialState).map((key, index) => {
           return (
             <View style={styles.row} key={index}>
-              <Text style={styles.label}>{key}</Text>
+              <Text style={GlobalStyles.label}>{key}</Text>
               <TextInput
                 value={newCoordinate[key]}
                 onChangeText={(event) => changeTextInput(key, event)}
-                style={styles.input}
+                style={GlobalStyles.input}
               />
             </View>
           );
@@ -102,6 +103,7 @@ const EditCoordinate = (props) => {
         {/* Only show this button, if route prop was 'Edit Coordinate'*/}
         <Button
           title={isEditCoordinate ? 'Save changes' : 'Add coordinate'}
+          color={Colors.scn}
           onPress={() => handleSave()}
         />
       </ScrollView>
@@ -112,23 +114,10 @@ const EditCoordinate = (props) => {
 export default EditCoordinate;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E8EAED',
-    justifyContent: 'center',
-  },
+  container: { flex: 1, justifyContent: 'flex-start' },
   row: {
     flexDirection: 'row',
     height: 30,
     width: 10,
-  },
-  label: {
-    fontWeight: 'bold',
-    width: 100,
-  },
-  input: {
-    borderWidth: 1,
-    padding: 5,
-    width: 200,
   },
 });

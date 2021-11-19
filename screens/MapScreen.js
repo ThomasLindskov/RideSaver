@@ -16,11 +16,11 @@ import * as Location from 'expo-location';
 import { Accuracy } from 'expo-location';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import Modal from "react-native-modal";
-import { auth , db } from '../firebase';  
+import Modal from 'react-native-modal';
+import { auth, db } from '../firebase';
+import { GlobalStyles, Colors } from '../styles/GlobalStyles';
 
-
-const MapScreen = ({route}) => {
+const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [currentLocation, setCurrentLocation] = useState(null);
@@ -41,10 +41,6 @@ const MapScreen = ({route}) => {
   const [availableSeats, setAvailableSeats] = useState();
   const [groupCoordinates, setGroupCoordinates] = useState();
 
-
-
-
-
   // Alerts user to give locationpermission
   const getLocationPermission = async () => {
     await Location.requestForegroundPermissionsAsync().then((item) => {
@@ -55,48 +51,48 @@ const MapScreen = ({route}) => {
   // The useEffect hook runs everytime the page updates, which means if something happens,
   // getLocationPermission will run again to check if we have location permission
   useEffect(() => {
-    const response = getLocationPermission();     
-    getCoordinates(); 
-    }, [])
+    const response = getLocationPermission();
+    getCoordinates();
+  }, []);
 
-   
-    const getCoordinates = async () => {
-      let groupid;
+  const getCoordinates = async () => {
+    let groupid;
 
-     await db.ref('userData/' + auth.currentUser.uid).get().then(snapshot => {
-        if (snapshot.exists()) { 
-          groupid = snapshot.val().group
-        } else {
-          console.log("No data available");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-
-      let coordinates = []
-      await db.ref('coordinates/').get().then(snapshot => {
+    await db
+      .ref('userData/' + auth.currentUser.uid)
+      .get()
+      .then((snapshot) => {
         if (snapshot.exists()) {
-          snapshot.forEach(coordinate => {
-            if(coordinate.val().groupId == groupid){
-              coordinates.push(coordinate.val())
-            }
-           
-          })
+          groupid = snapshot.val().group;
         } else {
-          console.log("No data available");
+          console.log('No data available');
         }
       })
       .catch((error) => {
         console.error(error);
+      });
+
+    let coordinates = [];
+    await db
+      .ref('coordinates/')
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          snapshot.forEach((coordinate) => {
+            if (coordinate.val().groupId == groupid) {
+              coordinates.push(coordinate.val());
+            }
+          });
+        } else {
+          console.log('No data available');
+        }
       })
+      .catch((error) => {
+        console.error(error);
+      });
 
-      setCoordinates(coordinates)
-
-    }
-
-    
-
+    setCoordinates(coordinates);
+  };
 
   // Only used for getting coordinates from current location shown on map not a marker
   // Maybe remove this function xx
@@ -112,38 +108,40 @@ const MapScreen = ({route}) => {
   const handleLongPress = (event) => {
     const coordinate = event.nativeEvent.coordinate;
 
-
-    setUserMarkerCoordinate(coordinate)
+    setUserMarkerCoordinate(coordinate);
     // Haptics creates a vibration for longpress
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setModalVisible(true)
+    setModalVisible(true);
   };
 
   const createRide = async (event) => {
-    setModalVisible(false)
+    setModalVisible(false);
     let groupid;
 
-    await db.ref('userData/' + auth.currentUser.uid).get().then(snapshot => {
-       if (snapshot.exists()) { 
-         groupid = snapshot.val().group
-       } else {
-         console.log("No data available");
-       }
-     })
-     .catch((error) => {
-       console.error(error);
-     })
+    await db
+      .ref('userData/' + auth.currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          groupid = snapshot.val().group;
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-     let newDate = JSON.stringify(userDate)
-     try {
+    let newDate = JSON.stringify(userDate);
+    try {
       db.ref('coordinates/').push({
         lat: userMarkerCoordinate.latitude,
         long: userMarkerCoordinate.longitude,
         userid: auth.currentUser.uid,
         availableSeats: availableSeats,
         groupId: groupid,
-        date: newDate
-      })
+        date: newDate,
+      });
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -209,26 +207,22 @@ const MapScreen = ({route}) => {
   };
 
   const getPinColor = (userid) => {
-    if(userid == auth.currentUser.uid){
-      return "blue"
-    }else {
-      return "red"
+    if (userid == auth.currentUser.uid) {
+      return 'blue';
+    } else {
+      return 'red';
     }
   };
 
-
-
-
-  const userMarker = userMarkerCoordinate != null ? (
+  const userMarker =
+    userMarkerCoordinate != null ? (
       <Marker
         title='Custom ting'
         description='Sindssyg custom ting'
-        pinColor = 'yellow'
-        coordinate= {userMarkerCoordinate}
-      />): null;
-
-
-
+        pinColor='yellow'
+        coordinate={userMarkerCoordinate}
+      />
+    ) : null;
 
   //   const handleChangeText = (name, event) => {
   //     setUserMarkerCoordinates({ ...userMarkerCoordinates, [name]: event });
@@ -266,20 +260,16 @@ const MapScreen = ({route}) => {
   //             onChangeText={onChangeNumber}
   //             keyboardType='numeric'
   //           />
- 
 
-   
-  
   return (
     <SafeAreaView style={styles.container}>
       <Button
         onPress={getCoordinates}
-        title="Reload map (Test button)"
-        color="#841584"
-        accessibilityLabel="Reload map"
+        title='Reload map (Test button)'
+        color={Colors.prm}
+        accessibilityLabel='Reload map'
       />
-      
-     
+
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
@@ -303,7 +293,7 @@ const MapScreen = ({route}) => {
           });
         }}
         onLongPress={handleLongPress}
-        >
+      >
         {/* 2 predefined markers */}
         <Marker
           title='Babistan'
@@ -314,18 +304,17 @@ const MapScreen = ({route}) => {
           }}
         />
         {coordinates.map((coordinate, index) => (
-            <Marker
-            title = {coordinate.date}
-            description = 'This is a coordinate.'
+          <Marker
+            title={coordinate.date}
+            description='This is a coordinate.'
             key={index}
-            pinColor = {getPinColor(coordinate.userid)} 
+            pinColor={getPinColor(coordinate.userid)}
             coordinate={{
               latitude: coordinate.lat,
               longitude: coordinate.long,
             }}
           />
-          ))
-        } 
+        ))}
         {/* Mapping through userMarkerCoordinates array and outputs each one, this should be updated to not be an empty array,
         but import existing coordinates from firebase. */}
         {userMarker}
@@ -336,43 +325,35 @@ const MapScreen = ({route}) => {
           animationType='slide'
           transparent={true}
           onRequestClose={() => {
-             setModalVisible(!modalVisible);
+            setModalVisible(!modalVisible);
           }}
         >
-            <View style={styles.modalView}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  marginTop: 10,
-                  marginBottom: 10,
-                  fontSize: 25,
-                  fontWeight: 'bold',
-                }}
-              >
-                Create Ride
+          <View style={styles.modalView}>
+            <Text style={GlobalStyles.header}>Create Ride</Text>
+            <Text style={styles.modalText}>Departure Time</Text>
+            <View style={styles.pickedDateContainer}>
+              <Text>
+                {userDate.toString().split(' ').splice(0, 5).join(' ')}
               </Text>
-              <Text style={styles.modalText}>Departure Time</Text>
-              <View style={styles.pickedDateContainer}>
-                <Text>{userDate.toString().split(' ').splice(0, 5).join(' ')}</Text>
-              </View>
-              <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
-                <Text>Choose date</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
-                <Text>Choose departure time</Text>
-              </TouchableOpacity>
+            </View>
+            <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
+              <Text>Choose date</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
+              <Text>Choose departure time</Text>
+            </TouchableOpacity>
 
-              {show && (
-                <DateTimePicker
-                  testID='dateTimePicker'
-                  value={userDate}
-                  mode={mode}
-                  is24Hour={true}
-                  display='default'
-                  onChange={onChange}
-                />
-              )} 
-              {/* Det er den her der ødelægger modallen.
+            {show && (
+              <DateTimePicker
+                testID='dateTimePicker'
+                value={userDate}
+                mode={mode}
+                is24Hour={true}
+                display='default'
+                onChange={onChange}
+              />
+            )}
+            {/* Det er den her der ødelægger modallen.
               <Text style={styles.modalText}>Number of seats</Text>
               <DropDownPicker
                 open={open}
@@ -383,31 +364,31 @@ const MapScreen = ({route}) => {
                 setValue={setValue}
                 setNumSeats={setNumSeats}
               />*/}
-               <TextInput
+            <TextInput
               style={styles.input}
               onChangeText={setAvailableSeats}
               value={availableSeats}
-              placeholder="Seats in car"
-              keyboardType="numeric"
-              />
+              placeholder='Seats in car'
+              keyboardType='numeric'
+            />
 
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setModalVisible(!modalVisible)}
-              >
-                <Text style={styles.textStyle}>Close</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => createRide()}
-              >
-                <Text style={styles.textStyle}>Create ride</Text>
-              </Pressable>
-            </View>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => setModalVisible(!modalVisible)}
+            >
+              <Text style={styles.textStyle}>Close</Text>
+            </Pressable>
+            <Pressable
+              style={[styles.button, styles.buttonClose]}
+              onPress={() => createRide()}
+            >
+              <Text style={styles.textStyle}>Create ride</Text>
+            </Pressable>
+          </View>
         </Modal>
       </View>
 
-{/* Shows info about a selected coordinate, and closes onPress of button*/}
+      {/* Shows info about a selected coordinate, and closes onPress of button*/}
       {selectedCoordinate && selectedAddress && (
         <View style={styles.infoBox}>
           <Text style={styles.infoText}>
@@ -430,7 +411,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     padding: 0,
-    
   },
   map: {
     flex: 1,
@@ -477,11 +457,8 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginTop: 15,
   },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: Colors.scn,
   },
   textStyle: {
     color: 'white',
