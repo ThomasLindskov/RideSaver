@@ -24,6 +24,7 @@ const CoordinateStackNavigator = () => {
         }}
         name='Coordinate List'
         component={CoordinateListScreen}
+        initialParams={{ changed: false }}
       />
       <Stack.Screen
         options={{
