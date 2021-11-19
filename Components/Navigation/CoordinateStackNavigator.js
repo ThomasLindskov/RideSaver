@@ -14,7 +14,7 @@ const CoordinateStackNavigator = () => {
   // CoordinateStackNavigator which shows list for coordinates, details and the add/edit coordinate component
   return (
     <Stack.Navigator>
-      <Stack.Screen name='Coordinate List' component={CoordinateListScreen} />
+      <Stack.Screen name='Coordinate List' component={CoordinateListScreen} initialParams={{ changed: false }}/>
       <Stack.Screen name='Coordinate Details' component={CoordinateDetails} />
       <Stack.Screen name='Edit Coordinate' component={AddCoordinate} />
     </Stack.Navigator>

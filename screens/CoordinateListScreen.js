@@ -1,16 +1,17 @@
 // Importing modules
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import { auth , db } from '../firebase';  
 
 // Is passed navigation as a prop as it is used in the CoordinateStackNavigator
-const CoordinateListScreen = ({ navigation }) => {
+const CoordinateListScreen = ({ navigation, route }) => {
   const [coordinates, setCoordinates] = useState([]);
 
   // useEffect hook updates on change and checks if any coordinates are in the firebase database
   useEffect(() => {
     getCoordinates();
-  }, []);
+  });
 
   const getCoordinates = async () => {
     let groupid;
@@ -29,11 +30,20 @@ const CoordinateListScreen = ({ navigation }) => {
     let coordinates = []
     await db.ref('coordinates/').get().then(snapshot => {
       if (snapshot.exists()) {
-        snapshot.forEach(coordinate => {
+        snapshot.forEach((coordinate) => {
           if(coordinate.val().groupId == groupid){
-            coordinates.push(coordinate.val())
-          }
-         
+            let newObj = {
+              id: coordinate.key,
+              availableSeats: coordinate.val().availableSeats,
+              date: coordinate.val().date,
+              groupId: coordinate.val().groupId,
+              lat: coordinate.val().lat,
+              long: coordinate.val().long,
+              userid: coordinate.val().userid,
+              userjoined: coordinate.val().userjoined
+            }
+            coordinates.push(newObj)
+          }     
         })
       } else {
         console.log("No data available");
@@ -48,9 +58,6 @@ const CoordinateListScreen = ({ navigation }) => {
   }
 
   
-
-  
-
   // If no coordinates return loading
   if (!coordinates) {
     return <Text>Loading...</Text>;

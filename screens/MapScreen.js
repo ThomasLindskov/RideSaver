@@ -320,8 +320,8 @@ const MapScreen = ({route}) => {
             key={index}
             pinColor = {getPinColor(coordinate.userid)} 
             coordinate={{
-              latitude: coordinate.lat,
-              longitude: coordinate.long,
+              latitude: Number(coordinate.lat),
+              longitude: Number(coordinate.long),
             }}
           />
           ))
