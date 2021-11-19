@@ -5,11 +5,10 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import TabNavigator from './Components/Navigation/TabNavigator';
 import LoginScreen from './screens/LoginScreen';
-import SignUpScreen from './screens/SignUpScreen'
+import RegisterScreen from './screens/RegisterScreen';
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs(['Setting a timer']);
-
 
 export default function App() {
   const Stack = createNativeStackNavigator();
@@ -18,15 +17,15 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-      <Stack.Screen
+        <Stack.Screen
           options={{ headerShown: false }}
           name='Login'
           component={LoginScreen}
         />
         <Stack.Screen
           options={{ headerShown: false }}
-          name='SignUp'
-          component={SignUpScreen}
+          name='Register'
+          component={RegisterScreen}
         />
         <Stack.Screen
           options={{ headerShown: false }}

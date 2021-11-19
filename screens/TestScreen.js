@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import firebase from 'firebase';
 import { auth, db } from '../firebase';
-import { GlobalStyles, Colors } from '../styles/GlobalStyles';
+import { GlobalStyles, Colors, BrandColors } from '../styles/GlobalStyles';
 
 // TestScreen only used in testing
 const TestScreen = () => {
@@ -62,7 +62,7 @@ const TestScreen = () => {
   return (
     <View style={GlobalStyles.container}>
       <Text style={GlobalStyles.header}>Test screen</Text>
-      <Text style={{ color: Colors.prm }}>
+      <Text style={{ color: BrandColors.Primary }}>
         This is the testScreen of: {firebase.auth().currentUser.email}
         Here you can change your groups
       </Text>
@@ -76,7 +76,9 @@ const TestScreen = () => {
               style={GlobalStyles.container}
               onPress={() => handleSelectGroup(groupKeys[index])}
             >
-              <Text style={{ color: Colors.wht }}>{item.organisation}</Text>
+              <Text style={{ color: BrandColors.Grey }}>
+                {item.organisation}
+              </Text>
             </TouchableOpacity>
           );
         }}

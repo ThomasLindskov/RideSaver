@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import { auth } from '../firebase';
-import { GlobalStyles, Colors } from '../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -25,8 +25,8 @@ const LoginScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  const handleSignUp = () => {
-    navigation.navigate('SignUp');
+  const handleRegister = () => {
+    navigation.navigate('Register');
   };
 
   const handleLogin = () => {
@@ -77,7 +77,7 @@ const LoginScreen = ({ navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          onPress={handleSignUp}
+          onPress={handleRegister}
           style={[styles.button, styles.buttonOutline]}
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
@@ -92,19 +92,19 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     ...GlobalStyles.container,
-    backgroundColor: Colors.prm,
+    backgroundColor: BrandColors.Primary,
   },
   inputContainer: {
     width: '80%',
   },
   input: {
-    backgroundColor: Colors.wht,
+    backgroundColor: BrandColors.WhiteLight,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 5,
-    color: Colors.blk,
-    borderColor: Colors.hov,
+    color: BrandColors.GreyDark,
+    borderColor: BrandColors.Secondary,
     borderWidth: 2,
   },
 
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    backgroundColor: Colors.scn,
+    backgroundColor: BrandColors.PrimaryLight,
     width: '100%',
     padding: 15,
     borderRadius: 10,
@@ -123,19 +123,19 @@ const styles = StyleSheet.create({
   },
 
   buttonOutline: {
-    backgroundColor: Colors.wht,
+    backgroundColor: BrandColors.WhiteLight,
     marginTop: 5,
-    borderColor: Colors.scn,
+    borderColor: BrandColors.PrimaryLight,
     borderWidth: 2,
   },
 
   buttonText: {
-    color: Colors.wht,
+    color: BrandColors.WhiteLight,
     fontWeight: '700',
     fontSize: 16,
   },
   buttonOutlineText: {
-    color: Colors.scn,
+    color: BrandColors.PrimaryLight,
     fontWeight: '700',
     fontSize: 16,
   },
@@ -144,6 +144,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     paddingBottom: 20,
     fontSize: 18,
-    color: Colors.wht,
+    color: BrandColors.WhiteLight,
   },
 });

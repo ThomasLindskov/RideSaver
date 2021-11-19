@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { auth, db } from '../firebase';
-import { GlobalStyles, Colors } from '../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -25,7 +25,7 @@ const LoginScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  const handleSignUp = () => {
+  const handleRegister = () => {
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((user) => {
@@ -51,11 +51,11 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <KeyboardAvoidingView
-      style={GlobalStyles.container}
+      style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.inputContainer}>
-        <Text style={GlobalStyles.header}>
+        <Text style={styles.header}>
           Welcome to RideSaver, please register!
         </Text>
         <Text style={styles.buttonOutlineText}>
@@ -84,7 +84,7 @@ const LoginScreen = ({ navigation }) => {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          onPress={handleSignUp}
+          onPress={handleRegister}
           style={[styles.button, styles.buttonOutline]}
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
@@ -101,17 +101,25 @@ const LoginScreen = ({ navigation }) => {
 export default LoginScreen;
 
 const styles = StyleSheet.create({
+  container: {
+    ...GlobalStyles.container,
+    backgroundColor: BrandColors.Secondary,
+  },
+  header: {
+    ...GlobalStyles.header,
+    color: BrandColors.GreyDark,
+  },
   inputContainer: {
     width: '80%',
   },
   input: {
-    backgroundColor: Colors.wht,
+    backgroundColor: BrandColors.WhiteLight,
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 10,
     marginTop: 5,
-    color: Colors.blk,
-    borderColor: Colors.scn,
+    color: BrandColors.GreyDark,
+    borderColor: BrandColors.Primary,
     borderWidth: 2,
   },
 
@@ -122,7 +130,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    backgroundColor: Colors.hov,
+    backgroundColor: BrandColors.Primary,
     width: '100%',
     padding: 15,
     borderRadius: 10,
@@ -130,20 +138,20 @@ const styles = StyleSheet.create({
   },
 
   buttonOutline: {
-    backgroundColor: Colors.wht,
+    backgroundColor: BrandColors.WhiteLight,
     marginTop: 5,
     marginBottom: 5,
-    borderColor: Colors.hov,
+    borderColor: BrandColors.Primary,
     borderWidth: 2,
   },
 
   buttonText: {
-    color: Colors.wht,
+    color: BrandColors.WhiteLight,
     fontWeight: '700',
     fontSize: 16,
   },
   buttonOutlineText: {
-    color: Colors.hov,
+    color: BrandColors.GreyDark,
     fontWeight: '700',
     fontSize: 16,
   },

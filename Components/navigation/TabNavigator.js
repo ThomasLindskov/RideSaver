@@ -8,7 +8,7 @@ import { auth, db } from '../../firebase';
 import { Button } from 'react-native';
 import MapScreen from '../../screens/MapScreen';
 import CoordinateStackNavigator from './CoordinateStackNavigator';
-import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 
 const Tab = createBottomTabNavigator();
 
@@ -52,7 +52,7 @@ const TabNavigator = ({ navigation }) => {
                 .catch((error) => alert(error.message));
             }}
             title='Logout'
-            color={Colors.scn}
+            color={BrandColors.PrimaryLight}
           />
         </View>
       );
@@ -61,15 +61,17 @@ const TabNavigator = ({ navigation }) => {
 
   //Show Homescreen, MapScreen and CoordinateStackNavigator regardless of loggedIn status
   return (
-    <Tab.Navigator screenOptions={{ tabBarActiveTintColor: Colors.prm }}>
+    <Tab.Navigator
+      screenOptions={{ tabBarActiveTintColor: BrandColors.PrimaryLight }}
+    >
       <Tab.Screen
         name='Profile'
         component={ProfileScreen}
         options={{
-          headerTintColor: Colors.prm,
+          headerTintColor: BrandColors.White,
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: Colors.bck,
+            backgroundColor: BrandColors.PrimaryDark,
           },
           // Remove figma balls inden aflevering xx
           headerLeft: () => (
@@ -85,7 +87,15 @@ const TabNavigator = ({ navigation }) => {
             </TouchableWithoutFeedback>
           ),
           headerRight: () => LogoutButton(),
-          tabBarIcon: () => <Ionicons name='person-circle-outline' size={20} />,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name='person-circle-outline'
+              color={
+                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
+              }
+              size={20}
+            />
+          ),
         }}
       />
       <Tab.Screen
@@ -93,10 +103,10 @@ const TabNavigator = ({ navigation }) => {
         component={MapScreen}
         initialParams={{ group: group }}
         options={{
-          headerTintColor: Colors.prm,
+          headerTintColor: BrandColors.White,
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: Colors.bck,
+            backgroundColor: BrandColors.PrimaryDark,
           },
           // Remove figma balls inden aflevering xx
           headerLeft: () => (
@@ -112,17 +122,25 @@ const TabNavigator = ({ navigation }) => {
             </TouchableWithoutFeedback>
           ),
           headerRight: () => LogoutButton(),
-          tabBarIcon: () => <Ionicons name='globe' size={20} />,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name='globe'
+              color={
+                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
+              }
+              size={20}
+            />
+          ),
         }}
       />
       <Tab.Screen
-        name='Coordinates'
+        name='List'
         component={CoordinateStackNavigator}
         options={{
-          headerTintColor: Colors.prm,
+          headerTintColor: BrandColors.White,
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: Colors.bck,
+            backgroundColor: BrandColors.PrimaryDark,
           },
           // Remove figma balls inden aflevering xx
           headerLeft: () => (
@@ -138,7 +156,15 @@ const TabNavigator = ({ navigation }) => {
             </TouchableWithoutFeedback>
           ),
           headerRight: () => LogoutButton(),
-          tabBarIcon: () => <Ionicons name='location-outline' size={20} />,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name='location-outline'
+              color={
+                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
+              }
+              size={20}
+            />
+          ),
         }}
       />
     </Tab.Navigator>

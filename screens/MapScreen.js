@@ -18,16 +18,13 @@ import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Modal from 'react-native-modal';
 import { auth, db } from '../firebase';
-import { GlobalStyles, Colors } from '../styles/GlobalStyles';
+import { GlobalStyles, Colors, BrandColors } from '../styles/GlobalStyles';
 
 const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
   const [userMarkerCoordinate, setUserMarkerCoordinate] = useState(null);
 
-  const [selectedCoordinate, setSelectedCoordinate] = useState(null);
-  const [selectedAddress, setSelectedAddress] = useState(null);
   const [location, setLocation] = useState({
     latitude: 55.666388,
     longitude: 12.623887,
@@ -94,16 +91,6 @@ const MapScreen = ({ route }) => {
     setCoordinates(coordinates);
   };
 
-  // Only used for getting coordinates from current location shown on map not a marker
-  // Maybe remove this function xx
-  const updateLocation = async () => {
-    await Location.getCurrentPositionAsync({
-      accuracy: Accuracy.Balanced,
-    }).then((item) => {
-      setCurrentLocation(item.coords);
-    });
-  };
-
   // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
   const handleLongPress = (event) => {
     const coordinate = event.nativeEvent.coordinate;
@@ -149,44 +136,6 @@ const MapScreen = ({ route }) => {
     getCoordinates();
   };
 
-  // When creating a new coordinate this sets a selectedadress which is run on line 130-136
-  const handleSelectMarker = async (coordinate) => {
-    setSelectedCoordinate(coordinate);
-    await Location.reverseGeocodeAsync(coordinate).then((data) => {
-      setSelectedAddress(data);
-    });
-  };
-
-  // Close infobox for specific coordinate.
-  const closeInfoBox = () =>
-    setSelectedCoordinate(null) && setSelectedAddress(null);
-
-  // If no hasLocationPermission === null we return null
-  // If there is an error we return a text asking to change settings
-  // Otherwise the button for update location is shown (which is the function we might not need xx)
-  /*const RenderCurrentLocation = (props) => {
-    if (props.hasLocationPermission === null) {
-      return null;
-    }
-    if (props.hasLocationPermission === false) {
-      return <Text>No location access. Go to settings to change</Text>;
-    }
-    return (
-      <View>
-        <Button
-          style={styles.container}
-          title='update location'
-          onPress={updateLocation}
-        />
-        {currentLocation && (
-          <Text>
-            {`Lat: ${currentLocation.latitude},\nLong:${currentLocation.longitude}`}
-          </Text>
-        )}
-      </View>
-    );
-  };*/
-
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || userDate;
     setShow(Platform.OS === 'ios');
@@ -224,49 +173,12 @@ const MapScreen = ({ route }) => {
       />
     ) : null;
 
-  //   const handleChangeText = (name, event) => {
-  //     setUserMarkerCoordinates({ ...userMarkerCoordinates, [name]: event });
-  //   };
-
-  //   <TextInput
-  //   style={styles.input}
-  //   onChangeText={(event) => handleChangeText(key, event)}
-  //   value={userMarkerCoordinates[key]}
-  // />
-
-  // initialRegion={{
-  //   latitude: 55.666388,
-  //   longitude: 12.623887,
-  //   latitudeDelta: 0.0922,
-  //   longitudeDelta: 0.0421,
-  // }}
-
-  // <DialogInput
-  //   title={'Create Ride'}
-  //   message={'Do you want to create a ride from your current location?'}
-  //   hintInput={'Add comment to your ride'}
-  //   submitInput={(inputText) => {
-  //     this.sendInput(inputText);
-  //   }}
-  //   closeDialog={() => {
-  //     this.showDialog(false);
-  //   }}
-  // />;
-
-  // <TextInput
-  //             style={styles.input}
-  //             placeholder='Choose number of available seats'
-  //             value={number}
-  //             onChangeText={onChangeNumber}
-  //             keyboardType='numeric'
-  //           />
-
   return (
     <SafeAreaView style={styles.container}>
       <Button
         onPress={getCoordinates}
         title='Reload map (Test button)'
-        color={Colors.prm}
+        color={BrandColors.SecondaryDark}
         accessibilityLabel='Reload map'
       />
 
@@ -332,7 +244,7 @@ const MapScreen = ({ route }) => {
           }}
         >
           <View style={styles.modalView}>
-            <Text style={GlobalStyles.header}>Create Ride</Text>
+            <Text style={styles.header}>Create Ride</Text>
             <Text style={styles.modalText}>Departure Time</Text>
             <View style={styles.pickedDateContainer}>
               <Text>
@@ -356,17 +268,6 @@ const MapScreen = ({ route }) => {
                 onChange={onChange}
               />
             )}
-            {/* Det er den her der ødelægger modallen.
-              <Text style={styles.modalText}>Number of seats</Text>
-              <DropDownPicker
-                open={open}
-                value={value}
-                numSeats={numSeats}
-                min={1}
-                setOpen={setOpen}
-                setValue={setValue}
-                setNumSeats={setNumSeats}
-              />*/}
             <TextInput
               style={styles.input}
               onChangeText={setAvailableSeats}
@@ -390,19 +291,6 @@ const MapScreen = ({ route }) => {
           </View>
         </Modal>
       </View>
-
-      {/* Shows info about a selected coordinate, and closes onPress of button*/}
-      {selectedCoordinate && selectedAddress && (
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>
-            {selectedCoordinate.latitude}, {selectedCoordinate.longitude}
-          </Text>
-          <Text style={styles.infoText}>
-            Name: {selectedAddress[0].name} Region: {selectedAddress[0].region}
-          </Text>
-          <Button title='close' onPress={closeInfoBox} />
-        </View>
-      )}
     </SafeAreaView>
   );
 };
@@ -415,24 +303,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding: 0,
   },
+  header: {
+    ...GlobalStyles.header,
+    color: BrandColors.SecondaryDark,
+  },
   map: {
     flex: 1,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-  },
-  infoBox: {
-    height: 200,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'yellow',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
-  infoText: {
-    fontSize: 15,
   },
   input: {
     borderWidth: 1,
@@ -440,12 +318,12 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 30,
-    backgroundColor: 'white',
+    backgroundColor: BrandColors.WhiteLight,
     borderRadius: 20,
     padding: 35,
     marginTop: 70,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: BrandColors.GreyDark,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -461,10 +339,10 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   buttonClose: {
-    backgroundColor: Colors.scn,
+    backgroundColor: BrandColors.SecondaryDark,
   },
   textStyle: {
-    color: 'white',
+    color: BrandColors.WhiteLight,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -476,7 +354,7 @@ const styles = StyleSheet.create({
   },
   pickedDateContainer: {
     padding: 5,
-    backgroundColor: '#eee',
+    backgroundColor: BrandColors.WhiteDark,
     borderRadius: 2,
   },
 });
