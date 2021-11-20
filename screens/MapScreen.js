@@ -14,11 +14,11 @@ import {
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import { GlobalStyles, Colors, BrandColors } from '../styles/GlobalStyles';
-import Modal from 'react-native-modal';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 import { auth, db } from '../firebase';
 import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
+import AddCoordinateModal from '../Components/Modals/AddCoordinateModal';
+
 import CoordinateDetailsModal from '../Components/Modals/CoordinateDetailsModal';
 
 const MapScreen = ({ route }) => {
@@ -32,13 +32,9 @@ const MapScreen = ({ route }) => {
   });
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [coordinateModalVisible, setCoordinateModalVisible] = useState(false);
+
+  const [modalInsert, setModalInsert] = useState();
   const [coordinates, setCoordinates] = useState([]);
-  const [userDate, setUserDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-  const [availableSeats, setAvailableSeats] = useState();
-  const [groupCoordinates, setGroupCoordinates] = useState();
 
   // Alerts user to give locationpermission
   const getLocationPermission = async () => {
@@ -52,7 +48,7 @@ const MapScreen = ({ route }) => {
   useEffect(() => {
     const response = getLocationPermission();
     getCoordinates();
-  }, []);
+  }, [modalInsert, modalVisible]);
 
   const getCoordinates = async () => {
     let groupid;
@@ -113,60 +109,6 @@ const MapScreen = ({ route }) => {
     setModalVisible(true);
   };
 
-  const createRide = async (event) => {
-    setModalVisible(false);
-    let groupid;
-
-    await db
-      .ref('userData/' + auth.currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          groupid = snapshot.val().group;
-        } else {
-          console.log('No data available');
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
-    let newDate = JSON.stringify(userDate);
-    try {
-      db.ref('coordinates/').push({
-        lat: userMarkerCoordinate.latitude,
-        long: userMarkerCoordinate.longitude,
-        userid: auth.currentUser.uid,
-        availableSeats: availableSeats,
-        groupId: groupid,
-        date: newDate,
-      });
-    } catch (error) {
-      console.log(`Error: ${error.message}`);
-    }
-
-    getCoordinates();
-  };
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || userDate;
-    setShow(Platform.OS === 'ios');
-    setUserDate(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
-  };
-
   const getPinColor = (userid) => {
     if (userid == auth.currentUser.uid) {
       return 'blue';
@@ -175,21 +117,28 @@ const MapScreen = ({ route }) => {
     }
   };
 
+  const handleClose = () => {
+    setModalInsert(null);
+  };
+
+  const handleNewClose = () => {
+    setModalVisible(false);
+  };
+
   const getModal = (coordinate) => {
-    return console.log(coordinate);
     if (coordinate.userid != auth.currentUser.uid) {
-      return (
+      setModalInsert(
         <CoordinateDetailsModal
-          open={coordinateModalVisible}
-          onClose={() => setCoordinateModalVisible(false)}
+          isOpen={true}
+          handleClose={handleClose}
           coordinate={coordinate}
         />
       );
     } else {
-      return (
+      setModalInsert(
         <EditCoordinateModal
-          open={coordinateModalVisible}
-          onClose={() => setCoordinateModalVisible(false)}
+          isOpen={true}
+          handleClose={handleClose}
           coordinate={coordinate}
         />
       );
@@ -214,7 +163,6 @@ const MapScreen = ({ route }) => {
         color={BrandColors.SecondaryDark}
         accessibilityLabel='Reload map'
       />
-
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
@@ -248,13 +196,15 @@ const MapScreen = ({ route }) => {
             longitude: 12.548816787109843,
           }}
         />
-
         {coordinates.map((coordinate, index) => (
           <Marker
             title={coordinate.date}
             description='This is a coordinate.'
             key={index}
-            onCalloutPress={() => getModal(coordinate)}
+            onCalloutPress={() => {
+              getModal(coordinate);
+              setCoordinateModalVisible(true);
+            }}
             pinColor={getPinColor(coordinate.userid)}
             coordinate={{
               latitude: Number(coordinate.lat),
@@ -267,61 +217,15 @@ const MapScreen = ({ route }) => {
         {userMarker}
       </MapView>
       <View>
-        <Modal
-          visible={modalVisible}
-          animationType='slide'
-          transparent={true}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.modalView}>
-            <Text style={styles.header}>Create Ride</Text>
-            <Text style={styles.modalText}>Departure Time</Text>
-            <View style={styles.pickedDateContainer}>
-              <Text>
-                {userDate.toString().split(' ').splice(0, 5).join(' ')}
-              </Text>
-            </View>
-            <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
-              <Text>Choose date</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
-              <Text>Choose departure time</Text>
-            </TouchableOpacity>
-
-            {show && (
-              <DateTimePicker
-                testID='dateTimePicker'
-                value={userDate}
-                mode={mode}
-                is24Hour={true}
-                display='default'
-                onChange={onChange}
-              />
-            )}
-            <TextInput
-              style={styles.input}
-              onChangeText={setAvailableSeats}
-              value={availableSeats}
-              placeholder='Seats in car'
-              keyboardType='numeric'
-            />
-
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={styles.textStyle}>Close</Text>
-            </Pressable>
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => createRide()}
-            >
-              <Text style={styles.textStyle}>Create ride</Text>
-            </Pressable>
-          </View>
-        </Modal>
+        {
+          <AddCoordinateModal
+            isOpen={modalVisible}
+            handleClose={handleNewClose}
+            coordinate={userMarkerCoordinate}
+            setUserMarkerCoordinate={setUserMarkerCoordinate}
+          />
+        }
+        {modalInsert}
       </View>
     </SafeAreaView>
   );
