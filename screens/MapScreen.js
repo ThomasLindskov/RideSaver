@@ -13,12 +13,13 @@ import {
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { Accuracy } from 'expo-location';
 import * as Haptics from 'expo-haptics';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { GlobalStyles, Colors, BrandColors } from '../styles/GlobalStyles';
 import Modal from 'react-native-modal';
 import { auth, db } from '../firebase';
-import { GlobalStyles, Colors, BrandColors } from '../styles/GlobalStyles';
+import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
+import CoordinateDetailsModal from '../Components/Modals/CoordinateDetailsModal';
 
 const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
@@ -31,6 +32,7 @@ const MapScreen = ({ route }) => {
   });
 
   const [modalVisible, setModalVisible] = useState(false);
+  const [coordinateModalVisible, setCoordinateModalVisible] = useState(false);
   const [coordinates, setCoordinates] = useState([]);
   const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
@@ -77,7 +79,17 @@ const MapScreen = ({ route }) => {
         if (snapshot.exists()) {
           snapshot.forEach((coordinate) => {
             if (coordinate.val().groupId == groupid) {
-              coordinates.push(coordinate.val());
+              let newObj = {
+                id: coordinate.key,
+                availableSeats: coordinate.val().availableSeats,
+                date: coordinate.val().date,
+                groupId: coordinate.val().groupId,
+                lat: coordinate.val().lat,
+                long: coordinate.val().long,
+                userid: coordinate.val().userid,
+                userjoined: coordinate.val().userjoined,
+              };
+              coordinates.push(newObj);
             }
           });
         } else {
@@ -163,6 +175,27 @@ const MapScreen = ({ route }) => {
     }
   };
 
+  const getModal = (coordinate) => {
+    return console.log(coordinate);
+    if (coordinate.userid != auth.currentUser.uid) {
+      return (
+        <CoordinateDetailsModal
+          open={coordinateModalVisible}
+          onClose={() => setCoordinateModalVisible(false)}
+          coordinate={coordinate}
+        />
+      );
+    } else {
+      return (
+        <EditCoordinateModal
+          open={coordinateModalVisible}
+          onClose={() => setCoordinateModalVisible(false)}
+          coordinate={coordinate}
+        />
+      );
+    }
+  };
+
   const userMarker =
     userMarkerCoordinate != null ? (
       <Marker
@@ -216,13 +249,12 @@ const MapScreen = ({ route }) => {
           }}
         />
 
-        {/* Maybe import EditCoordinate if you own it (change it to a modal) else coordinate details so you can join.  */}
-
         {coordinates.map((coordinate, index) => (
           <Marker
             title={coordinate.date}
             description='This is a coordinate.'
             key={index}
+            onCalloutPress={() => getModal(coordinate)}
             pinColor={getPinColor(coordinate.userid)}
             coordinate={{
               latitude: Number(coordinate.lat),

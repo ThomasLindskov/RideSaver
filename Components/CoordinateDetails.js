@@ -3,9 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
 import firebase from 'firebase';
 import { GlobalStyles, Colors } from '../styles/GlobalStyles';
-import { auth, db } from '../firebase';
 import { VideoExportPreset } from 'expo-image-picker';
 import { set } from 'react-native-reanimated';
+import { auth, db } from '../firebase';
 
 // Passed props which are deconstructed to acces navigation and route
 const CoordinateDetails = (props) => {
@@ -13,12 +13,11 @@ const CoordinateDetails = (props) => {
   const initialState = { lat: '', long: '', date: '', availableSeats: '' };
   const [coordinate, setCoordinate] = useState(initialState);
   const [joinedUsers, setjoinedUsers] = useState([]);
-  const [updated, setUpdated] = useState(0);
 
   // useEffect hook will set the coordinate state from the passed route prop and return an empty object xx
   useEffect(() => {
     setCoordinate(route.params.coordinate[1]);
-    if (route.params.coordinate[1].userjoined && updated == false) {
+    if (route.params.coordinate[1].userjoined) {
       setjoinedUsers(Object.keys(route.params.coordinate[1].userjoined));
     }
   }, []);
@@ -131,7 +130,7 @@ const CoordinateDetails = (props) => {
         </View>
       );
       //
-    } else if (joinedUsers.includes(auth.currentUser.uid) && updated == 0) {
+    } else if (joinedUsers.includes(auth.currentUser.uid)) {
       return (
         <View>
           <Button title='cancel seat' onPress={() => handleRemoveRide()} />

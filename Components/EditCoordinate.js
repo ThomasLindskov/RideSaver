@@ -10,7 +10,6 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import firebase from 'firebase';
 import { GlobalStyles, Colors } from '../styles/GlobalStyles';
 import { auth, db } from '../firebase';
 
