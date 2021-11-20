@@ -17,7 +17,12 @@ import { auth, db } from '../firebase';
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
 const EditCoordinate = ({ route, navigation }) => {
   // Initial state oject with 4 basic attributes and state for adding a new coordinate
-  const initialState = { lat: '', long: '', date: '', availableSeats: '' };
+  const initialState = {
+    latitude: '',
+    longitude: '',
+    date: '',
+    availableSeats: '',
+  };
   const [newCoordinate, setNewCoordinate] = useState(initialState);
 
   // This component is used for editing and adding new coordinates, and if the route prop passed was 'Edit Coordinate' we set isEditCoordinate which is used later
@@ -40,10 +45,10 @@ const EditCoordinate = ({ route, navigation }) => {
     }
 
     const id = newCoordinate.id;
-    const { lat, long, date, availableSeats } = newCoordinate;
+    const { latitude, longitude, date, availableSeats } = newCoordinate;
     if (
-      lat.length === 0 ||
-      long.length === 0 ||
+      latitude.length === 0 ||
+      longitude.length === 0 ||
       date.length === 0 ||
       availableSeats.length === 0
     ) {
@@ -55,7 +60,7 @@ const EditCoordinate = ({ route, navigation }) => {
     try {
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
-        .update({ lat, long, date, availableSeats });
+        .update({ latitude, longitude, date, availableSeats });
       // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
       Alert.alert('Your info has been updated');
       const coordinate = [id, newCoordinate];

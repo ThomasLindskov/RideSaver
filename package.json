@@ -36,6 +36,7 @@
     "react-native-dialog-input": "^1.0.8",
     "react-native-dotenv": "^3.2.0",
     "react-native-dropdown-picker": "^5.1.28",
+    "react-native-geocoding": "^0.5.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-maps": "0.28.0",
     "react-native-modal": "^13.0.0",

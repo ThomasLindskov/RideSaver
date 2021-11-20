@@ -10,7 +10,12 @@ import { auth, db } from '../firebase';
 // Passed props which are deconstructed to acces navigation and route
 const CoordinateDetails = (props) => {
   const { navigation, route } = props;
-  const initialState = { lat: '', long: '', date: '', availableSeats: '' };
+  const initialState = {
+    latitude: '',
+    longitude: '',
+    date: '',
+    availableSeats: '',
+  };
   const [coordinate, setCoordinate] = useState(initialState);
   const [joinedUsers, setjoinedUsers] = useState([]);
 

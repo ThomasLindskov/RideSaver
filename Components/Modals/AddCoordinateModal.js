@@ -6,32 +6,32 @@ import {
   View,
   TextInput,
   Button,
-  Alert,
-  SafeAreaView,
-  ScrollView,
   Pressable,
   TouchableOpacity,
 } from 'react-native';
-import { auth , db } from '../../firebase';  
-import Modal from "react-native-modal";
+import { auth, db } from '../../firebase';
+import Modal from 'react-native-modal';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
-const EditCoordinateModal = ( {isOpen, handleClose, coordinate, setUserMarkerCoordinate }) => {
-
+const AddCoordinateModal = ({
+  isOpen,
+  handleClose,
+  coordinate,
+  setUserMarkerCoordinate,
+  geoConverter,
+}) => {
   // Initial state oject with 4 basic attributes and state for adding a new coordinate
   const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [availableSeats, setAvailableSeats] = useState();
+  const [address, setAddress] = useState();
 
-
-    // useEffect hook runs if we are here to edit, and can update through initialState
-    useEffect(() => {
-  
-    }, []);
-
-
+  // useEffect hook runs if we are here to edit, and can update through initialState
+  useEffect(() => {
+    setAddress(geoConverter(coordinate));
+  }, [coordinate]);
 
   const showMode = (currentMode) => {
     setShow(true);
@@ -50,33 +50,35 @@ const EditCoordinateModal = ( {isOpen, handleClose, coordinate, setUserMarkerCoo
     handleClose();
     let groupid;
 
-    await db.ref('userData/' + auth.currentUser.uid).get().then(snapshot => {
-       if (snapshot.exists()) { 
-         groupid = snapshot.val().group
-       } else {
-         console.log("No data available");
-       }
-     })
-     .catch((error) => {
-       console.error(error);
-     })
+    await db
+      .ref('userData/' + auth.currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          groupid = snapshot.val().group;
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
-     let newDate = JSON.stringify(userDate)
-     try {
+    let newDate = JSON.stringify(userDate);
+    try {
       db.ref('coordinates/').push({
-        lat: coordinate.latitude,
-        long: coordinate.longitude,
+        latitude: coordinate.latitude,
+        longitude: coordinate.longitude,
         userid: auth.currentUser.uid,
         availableSeats: availableSeats,
         groupId: groupid,
-        date: newDate
-      })
+        date: newDate,
+      });
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
 
     setUserMarkerCoordinate(null);
-
   };
 
   const onChange = (event, selectedDate) => {
@@ -85,114 +87,96 @@ const EditCoordinateModal = ( {isOpen, handleClose, coordinate, setUserMarkerCoo
     setUserDate(currentDate);
   };
 
-
-
-
   // This component is used for editing and adding new coordinates, and if the route prop passed was 'Edit Coordinate' we set isEditCoordinate which is used later
- 
-
-
 
   // Update state for initalState in textinput field
 
-
-
-
-  
-    if (!coordinate) {
-      return (
-        <Modal 
+  if (!coordinate) {
+    return (
+      <Modal
+        visible={isOpen}
+        animationType='slide'
+        transparent={true}
+        onRequestClose={() => {
+          handleClose();
+        }}
+      >
+        <Text>Loading...</Text>
+        <Button title='Close' onPress={() => handleClose()} />
+      </Modal>
+    );
+  }
+  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
+  return (
+    <Modal
       visible={isOpen}
       animationType='slide'
       transparent={true}
       onRequestClose={() => {
-        handleClose()
-      }}>
-        <Text>Loading...</Text>
-        <Button title="Close" onPress={() =>  handleClose()} /> 
-      </Modal>
-      )
-    }
-  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
-  return (
-    <Modal
-          visible={isOpen}
-          animationType='slide'
-          transparent={true}
-          onRequestClose={() => {
-            handleClose();
+        handleClose();
+      }}
+    >
+      <View style={styles.modalView}>
+        <Text
+          style={{
+            textAlign: 'center',
+            marginTop: 10,
+            marginBottom: 10,
+            fontSize: 25,
+            fontWeight: 'bold',
           }}
         >
-            <View style={styles.modalView}>
-              <Text
-                style={{
-                  textAlign: 'center',
-                  marginTop: 10,
-                  marginBottom: 10,
-                  fontSize: 25,
-                  fontWeight: 'bold',
-                }}
-              >
-                Create Ride
-              </Text>
-              <Text style={styles.modalText}>Departure Time</Text>
-              <View style={styles.pickedDateContainer}>
-                <Text>{userDate.toString().split(' ').splice(0, 5).join(' ')}</Text>
-              </View>
-              <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
-                <Text>Choose date</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
-                <Text>Choose departure time</Text>
-              </TouchableOpacity>
+          Create Ride
+        </Text>
+        <Text style={styles.modalText}>Departure Time</Text>
+        <View style={styles.pickedDateContainer}>
+          <Text>{userDate.toString().split(' ').splice(0, 5).join(' ')}</Text>
+        </View>
+        <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
+          <Text>Choose date</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
+          <Text>Choose departure time</Text>
+        </TouchableOpacity>
 
-              {show && (
-                <DateTimePicker
-                  testID='dateTimePicker'
-                  value={userDate}
-                  mode={mode}
-                  is24Hour={true}
-                  display='default'
-                  onChange={onChange}
-                />
-              )} 
-              {/* Det er den her der ødelægger modallen.
-              <Text style={styles.modalText}>Number of seats</Text>
-              <DropDownPicker
-                open={open}
-                value={value}
-                numSeats={numSeats}
-                min={1}
-                setOpen={setOpen}
-                setValue={setValue}
-                setNumSeats={setNumSeats}
-              />*/}
-               <TextInput
-              style={styles.input}
-              onChangeText={setAvailableSeats}
-              value={availableSeats}
-              placeholder="Seats in car"
-              keyboardType="numeric"
-              />
+        <Text>{address}</Text>
 
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => handleClose()}
-              >
-                <Text style={styles.textStyle}>Close</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => createRide()}
-              >
-                <Text style={styles.textStyle}>Create ride</Text>
-              </Pressable>
-            </View>
-        </Modal>
+        {show && (
+          <DateTimePicker
+            testID='dateTimePicker'
+            value={userDate}
+            mode={mode}
+            is24Hour={true}
+            display='default'
+            onChange={onChange}
+          />
+        )}
+        <TextInput
+          style={styles.input}
+          onChangeText={setAvailableSeats}
+          value={availableSeats}
+          placeholder='Seats in car'
+          keyboardType='numeric'
+        />
+
+        <Pressable
+          style={[styles.button, styles.buttonClose]}
+          onPress={() => handleClose()}
+        >
+          <Text style={styles.textStyle}>Close</Text>
+        </Pressable>
+        <Pressable
+          style={[styles.button, styles.buttonClose]}
+          onPress={() => createRide()}
+        >
+          <Text style={styles.textStyle}>Create ride</Text>
+        </Pressable>
+      </View>
+    </Modal>
   );
 };
 
-export default EditCoordinateModal;
+export default AddCoordinateModal;
 
 const styles = StyleSheet.create({
   container: {

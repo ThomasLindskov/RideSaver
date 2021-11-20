@@ -3,13 +3,9 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   SafeAreaView,
   Dimensions,
   Button,
-  Pressable,
-  TouchableOpacity,
-  TextInput,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -20,6 +16,7 @@ import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
 import AddCoordinateModal from '../Components/Modals/AddCoordinateModal';
 
 import CoordinateDetailsModal from '../Components/Modals/CoordinateDetailsModal';
+import { API_KEY } from '../config';
 
 const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
@@ -49,6 +46,24 @@ const MapScreen = ({ route }) => {
     const response = getLocationPermission();
     getCoordinates();
   }, [modalInsert, modalVisible]);
+
+  const geoConverter = (coordinate) => {
+    if (!coordinate) {
+      return;
+    }
+    fetch(
+      'https://maps.googleapis.com/maps/api/geocode/json?address=' +
+        coordinate.latitude +
+        ',' +
+        coordinate.longitude +
+        '&key=' +
+        API_KEY
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        return responseJson.results[0].formatted_address;
+      });
+  };
 
   const getCoordinates = async () => {
     let groupid;
@@ -80,8 +95,8 @@ const MapScreen = ({ route }) => {
                 availableSeats: coordinate.val().availableSeats,
                 date: coordinate.val().date,
                 groupId: coordinate.val().groupId,
-                lat: coordinate.val().lat,
-                long: coordinate.val().long,
+                latitude: coordinate.val().latitude,
+                longitude: coordinate.val().longitude,
                 userid: coordinate.val().userid,
                 userjoined: coordinate.val().userjoined,
               };
@@ -203,12 +218,12 @@ const MapScreen = ({ route }) => {
             key={index}
             onCalloutPress={() => {
               getModal(coordinate);
-              setCoordinateModalVisible(true);
+              geoConverter(coordinate);
             }}
             pinColor={getPinColor(coordinate.userid)}
             coordinate={{
-              latitude: Number(coordinate.lat),
-              longitude: Number(coordinate.long),
+              latitude: Number(coordinate.latitude),
+              longitude: Number(coordinate.longitude),
             }}
           />
         ))}
@@ -223,6 +238,7 @@ const MapScreen = ({ route }) => {
             handleClose={handleNewClose}
             coordinate={userMarkerCoordinate}
             setUserMarkerCoordinate={setUserMarkerCoordinate}
+            geoConverter={geoConverter}
           />
         }
         {modalInsert}
