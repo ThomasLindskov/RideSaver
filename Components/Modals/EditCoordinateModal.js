@@ -70,6 +70,8 @@ const EditCoordinateModal = ( {isOpen, handleClose, coordinate }) => {
       console.log(`Error: ${error.message}`);
     }
     // If we don't want to edit, but to add new coordinate, this will run
+    handleClose()
+
   } 
 
     // Alert to either cancel or accept deletion of coordinate, will run handleDelete if Delete is pressed
@@ -87,7 +89,7 @@ const EditCoordinateModal = ( {isOpen, handleClose, coordinate }) => {
       const id = coordinate.id;
       try {
         db.ref(`coordinates/` + id).remove();
-        onClose();
+        handleClose();
       } catch (error) {
         console.log(error.message);
       }
@@ -133,14 +135,23 @@ const EditCoordinateModal = ( {isOpen, handleClose, coordinate }) => {
               </View>
             );
           })}
-          {/* Only show this button, if route prop was 'Edit Coordinate'*/}
+          {/*This button use handleSave() to save the changes in the ride */}
           <Button
             title={'Save changes'}
             onPress={() => handleSave()}
           />
+
+
+          {/*This button use handleClose() from MapScreen to remove the modal from the screen  */}
           <Button title="Close" onPress={() => {
           handleClose()
           }} /> 
+
+          {/*This button use confirmDelete() and deletes the ride   */}    
+          <Button
+            title={'Delete ride'}
+            onPress={() => confirmDelete()}
+          />
       </View>
     </Modal>
   );
