@@ -20,6 +20,7 @@ import Modal from "react-native-modal";
 import { auth , db } from '../firebase';  
 import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
 import CoordinateDetailsModal from '../Components/Modals/CoordinateDetailsModal';
+import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 
 
 
@@ -38,6 +39,7 @@ const MapScreen = ({route}) => {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [coordinateModalVisible, setCoordinateModalVisible] = useState(false);
+  const [modalInsert, setModalInsert] = useState();
   const [coordinates, setCoordinates] = useState([]);
   const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
@@ -61,7 +63,7 @@ const MapScreen = ({route}) => {
   useEffect(() => {
     const response = getLocationPermission();     
     getCoordinates(); 
-    }, [])
+    }, [modalInsert])
 
    
     const getCoordinates = async () => {
@@ -230,13 +232,19 @@ const MapScreen = ({route}) => {
     }
   };
 
+  const handleClose = ()=>{
+    setModalInsert(null)
+  }
+
   const getModal = (coordinate) => {
-    return console.log(coordinate);
-    if(coordinate.userid != auth.currentUser.uid){
-      return <CoordinateDetailsModal open={coordinateModalVisible} onClose={() => setCoordinateModalVisible(false)} coordinate = {coordinate}/>
-    }else {
-      return <EditCoordinateModal open={coordinateModalVisible} onClose={() => setCoordinateModalVisible(false)} coordinate = {coordinate}/>
-    }
+      if(coordinate.userid != auth.currentUser.uid){
+        setModalInsert(<CoordinateDetailsModal isOpen={true} handleClose={handleClose} coordinate = {coordinate}/>)
+      }else {
+        setModalInsert(<EditCoordinateModal isOpen={true} handleClose={handleClose} coordinate = {coordinate}/>)
+      }
+      
+
+      
   };
 
 
@@ -292,7 +300,7 @@ const MapScreen = ({route}) => {
   //           />
  
 
-   
+   let modal;
   
   return (
     <SafeAreaView style={styles.container}>
@@ -302,8 +310,6 @@ const MapScreen = ({route}) => {
         color="#841584"
         accessibilityLabel="Reload map"
       />
-      
-     
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
@@ -337,13 +343,15 @@ const MapScreen = ({route}) => {
             longitude: 12.548816787109843,
           }}
         />
-
         {coordinates.map((coordinate, index) => (
             <Marker
             title = {coordinate.date}
             description = 'This is a coordinate.'
             key={index}
-            onCalloutPress={() => getModal(coordinate)}
+            onCalloutPress={() => {
+              getModal(coordinate)  
+              setCoordinateModalVisible(true)
+            }}
             pinColor = {getPinColor(coordinate.userid)} 
             coordinate={{
               latitude: Number(coordinate.lat),
@@ -431,6 +439,7 @@ const MapScreen = ({route}) => {
               </Pressable>
             </View>
         </Modal>
+        {modalInsert}
       </View>
 
 {/* Shows info about a selected coordinate, and closes onPress of button*/}

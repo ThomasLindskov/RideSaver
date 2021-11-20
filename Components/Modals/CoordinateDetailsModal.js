@@ -5,10 +5,11 @@ import { auth , db } from '../../firebase';
 import Modal from "react-native-modal";
 
 
-// Passed props which are deconstructed to acces navigation and route
-const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
+// Passed  which are deconstructed to acces navigation and route
+const CoordinateDetailsModal = ({isOpen, handleClose, coordinate }) => {
   const initialState = { lat: '', long: '', date: '', availableSeats: '' };
   const [joinedUsers, setjoinedUsers] = useState([])
+
 
   
 
@@ -17,7 +18,7 @@ const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
     if(coordinate.userjoined){
       setjoinedUsers(Object.keys(coordinate.userjoined))
     }
-  }, []);
+  }, [isOpen]);
 
 
 
@@ -52,7 +53,7 @@ const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
-    onClose();
+    handleClose()
 
   };
 
@@ -91,9 +92,10 @@ const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
       console.log(`Error: ${error.message}`);
     }
 
-    onClose();
+    handleClose()
     
   };
+
 
   
 
@@ -101,14 +103,14 @@ const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
   if (!coordinate) {
     return (
       <Modal 
-    visible={open}
+    visible={isOpen}
     animationType='slide'
     transparent={true}
     onRequestClose={() => {
-       onClose();
+      handleClose()
     }}>
       <Text>Loading...</Text>
-      <Button title="Close" onPress={() => onClose()} /> 
+      <Button title="Close" onPress={() =>  handleClose()} /> 
     </Modal>
     )
   }
@@ -128,17 +130,18 @@ const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
   } 
 
 
+
   // When we have a coordinate it shows and edit or delete button and all items under that coordinate (lat, long, leaveTime and availableSeats)
   // Why is the button on top and on the bottom? xx
   return (
     <Modal 
-    visible={open}
+    visible={isOpen}
     animationType='slide'
     transparent={true}
     onRequestClose={() => {
-      onClose();
+      handleClose();
     }}>
-      <View style={styles.container}>
+      <View style={styles.modalView}>
         {Object.keys(initialState).map((key, index) => {
             return (
               <View style={styles.row} key={index}>
@@ -148,7 +151,9 @@ const CoordinateDetailsModal = ({open, onClose, coordinate}) => {
             );
           })}
         {buttons()}
-        <Button title="Close" onPress={() => onClose()} /> 
+        <Button title="Close" onPress={() => {
+          handleClose()
+        }} /> 
 
       </View>
     </Modal>
@@ -170,5 +175,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     width: 200,
+  },
+    modalView: {
+    margin: 30,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    marginTop: 70,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });

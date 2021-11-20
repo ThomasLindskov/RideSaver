@@ -15,19 +15,24 @@ import Modal from "react-native-modal";
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
-const EditCoordinateModal = ( {route, navigation}) => {
+const EditCoordinateModal = ( {isOpen, handleClose, coordinate }) => {
 
   // Initial state oject with 4 basic attributes and state for adding a new coordinate
   const initialState = { lat: '', long: '', date: '', availableSeats: '' };
+  const [joinedUsers, setjoinedUsers] = useState([])
   const [newCoordinate, setNewCoordinate] = useState(initialState);
+
+
 
   // This component is used for editing and adding new coordinates, and if the route prop passed was 'Edit Coordinate' we set isEditCoordinate which is used later
  
 
   // useEffect hook runs if we are here to edit, and can update through initialState
   useEffect(() => {
-      const coordinate = route.params.coordinate[1];
-      setNewCoordinate(coordinate);
+    setNewCoordinate(coordinate)
+    if(coordinate.userjoined){
+      setjoinedUsers(Object.keys(coordinate.userjoined))
+    }
   }, []);
 
   // Update state for initalState in textinput field
@@ -61,8 +66,6 @@ const EditCoordinateModal = ( {route, navigation}) => {
         .update({ lat, long, date, availableSeats });
       // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
       Alert.alert('Your info has been updated');
-      const coordinate = [id, newCoordinate];
-      navigation.navigate('Coordinate Details', { coordinate });
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -91,25 +94,30 @@ const EditCoordinateModal = ( {route, navigation}) => {
     };
 
   
-  if(!newCoordinate){
-    return (
-      <Modal 
-    visible={open}
+    if (!newCoordinate) {
+      return (
+        <Modal 
+      visible={isOpen}
+      animationType='slide'
+      transparent={true}
+      onRequestClose={() => {
+        handleClose()
+      }}>
+        <Text>Loading...</Text>
+        <Button title="Close" onPress={() =>  handleClose()} /> 
+      </Modal>
+      )
+    }
+  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
+  return (
+    <Modal 
+    visible={isOpen}
     animationType='slide'
     transparent={true}
     onRequestClose={() => {
-       onClose();
+      handleClose();
     }}>
-      <Text>Loading...</Text>
-      <Button title="Close" onPress={() => onClose()} /> 
-    </Modal>
-    )
-  }
-  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
-  return (
-    <Modal>
-      <SafeAreaView style={styles.container}>
-        <ScrollView>
+      <View style={styles.modalView}>
           {Object.keys(initialState).map((key, index) => {
             if(typeof newCoordinate[key] == 'number'){
               newCoordinate[key] = newCoordinate[key].toString();
@@ -130,8 +138,10 @@ const EditCoordinateModal = ( {route, navigation}) => {
             title={'Save changes'}
             onPress={() => handleSave()}
           />
-        </ScrollView>
-      </SafeAreaView>
+          <Button title="Close" onPress={() => {
+          handleClose()
+          }} /> 
+      </View>
     </Modal>
   );
 };
@@ -157,5 +167,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 5,
     width: 200,
+  },
+  modalView: {
+    margin: 30,
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 35,
+    marginTop: 70,
+    alignItems: 'flex-start',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
   },
 });
