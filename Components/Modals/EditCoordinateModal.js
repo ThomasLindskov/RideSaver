@@ -5,8 +5,7 @@ import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
 import Geocoder from 'react-native-geocoding';
 import { API_KEY } from '../../config';
-
-// Geocoder.init('AIzaSyC8UVX6Sq2nxphNaOQsBTk1gu3nFfLkDmk', { language: 'en' });
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
@@ -21,8 +20,6 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
   const [joinedUsers, setjoinedUsers] = useState([]);
   const [newCoordinate, setNewCoordinate] = useState(initialState);
 
-  // This component is used for editing and adding new coordinates, and if the route prop passed was 'Edit Coordinate' we set isEditCoordinate which is used later
-
   // useEffect hook runs if we are here to edit, and can update through initialState
   useEffect(() => {
     setNewCoordinate(coordinate);
@@ -31,37 +28,10 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     }
   }, []);
 
-  // const getAddress = async () => {
-  //   let { status } = await Location.requestForegroundPermissionsAsync(); // Get the location permission from the user and extract the 'status' key from it.
-  //   if (status !== 'granted') {
-  //     alert('permission denied!');
-  //     return;
-  //   }
-  //   let address = Location.reverseGeoCodeAsync({
-  //     latitude: newCoordinate.lat,
-  //     longtitude: newCoordinate.long,
-  //   });
-  //   return address;
-  // };
-
-  // getAddress().then((result) => console.log(result));
-
-  // const geoCodeReverse = () => {
-  //   Geocoder.from(Number(newCoordinate.lat), Number(newCoordinate.long))
-  //     .then((json) => {
-  //       var addressComponent = json.results[0].address_components[0];
-  //       console.log(addressComponent);
-  //     })
-  //     .catch((error) => console.warn(error));
-  // };
-  // console.log('GeoCoderTest', geoCodeReverse());
-
-  // Update state for initalState in textinput field
   const changeTextInput = (key, event) => {
     setNewCoordinate({ ...newCoordinate, [key]: event });
   };
 
-  // Save and set as newCoordinate if the length of data inputted is not 0 else, alert error
   const handleSave = () => {
     if (newCoordinate.userid != auth.currentUser.uid) {
       return Alert.alert('Not your ride');
@@ -129,8 +99,6 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
       </Modal>
     );
   }
-
-  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
   return (
     <Modal
       visible={isOpen}
@@ -146,29 +114,38 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
             newCoordinate[key] = newCoordinate[key].toString();
           }
           return (
-            <View style={styles.row} key={index}>
-              <Text style={styles.label}>{key}</Text>
+            <View key={index}>
+              <Text style={GlobalStyles.label}>{key}</Text>
               <TextInput
                 value={newCoordinate[key]}
                 onChangeText={(event) => changeTextInput(key, event)}
-                style={styles.input}
+                style={GlobalStyles.input}
               />
             </View>
           );
         })}
         {/*This button use handleSave() to save the changes in the ride */}
-        <Button title={'Save changes'} onPress={() => handleSave()} />
+        <Button
+          title={'Save changes'}
+          color={BrandColors.Primary}
+          onPress={() => handleSave()}
+        />
 
         {/*This button use handleClose() from MapScreen to remove the modal from the screen  */}
         <Button
           title='Close'
+          color={BrandColors.Primary}
           onPress={() => {
             handleClose();
           }}
         />
 
         {/*This button use confirmDelete() and deletes the ride   */}
-        <Button title={'Delete ride'} onPress={() => confirmDelete()} />
+        <Button
+          title={'Delete ride'}
+          color={BrandColors.Primary}
+          onPress={() => confirmDelete()}
+        />
       </View>
     </Modal>
   );
@@ -177,33 +154,14 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
 export default EditCoordinateModal;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E8EAED',
-    justifyContent: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    height: 30,
-    width: 10,
-  },
-  label: {
-    fontWeight: 'bold',
-    width: 100,
-  },
-  input: {
-    borderWidth: 1,
-    padding: 5,
-    width: 200,
-  },
   modalView: {
     margin: 30,
-    backgroundColor: 'white',
+    backgroundColor: BrandColors.WhiteLight,
     borderRadius: 20,
     padding: 35,
     marginTop: 70,
     alignItems: 'flex-start',
-    shadowColor: '#000',
+    shadowColor: BrandColors.GreyDark,
     shadowOffset: {
       width: 0,
       height: 2,

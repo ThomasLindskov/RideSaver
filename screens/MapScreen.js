@@ -147,6 +147,7 @@ const MapScreen = ({ route }) => {
           isOpen={true}
           handleClose={handleClose}
           coordinate={coordinate}
+          geoConverter={geoConverter}
         />
       );
     } else {
@@ -155,6 +156,7 @@ const MapScreen = ({ route }) => {
           isOpen={true}
           handleClose={handleClose}
           coordinate={coordinate}
+          geoConverter={geoConverter}
         />
       );
     }

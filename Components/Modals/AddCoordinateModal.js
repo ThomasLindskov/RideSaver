@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
@@ -21,17 +22,23 @@ const AddCoordinateModal = ({
   setUserMarkerCoordinate,
   geoConverter,
 }) => {
-  // Initial state oject with 4 basic attributes and state for adding a new coordinate
   const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [availableSeats, setAvailableSeats] = useState();
   const [address, setAddress] = useState();
 
-  // useEffect hook runs if we are here to edit, and can update through initialState
+  // const cord = {
+  //   latitude: coordinate.latitude,
+  //   longitude: coordinate.longitude,
+  // };
+  // console.log(geoConverter(cord));
+  // console.log(coordinate);
+  // console.log(address);
+
   useEffect(() => {
     setAddress(geoConverter(coordinate));
-  }, [coordinate]);
+  }, []);
 
   const showMode = (currentMode) => {
     setShow(true);
@@ -87,10 +94,6 @@ const AddCoordinateModal = ({
     setUserDate(currentDate);
   };
 
-  // This component is used for editing and adding new coordinates, and if the route prop passed was 'Edit Coordinate' we set isEditCoordinate which is used later
-
-  // Update state for initalState in textinput field
-
   if (!coordinate) {
     return (
       <Modal
@@ -106,7 +109,6 @@ const AddCoordinateModal = ({
       </Modal>
     );
   }
-  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
   return (
     <Modal
       visible={isOpen}
@@ -128,6 +130,7 @@ const AddCoordinateModal = ({
         >
           Create Ride
         </Text>
+        <Text>Ride from: {address}</Text>
         <Text style={styles.modalText}>Departure Time</Text>
         <View style={styles.pickedDateContainer}>
           <Text>{userDate.toString().split(' ').splice(0, 5).join(' ')}</Text>
@@ -138,9 +141,6 @@ const AddCoordinateModal = ({
         <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
           <Text>Choose departure time</Text>
         </TouchableOpacity>
-
-        <Text>{address}</Text>
-
         {show && (
           <DateTimePicker
             testID='dateTimePicker'
@@ -152,7 +152,7 @@ const AddCoordinateModal = ({
           />
         )}
         <TextInput
-          style={styles.input}
+          style={GlobalStyles.input}
           onChangeText={setAvailableSeats}
           value={availableSeats}
           placeholder='Seats in car'
@@ -179,33 +179,14 @@ const AddCoordinateModal = ({
 export default AddCoordinateModal;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#E8EAED',
-    justifyContent: 'center',
-  },
-  row: {
-    flexDirection: 'row',
-    height: 30,
-    width: 10,
-  },
-  label: {
-    fontWeight: 'bold',
-    width: 100,
-  },
-  input: {
-    borderWidth: 1,
-    padding: 5,
-    width: 200,
-  },
   modalView: {
     margin: 30,
-    backgroundColor: 'white',
+    backgroundColor: BrandColors.WhiteLight,
     borderRadius: 20,
     padding: 35,
     marginTop: 70,
     alignItems: 'flex-start',
-    shadowColor: '#000',
+    shadowColor: BrandColors.GreyDark,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -220,14 +201,11 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginTop: 15,
   },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: BrandColors.Primary,
   },
   textStyle: {
-    color: 'white',
+    color: BrandColors.WhiteLight,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -239,7 +217,7 @@ const styles = StyleSheet.create({
   },
   pickedDateContainer: {
     padding: 5,
-    backgroundColor: '#eee',
+    backgroundColor: BrandColors.WhiteDark,
     borderRadius: 2,
   },
 });

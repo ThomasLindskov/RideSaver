@@ -3,9 +3,15 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 
 // Passed  which are deconstructed to acces navigation and route
-const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
+const CoordinateDetailsModal = ({
+  isOpen,
+  handleClose,
+  coordinate,
+  geoConverter,
+}) => {
   const initialState = {
     latitude: '',
     longitude: '',
@@ -13,6 +19,14 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
     availableSeats: '',
   };
   const [joinedUsers, setjoinedUsers] = useState([]);
+
+  //geoConverter not working :( xx
+  // const cord = {
+  //   latitude: coordinate.latitude,
+  //   longitude: coordinate.longitude,
+  // };
+  // console.log(geoConverter(cord));
+  // console.log(coordinate);
 
   // useEffect hook will set the coordinate state from the passed route prop and return an empty object xx
   useEffect(() => {
@@ -129,11 +143,13 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       }}
     >
       <View style={styles.modalView}>
+        <Text>Hello:</Text>
+
         {Object.keys(initialState).map((key, index) => {
           return (
             <View style={styles.row} key={index}>
-              <Text style={styles.label}>{key}</Text>
-              <Text style={styles.label}> {coordinate[key]} </Text>
+              <Text style={GlobalStyles.label}>{key}</Text>
+              <Text style={GlobalStyles.label}> {coordinate[key]} </Text>
             </View>
           );
         })}
@@ -152,27 +168,19 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
 export default CoordinateDetailsModal;
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'flex-start' },
   row: {
     margin: 5,
     padding: 5,
     flexDirection: 'row',
   },
-  label: { width: 100, fontWeight: 'bold' },
-  value: { flex: 1 },
-  input: {
-    borderWidth: 1,
-    padding: 5,
-    width: 200,
-  },
   modalView: {
     margin: 30,
-    backgroundColor: 'white',
+    backgroundColor: BrandColors.WhiteLight,
     borderRadius: 20,
     padding: 35,
     marginTop: 70,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: BrandColors.GreyDark,
     shadowOffset: {
       width: 0,
       height: 2,
