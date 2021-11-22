@@ -7,8 +7,7 @@ import Modal from 'react-native-modal';
 // Passed  which are deconstructed to acces navigation and route
 const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
   const initialState = {
-    latitude: '',
-    longitude: '',
+    address: '',
     date: '',
     availableSeats: '',
   };
@@ -130,12 +129,22 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
     >
       <View style={styles.modalView}>
         {Object.keys(initialState).map((key, index) => {
-          return (
-            <View style={styles.row} key={index}>
-              <Text style={styles.label}>{key}</Text>
-              <Text style={styles.label}> {coordinate[key]} </Text>
-            </View>
-          );
+          if(key == "address"){
+            console.log(coordinate[key])
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <Text style={styles.label}>{`${coordinate[key].street} ${coordinate[key].name} ${coordinate[key].city} ${coordinate[key].postalCode}`} </Text>
+              </View>
+            );
+          } else {
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <Text style={styles.label}> {coordinate[key]} </Text>
+              </View>
+            );
+          } 
         })}
         {buttons()}
         <Button
