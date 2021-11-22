@@ -34,7 +34,7 @@ const LoginScreen = ({ navigation }) => {
           try {
             db.ref('userData/' + userCredentials.uid).set({
               name: name,
-              groups: [1],
+              group: 1,
             });
           } catch (error) {
             console.log(`Error: ${error.message}`);

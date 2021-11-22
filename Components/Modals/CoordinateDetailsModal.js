@@ -12,9 +12,11 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
     availableSeats: '',
   };
   const [joinedUsers, setjoinedUsers] = useState([]);
+  const [nameOfUser, setnameOfUser] = useState([]);
 
   // useEffect hook will set the coordinate state from the passed route prop and return an empty object xx
   useEffect(() => {
+    getUserName(coordinate.userid);
     if (coordinate.userjoined) {
       setjoinedUsers(Object.keys(coordinate.userjoined));
     }
@@ -50,6 +52,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
     }
     handleClose();
   };
+  
 
   const handleRemoveRide = () => {
     const id = coordinate.id;
@@ -87,6 +90,28 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
     handleClose();
   };
 
+  const getUserName = async (id) => {
+
+    let name;
+    await db
+      .ref('userData/' + id)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          name = snapshot.val().name;
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+      setnameOfUser(name)
+  }
+  
+  
+
   // If no coordinates it shows this
   if (!coordinate) {
     return (
@@ -118,6 +143,8 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
 
   // When we have a coordinate it shows and edit or delete button and all items under that coordinate (lat, long, leaveTime and availableSeats)
   // Why is the button on top and on the bottom? xx
+
+
   return (
     <Modal
       visible={isOpen}
@@ -128,13 +155,22 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       }}
     >
       <View style={styles.modalView}>
+      <Text style={styles.label}> Person:{nameOfUser} </Text>
         {Object.keys(initialState).map((key, index) => {
           if(key == "address"){
-            console.log(coordinate[key])
             return (
               <View style={styles.row} key={index}>
                 <Text style={styles.label}>{key}</Text>
                 <Text style={styles.label}>{`${coordinate[key].street} ${coordinate[key].name} ${coordinate[key].city} ${coordinate[key].postalCode}`} </Text>
+              </View>
+            );
+          } else  if(key == "date"){
+            let formattedDate = new Date( Date.parse(coordinate[key]) );
+            let dateString = `${formattedDate.toLocaleString('default', { month: 'short' })}`
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <Text style={styles.label}> {dateString} </Text>
               </View>
             );
           } else {

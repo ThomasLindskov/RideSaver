@@ -133,7 +133,7 @@ const TabNavigator = ({ navigation }) => {
           ),
         }}
       />
-      <Tab.Screen
+      {/*<Tab.Screen
         name='List'
         component={CoordinateStackNavigator}
         options={{
@@ -166,7 +166,7 @@ const TabNavigator = ({ navigation }) => {
             />
           ),
         }}
-      />
+      />*/}
     </Tab.Navigator>
   );
 };
