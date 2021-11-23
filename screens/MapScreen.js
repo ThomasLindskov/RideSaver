@@ -6,6 +6,7 @@ import {
   SafeAreaView,
   Dimensions,
   Button,
+  Text
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -14,9 +15,11 @@ import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 import { auth, db } from '../firebase';
 import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
 import AddCoordinateModal from '../Components/Modals/AddCoordinateModal';
+import { Accuracy } from 'expo-location';
 
 import CoordinateDetailsModal from '../Components/Modals/CoordinateDetailsModal';
-import { API_KEY } from '../config';
+
+
 
 const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
@@ -29,9 +32,13 @@ const MapScreen = ({ route }) => {
   });
 
   const [modalVisible, setModalVisible] = useState(false);
-
   const [modalInsert, setModalInsert] = useState();
   const [coordinates, setCoordinates] = useState([]);
+  const [markerAddress, setMarkerAddress] = useState();
+  const [group, setGroup] = useState();
+  const [currentLocation, setCurrentLocation] = useState(null);
+
+
 
   // Alerts user to give locationpermission
   const getLocationPermission = async () => {
@@ -40,34 +47,26 @@ const MapScreen = ({ route }) => {
     });
   };
 
+  const updateLocation = async () => {
+    await Location.getCurrentPositionAsync({
+      accuracy: Accuracy.Balanced,
+    }).then((item) => {
+      setCurrentLocation(item.coords);
+    });
+  };
+
   // The useEffect hook runs everytime the page updates, which means if something happens,
   // getLocationPermission will run again to check if we have location permission
   useEffect(() => {
     const response = getLocationPermission();
     getCoordinates();
-  }, [modalInsert, modalVisible]);
+    updateLocation();
 
-  const geoConverter = (coordinate) => {
-    if (!coordinate) {
-      return;
-    }
-    fetch(
-      'https://maps.googleapis.com/maps/api/geocode/json?address=' +
-        coordinate.latitude +
-        ',' +
-        coordinate.longitude +
-        '&key=' +
-        API_KEY
-    )
-      .then((response) => response.json())
-      .then((responseJson) => {
-        return responseJson.results[0].formatted_address;
-      });
-  };
+  }, [modalInsert, modalVisible]);
 
   const getCoordinates = async () => {
     let groupid;
-
+    
     await db
       .ref('userData/' + auth.currentUser.uid)
       .get()
@@ -99,6 +98,7 @@ const MapScreen = ({ route }) => {
                 longitude: coordinate.val().longitude,
                 userid: coordinate.val().userid,
                 userjoined: coordinate.val().userjoined,
+                address: coordinate.val().address
               };
               coordinates.push(newObj);
             }
@@ -112,16 +112,23 @@ const MapScreen = ({ route }) => {
       });
 
     setCoordinates(coordinates);
+    getGroup(groupid)
   };
 
-  // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
-  const handleLongPress = (event) => {
-    const coordinate = event.nativeEvent.coordinate;
 
+  // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
+  const handleLongPress = async (event) => {
+    const coordinate = event.nativeEvent.coordinate;
+    
+    //Skal testes på Iphone da Mikkels virkede anderledes. 
+    await Location.reverseGeocodeAsync(coordinate).then((data) => {
+      setMarkerAddress(data)
+    } )
     setUserMarkerCoordinate(coordinate);
     // Haptics creates a vibration for longpress
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setModalVisible(true);
+
   };
 
   const getPinColor = (userid) => {
@@ -139,6 +146,27 @@ const MapScreen = ({ route }) => {
   const handleNewClose = () => {
     setModalVisible(false);
   };
+
+  
+  const getGroup = async (groupid) => {
+    await db
+    .ref('groups/' + groupid)
+    .get()
+    .then((snapshot) => {
+      if (snapshot.exists()) {
+        setGroup(snapshot.val())
+      } else {
+        console.log('No data available');
+      }
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  };
+
+
+
+
 
   const getModal = (coordinate) => {
     if (coordinate.userid != auth.currentUser.uid) {
@@ -162,6 +190,10 @@ const MapScreen = ({ route }) => {
     }
   };
 
+  if(!coordinates || !group || !currentLocation) {
+    return <Text>Loading...</Text>;
+  }
+
   const userMarker =
     userMarkerCoordinate != null ? (
       <Marker
@@ -175,7 +207,7 @@ const MapScreen = ({ route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Button
-        onPress={getCoordinates}
+        onPress={() => {getCoordinates()}}
         title='Reload map (Test button)'
         color={BrandColors.SecondaryDark}
         accessibilityLabel='Reload map'
@@ -183,8 +215,8 @@ const MapScreen = ({ route }) => {
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
-          latitude: location.latitude,
-          longitude: location.longitude,
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -205,30 +237,37 @@ const MapScreen = ({ route }) => {
         onLongPress={handleLongPress}
       >
         {/* 2 predefined markers */}
-        <Marker
-          title='Babistan'
-          description='bab'
+        {!group ? null : <Marker
+          title={group.organisation}
+          description='office'
+          pinColor='purple'
           coordinate={{
-            latitude: 55.667885358340435,
-            longitude: 12.548816787109843,
+            latitude: Number(group.latitude),
+            longitude: Number(group.longitude),
           }}
-        />
-        {coordinates.map((coordinate, index) => (
-          <Marker
-            title={coordinate.date}
-            description='This is a coordinate.'
+        />}
+
+        {coordinates.map((coordinate, index) => {
+        let formattedDate = new Date( Date.parse(coordinate.date) );
+        let dateString = `${formattedDate.toLocaleString('default', { month: 'short' })}`
+        let isUserjoined = !coordinate.userjoined ? null : coordinate.userjoined[auth.currentUser.uid]
+        if(coordinate.availableSeats > 0 || isUserjoined){
+          return (<Marker
+            title={dateString}
+            description='Press here to get more info.'
             key={index}
             onCalloutPress={() => {
               getModal(coordinate);
-              geoConverter(coordinate);
             }}
             pinColor={getPinColor(coordinate.userid)}
             coordinate={{
               latitude: Number(coordinate.latitude),
               longitude: Number(coordinate.longitude),
             }}
-          />
-        ))}
+          />)
+        }
+        
+          })}
         {/* Mapping through userMarkerCoordinates array and outputs each one, this should be updated to not be an empty array,
         but import existing coordinates from firebase. */}
         {userMarker}
@@ -239,8 +278,8 @@ const MapScreen = ({ route }) => {
             isOpen={modalVisible}
             handleClose={handleNewClose}
             coordinate={userMarkerCoordinate}
+            address = {markerAddress}
             setUserMarkerCoordinate={setUserMarkerCoordinate}
-            geoConverter={geoConverter}
           />
         }
         {modalInsert}

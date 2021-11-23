@@ -1,24 +1,52 @@
 // Import modules and firebase to access data from database
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, TextInput, Button, Alert } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  Button,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
-import Geocoder from 'react-native-geocoding';
-import { API_KEY } from '../../config';
 import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
 const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
   // Initial state oject with 4 basic attributes and state for adding a new coordinate
   const initialState = {
-    latitude: '',
-    longitude: '',
+    address: '',
     date: '',
     availableSeats: '',
   };
   const [joinedUsers, setjoinedUsers] = useState([]);
   const [newCoordinate, setNewCoordinate] = useState(initialState);
+  const [mode, setMode] = useState('date');
+  const [show, setShow] = useState(false);
+  const [userDate, setUserDate] = useState(new Date(coordinate.date));
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode('date');
+  };
+
+  const showTimepicker = () => {
+    showMode('time');
+  };
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || userDate;
+    setShow(Platform.OS === 'ios');
+    setUserDate(currentDate);
+  };
 
   // useEffect hook runs if we are here to edit, and can update through initialState
   useEffect(() => {
@@ -37,11 +65,15 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
       return Alert.alert('Not your ride');
     }
 
+    //FIND UD AF HVORDAN FANDEN VI OPDATERE ADRESSE
+
+    const date = userDate;
     const id = newCoordinate.id;
-    const { latitude, longitude, date, availableSeats } = newCoordinate;
+    const { availableSeats } = newCoordinate;
+    const { latitude, longitude } = coordinate;
     if (
       latitude.length === 0 ||
-      longitude.length === 0 ||
+      latitude.length === 0 ||
       date.length === 0 ||
       availableSeats.length === 0
     ) {
@@ -113,16 +145,72 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
           if (typeof newCoordinate[key] == 'number') {
             newCoordinate[key] = newCoordinate[key].toString();
           }
-          return (
-            <View key={index}>
-              <Text style={GlobalStyles.label}>{key}</Text>
-              <TextInput
-                value={newCoordinate[key]}
-                onChangeText={(event) => changeTextInput(key, event)}
-                style={GlobalStyles.input}
-              />
-            </View>
-          );
+          if (key == 'address') {
+            return (
+              <View key={index}>
+                <View style={styles.row}>
+                  <Text style={styles.label}>Street</Text>
+                  <TextInput
+                    value={`${coordinate[key].street} ${coordinate[key].name}`}
+                    onChangeText={(event) => changeTextInput(key, event)}
+                    style={styles.input}
+                  />
+                </View>
+                <View style={styles.row}>
+                  <Text style={styles.label}>City</Text>
+                  <TextInput
+                    value={`${coordinate[key].city}`}
+                    onChangeText={(event) => changeTextInput(key, event)}
+                    style={styles.input}
+                  />
+                </View>
+              </View>
+            );
+          } else if (key == 'date') {
+            return (
+              <View key={index}>
+                <Text style={styles.modalText}>Departure Time</Text>
+                <View style={styles.pickedDateContainer}>
+                  <Text>
+                    {userDate.toString().split(' ').splice(0, 5).join(' ')}
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  onPress={showDatepicker}
+                  style={{ marginTop: 5 }}
+                >
+                  <Text>Choose date</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={showTimepicker}
+                  style={{ marginTop: 5 }}
+                >
+                  <Text>Choose departure time</Text>
+                </TouchableOpacity>
+                {show && (
+                  <DateTimePicker
+                    testID='dateTimePicker'
+                    value={userDate}
+                    mode={mode}
+                    is24Hour={true}
+                    display='default'
+                    onChange={onChange}
+                  />
+                )}
+              </View>
+            );
+          } else {
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <TextInput
+                  value={newCoordinate[key]}
+                  onChangeText={(event) => changeTextInput(key, event)}
+                  style={styles.input}
+                />
+              </View>
+            );
+          }
         })}
         {/*This button use handleSave() to save the changes in the ride */}
         <Button
@@ -169,5 +257,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  pickedDateContainer: {
+    padding: 5,
+    backgroundColor: '#eee',
+    borderRadius: 2,
+  },
+  modalText: {
+    marginBottom: 15,
+    marginTop: 15,
+    textAlign: 'center',
+    fontWeight: 'bold',
   },
 });

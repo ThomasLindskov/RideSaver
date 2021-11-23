@@ -12,6 +12,7 @@ import {
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
 import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
@@ -20,13 +21,12 @@ const AddCoordinateModal = ({
   handleClose,
   coordinate,
   setUserMarkerCoordinate,
-  geoConverter,
+  address,
 }) => {
   const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [availableSeats, setAvailableSeats] = useState();
-  const [address, setAddress] = useState();
 
   // const cord = {
   //   latitude: coordinate.latitude,
@@ -36,9 +36,7 @@ const AddCoordinateModal = ({
   // console.log(coordinate);
   // console.log(address);
 
-  useEffect(() => {
-    setAddress(geoConverter(coordinate));
-  }, []);
+  useEffect(() => {}, []);
 
   const showMode = (currentMode) => {
     setShow(true);
@@ -71,15 +69,25 @@ const AddCoordinateModal = ({
         console.error(error);
       });
 
-    let newDate = JSON.stringify(userDate);
+    let newDate = userDate.toString();
     try {
       db.ref('coordinates/').push({
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
+        address: address,
         userid: auth.currentUser.uid,
         availableSeats: availableSeats,
         groupId: groupid,
         date: newDate,
+        address: {
+          city: address[0].city,
+          country: address[0].country,
+          district: address[0].district,
+          isoCountryCode: address[0].isoCountryCode,
+          name: address[0].name,
+          postalCode: address[0].postalCode,
+          street: address[0].street,
+        },
       });
     } catch (error) {
       console.log(`Error: ${error.message}`);
@@ -141,6 +149,9 @@ const AddCoordinateModal = ({
         <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
           <Text>Choose departure time</Text>
         </TouchableOpacity>
+
+        <Text>{`${address[0].street} ${address[0].name} ${address[0].city} ${address[0].postalCode}`}</Text>
+
         {show && (
           <DateTimePicker
             testID='dateTimePicker'

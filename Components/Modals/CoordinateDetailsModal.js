@@ -13,12 +13,12 @@ const CoordinateDetailsModal = ({
   geoConverter,
 }) => {
   const initialState = {
-    latitude: '',
-    longitude: '',
+    address: '',
     date: '',
     availableSeats: '',
   };
   const [joinedUsers, setjoinedUsers] = useState([]);
+  const [nameOfUser, setnameOfUser] = useState([]);
 
   //geoConverter not working :( xx
   // const cord = {
@@ -30,6 +30,7 @@ const CoordinateDetailsModal = ({
 
   // useEffect hook will set the coordinate state from the passed route prop and return an empty object xx
   useEffect(() => {
+    getUserName(coordinate.userid);
     if (coordinate.userjoined) {
       setjoinedUsers(Object.keys(coordinate.userjoined));
     }
@@ -102,6 +103,25 @@ const CoordinateDetailsModal = ({
     handleClose();
   };
 
+  const getUserName = async (id) => {
+    let name;
+    await db
+      .ref('userData/' + id)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          name = snapshot.val().name;
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    setnameOfUser(name);
+  };
+
   // If no coordinates it shows this
   if (!coordinate) {
     return (
@@ -133,6 +153,7 @@ const CoordinateDetailsModal = ({
 
   // When we have a coordinate it shows and edit or delete button and all items under that coordinate (lat, long, leaveTime and availableSeats)
   // Why is the button on top and on the bottom? xx
+
   return (
     <Modal
       visible={isOpen}
@@ -143,15 +164,36 @@ const CoordinateDetailsModal = ({
       }}
     >
       <View style={styles.modalView}>
-        <Text>Hello:</Text>
-
+        <Text style={styles.label}> Person:{nameOfUser} </Text>
         {Object.keys(initialState).map((key, index) => {
-          return (
-            <View style={styles.row} key={index}>
-              <Text style={GlobalStyles.label}>{key}</Text>
-              <Text style={GlobalStyles.label}> {coordinate[key]} </Text>
-            </View>
-          );
+          if (key == 'address') {
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <Text style={styles.label}>
+                  {`${coordinate[key].street} ${coordinate[key].name} ${coordinate[key].city} ${coordinate[key].postalCode}`}{' '}
+                </Text>
+              </View>
+            );
+          } else if (key == 'date') {
+            let formattedDate = new Date(Date.parse(coordinate[key]));
+            let dateString = `${formattedDate.toLocaleString('default', {
+              month: 'short',
+            })}`;
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <Text style={styles.label}> {dateString} </Text>
+              </View>
+            );
+          } else {
+            return (
+              <View style={styles.row} key={index}>
+                <Text style={styles.label}>{key}</Text>
+                <Text style={styles.label}> {coordinate[key]} </Text>
+              </View>
+            );
+          }
         })}
         {buttons()}
         <Button
