@@ -67,4 +67,11 @@ export const GlobalStyles = StyleSheet.create({
     marginLeft: 10,
   },
   logout: { marginRight: 10 },
+  ul: { fontSize: 12, margin: 5 },
+  columnView: {
+    flex: 1,
+    marginTop: 40,
+    marginHorizontal: 10,
+  },
+  pin: {},
 });

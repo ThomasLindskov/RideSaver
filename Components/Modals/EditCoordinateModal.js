@@ -65,7 +65,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
       return Alert.alert('Not your ride');
     }
 
-    //FIND UD AF HVORDAN FANDEN VI OPDATERE ADRESSE
+    //FIND UD AF HVORDAN FANDEN VI OPDATERE ADRESSE xx
 
     const date = userDate;
     const id = newCoordinate.id;
@@ -150,17 +150,15 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
               <View key={index}>
                 <View style={styles.row}>
                   <Text style={styles.label}>Street</Text>
-                  <TextInput
+                  <Text
                     value={`${coordinate[key].street} ${coordinate[key].name}`}
-                    onChangeText={(event) => changeTextInput(key, event)}
                     style={styles.input}
                   />
                 </View>
                 <View style={styles.row}>
                   <Text style={styles.label}>City</Text>
-                  <TextInput
+                  <Text
                     value={`${coordinate[key].city}`}
-                    onChangeText={(event) => changeTextInput(key, event)}
                     style={styles.input}
                   />
                 </View>
@@ -260,7 +258,7 @@ const styles = StyleSheet.create({
   },
   pickedDateContainer: {
     padding: 5,
-    backgroundColor: '#eee',
+    backgroundColor: BrandColors.WhiteDark,
     borderRadius: 2,
   },
   modalText: {

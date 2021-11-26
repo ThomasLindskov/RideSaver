@@ -6,7 +6,7 @@ import {
   SafeAreaView,
   Dimensions,
   Button,
-  Text
+  Text,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
@@ -18,8 +18,6 @@ import AddCoordinateModal from '../Components/Modals/AddCoordinateModal';
 import { Accuracy } from 'expo-location';
 
 import CoordinateDetailsModal from '../Components/Modals/CoordinateDetailsModal';
-
-
 
 const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
@@ -37,8 +35,6 @@ const MapScreen = ({ route }) => {
   const [markerAddress, setMarkerAddress] = useState();
   const [group, setGroup] = useState();
   const [currentLocation, setCurrentLocation] = useState(null);
-
-
 
   // Alerts user to give locationpermission
   const getLocationPermission = async () => {
@@ -61,12 +57,11 @@ const MapScreen = ({ route }) => {
     const response = getLocationPermission();
     getCoordinates();
     updateLocation();
-
   }, [modalInsert, modalVisible]);
 
   const getCoordinates = async () => {
     let groupid;
-    
+
     await db
       .ref('userData/' + auth.currentUser.uid)
       .get()
@@ -98,7 +93,7 @@ const MapScreen = ({ route }) => {
                 longitude: coordinate.val().longitude,
                 userid: coordinate.val().userid,
                 userjoined: coordinate.val().userjoined,
-                address: coordinate.val().address
+                address: coordinate.val().address,
               };
               coordinates.push(newObj);
             }
@@ -112,23 +107,21 @@ const MapScreen = ({ route }) => {
       });
 
     setCoordinates(coordinates);
-    getGroup(groupid)
+    getGroup(groupid);
   };
-
 
   // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
   const handleLongPress = async (event) => {
     const coordinate = event.nativeEvent.coordinate;
-    
-    //Skal testes på Iphone da Mikkels virkede anderledes. 
+
+    //Skal testes på Iphone da Mikkels virkede anderledes.
     await Location.reverseGeocodeAsync(coordinate).then((data) => {
-      setMarkerAddress(data)
-    } )
+      setMarkerAddress(data);
+    });
     setUserMarkerCoordinate(coordinate);
     // Haptics creates a vibration for longpress
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     setModalVisible(true);
-
   };
 
   const getPinColor = (userid) => {
@@ -147,26 +140,21 @@ const MapScreen = ({ route }) => {
     setModalVisible(false);
   };
 
-  
   const getGroup = async (groupid) => {
     await db
-    .ref('groups/' + groupid)
-    .get()
-    .then((snapshot) => {
-      if (snapshot.exists()) {
-        setGroup(snapshot.val())
-      } else {
-        console.log('No data available');
-      }
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      .ref('groups/' + groupid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          setGroup(snapshot.val());
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
-
-
-
-
 
   const getModal = (coordinate) => {
     if (coordinate.userid != auth.currentUser.uid) {
@@ -175,7 +163,6 @@ const MapScreen = ({ route }) => {
           isOpen={true}
           handleClose={handleClose}
           coordinate={coordinate}
-          geoConverter={geoConverter}
         />
       );
     } else {
@@ -184,21 +171,20 @@ const MapScreen = ({ route }) => {
           isOpen={true}
           handleClose={handleClose}
           coordinate={coordinate}
-          geoConverter={geoConverter}
         />
       );
     }
   };
 
-  if(!coordinates || !group || !currentLocation) {
+  if (!coordinates || !group || !currentLocation) {
     return <Text>Loading...</Text>;
   }
 
   const userMarker =
     userMarkerCoordinate != null ? (
       <Marker
-        title='Custom ting'
-        description='Sindssyg custom ting'
+        title='Temporary marker'
+        description='This is where ride info will go'
         pinColor='yellow'
         coordinate={userMarkerCoordinate}
       />
@@ -207,8 +193,10 @@ const MapScreen = ({ route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <Button
-        onPress={() => {getCoordinates()}}
-        title='Reload map (Test button)'
+        onPress={() => {
+          getCoordinates();
+        }}
+        title='Reload map'
         color={BrandColors.SecondaryDark}
         accessibilityLabel='Reload map'
       />
@@ -237,37 +225,46 @@ const MapScreen = ({ route }) => {
         onLongPress={handleLongPress}
       >
         {/* 2 predefined markers */}
-        {!group ? null : <Marker
-          title={group.organisation}
-          description='office'
-          pinColor='purple'
-          coordinate={{
-            latitude: Number(group.latitude),
-            longitude: Number(group.longitude),
-          }}
-        />}
+        {!group ? null : (
+          <Marker
+            title={group.organisation}
+            description={`The office of ${group.organisation}`}
+            pinColor='purple'
+            image={require('../assets/Office2Medium.png')}
+            coordinate={{
+              latitude: Number(group.latitude),
+              longitude: Number(group.longitude),
+            }}
+          />
+        )}
 
         {coordinates.map((coordinate, index) => {
-        let formattedDate = new Date( Date.parse(coordinate.date) );
-        let dateString = `${formattedDate.toLocaleString('default', { month: 'short' })}`
-        let isUserjoined = !coordinate.userjoined ? null : coordinate.userjoined[auth.currentUser.uid]
-        if(coordinate.availableSeats > 0 || isUserjoined){
-          return (<Marker
-            title={dateString}
-            description='Press here to get more info.'
-            key={index}
-            onCalloutPress={() => {
-              getModal(coordinate);
-            }}
-            pinColor={getPinColor(coordinate.userid)}
-            coordinate={{
-              latitude: Number(coordinate.latitude),
-              longitude: Number(coordinate.longitude),
-            }}
-          />)
-        }
-        
-          })}
+          let formattedDate = new Date(Date.parse(coordinate.date));
+          let dateString = `${formattedDate.toLocaleString('default', {
+            month: 'short',
+          })}`;
+          let isUserjoined = !coordinate.userjoined
+            ? null
+            : coordinate.userjoined[auth.currentUser.uid];
+          if (coordinate.availableSeats > 0 || isUserjoined) {
+            return (
+              <Marker
+                title={dateString}
+                description='Press here to get more info.'
+                image={require('../assets/Car2Medium.png')}
+                key={index}
+                onCalloutPress={() => {
+                  getModal(coordinate);
+                }}
+                pinColor={getPinColor(coordinate.userid)}
+                coordinate={{
+                  latitude: Number(coordinate.latitude),
+                  longitude: Number(coordinate.longitude),
+                }}
+              />
+            );
+          }
+        })}
         {/* Mapping through userMarkerCoordinates array and outputs each one, this should be updated to not be an empty array,
         but import existing coordinates from firebase. */}
         {userMarker}
@@ -278,7 +275,7 @@ const MapScreen = ({ route }) => {
             isOpen={modalVisible}
             handleClose={handleNewClose}
             coordinate={userMarkerCoordinate}
-            address = {markerAddress}
+            address={markerAddress}
             setUserMarkerCoordinate={setUserMarkerCoordinate}
           />
         }

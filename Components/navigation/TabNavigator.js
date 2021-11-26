@@ -9,6 +9,7 @@ import { Button } from 'react-native';
 import MapScreen from '../../screens/MapScreen';
 import CoordinateStackNavigator from './CoordinateStackNavigator';
 import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
+import InfoScreen from '../../screens/InfoScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -64,6 +65,40 @@ const TabNavigator = ({ navigation }) => {
     <Tab.Navigator
       screenOptions={{ tabBarActiveTintColor: BrandColors.PrimaryLight }}
     >
+      <Tab.Screen
+        name='Info'
+        component={InfoScreen}
+        options={{
+          headerTintColor: BrandColors.White,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: BrandColors.PrimaryDark,
+          },
+          // Remove figma balls inden aflevering xx
+          headerLeft: () => (
+            <TouchableWithoutFeedback
+              onPress={() => {
+                Alert.alert('figma balls');
+              }}
+            >
+              <Image
+                style={GlobalStyles.logo}
+                source={require('../../assets/RideSaverLogo.png')}
+              />
+            </TouchableWithoutFeedback>
+          ),
+          headerRight: () => LogoutButton(),
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name='help-circle-outline'
+              color={
+                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
+              }
+              size={20}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name='Profile'
         component={ProfileScreen}

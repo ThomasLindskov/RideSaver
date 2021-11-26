@@ -68,7 +68,7 @@ const CoordinateDetails = (props) => {
         // Only choosen fields will be updated
         .update({ availableSeats: coordinate.availableSeats });
       // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
-      Alert.alert('Your Joined the ride');
+      Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -78,7 +78,7 @@ const CoordinateDetails = (props) => {
         // Only choosen fields will be updated
         .set({ 0: true });
       // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
-      Alert.alert('Your Joined the ride');
+      Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -103,7 +103,7 @@ const CoordinateDetails = (props) => {
         // Only choosen fields will be updated
         .update({ availableSeats: coordinate.availableSeats });
       // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
-      Alert.alert('Your Joined the ride');
+      Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -138,7 +138,7 @@ const CoordinateDetails = (props) => {
     } else if (joinedUsers.includes(auth.currentUser.uid)) {
       return (
         <View>
-          <Button title='cancel seat' onPress={() => handleRemoveRide()} />
+          <Button title='Cancel Seat' onPress={() => handleRemoveRide()} />
         </View>
       );
     } else {

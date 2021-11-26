@@ -34,9 +34,9 @@ const EditCoordinate = ({ route, navigation }) => {
   }, []);
 
   // Update state for initalState in textinput field
-  const changeTextInput = (key, event) => {
-    setNewCoordinate({ ...newCoordinate, [key]: event });
-  };
+  // const changeTextInput = (key, event) => {
+  //   setNewCoordinate({ ...newCoordinate, [key]: event });
+  // };
 
   // Save and set as newCoordinate if the length of data inputted is not 0 else, alert error
   const handleSave = () => {
@@ -74,7 +74,7 @@ const EditCoordinate = ({ route, navigation }) => {
   if (!newCoordinate) {
     return <Text>Loading...</Text>;
   }
-  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
@@ -85,11 +85,7 @@ const EditCoordinate = ({ route, navigation }) => {
           return (
             <View style={styles.row} key={index}>
               <Text style={GlobalStyles.label}>{key}</Text>
-              <TextInput
-                value={newCoordinate[key]}
-                onChangeText={(event) => changeTextInput(key, event)}
-                style={GlobalStyles.input}
-              />
+              <Text value={newCoordinate[key]} style={GlobalStyles.input} />
             </View>
           );
         })}

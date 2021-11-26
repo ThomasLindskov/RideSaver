@@ -6,12 +6,7 @@ import Modal from 'react-native-modal';
 import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 
 // Passed  which are deconstructed to acces navigation and route
-const CoordinateDetailsModal = ({
-  isOpen,
-  handleClose,
-  coordinate,
-  geoConverter,
-}) => {
+const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
   const initialState = {
     address: '',
     date: '',
@@ -50,7 +45,7 @@ const CoordinateDetailsModal = ({
         // Only choosen fields will be updated
         .update({ availableSeats: coordinate.availableSeats });
       // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
-      Alert.alert('Your Joined the ride');
+      Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -59,8 +54,7 @@ const CoordinateDetailsModal = ({
       db.ref(`coordinates/${id}/userjoined/` + auth.currentUser.uid)
         // Only choosen fields will be updated
         .set({ 0: true });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
-      Alert.alert('Your Joined the ride');
+      Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -84,8 +78,7 @@ const CoordinateDetailsModal = ({
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
         .update({ availableSeats: coordinate.availableSeats });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
-      Alert.alert('Your Joined the ride');
+      Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -94,7 +87,6 @@ const CoordinateDetailsModal = ({
       db.ref(`coordinates/${id}/userjoined/` + auth.currentUser.uid)
         // Only choosen fields will be updated
         .remove();
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
       Alert.alert('Your cancelled your seat');
     } catch (error) {
       console.log(`Error: ${error.message}`);
@@ -134,7 +126,11 @@ const CoordinateDetailsModal = ({
         }}
       >
         <Text>Loading...</Text>
-        <Button title='Close' onPress={() => handleClose()} />
+        <Button
+          title='Close'
+          color={BrandColors.Primary}
+          onPress={() => handleClose()}
+        />
       </Modal>
     );
   }
@@ -143,11 +139,21 @@ const CoordinateDetailsModal = ({
     if (joinedUsers.includes(auth.currentUser.uid)) {
       return (
         <View>
-          <Button title='cancel seat' onPress={() => handleRemoveRide()} />
+          <Button
+            title='Cancel Seat'
+            color={BrandColors.Primary}
+            onPress={() => handleRemoveRide()}
+          />
         </View>
       );
     } else {
-      return <Button title='Join Ride' onPress={() => handleJoinRide()} />;
+      return (
+        <Button
+          title='Join Ride'
+          color={BrandColors.Primary}
+          onPress={() => handleJoinRide()}
+        />
+      );
     }
   };
 
@@ -198,6 +204,7 @@ const CoordinateDetailsModal = ({
         {buttons()}
         <Button
           title='Close'
+          color={BrandColors.Primary}
           onPress={() => {
             handleClose();
           }}
