@@ -1,10 +1,6 @@
 // Importing modules and firebase to acces data
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
-import firebase from 'firebase';
-import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
-import { VideoExportPreset } from 'expo-image-picker';
-import { set } from 'react-native-reanimated';
 import { auth, db } from '../../firebase';
 
 // Passed props which are deconstructed to acces navigation and route
@@ -19,7 +15,6 @@ const CoordinateDetails = (props) => {
   const [coordinate, setCoordinate] = useState(initialState);
   const [joinedUsers, setjoinedUsers] = useState([]);
 
-  // useEffect hook will set the coordinate state from the passed route prop and return an empty object xx
   useEffect(() => {
     setCoordinate(route.params.coordinate[1]);
     if (route.params.coordinate[1].userjoined) {
@@ -27,7 +22,6 @@ const CoordinateDetails = (props) => {
     }
   }, []);
 
-  // Navigating to Edit Coordinate which does not exist xx - I think its AddCoordinate.js
   const handleEdit = () => {
     const coordinate = route.params.coordinate;
     navigation.navigate('Edit Coordinate', { coordinate });
@@ -67,7 +61,6 @@ const CoordinateDetails = (props) => {
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
         .update({ availableSeats: coordinate.availableSeats });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
       Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
@@ -77,7 +70,6 @@ const CoordinateDetails = (props) => {
       db.ref(`coordinates/${id}/userjoined/` + auth.currentUser.uid)
         // Only choosen fields will be updated
         .set({ 0: true });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
       Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
@@ -102,7 +94,6 @@ const CoordinateDetails = (props) => {
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
         .update({ availableSeats: coordinate.availableSeats });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
       Alert.alert('You joined the ride!');
     } catch (error) {
       console.log(`Error: ${error.message}`);
@@ -112,8 +103,7 @@ const CoordinateDetails = (props) => {
       db.ref(`coordinates/${id}/userjoined/` + auth.currentUser.uid)
         // Only choosen fields will be updated
         .remove();
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
-      Alert.alert('Your cancelled your seat');
+      Alert.alert('You cancelled your seat');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
@@ -147,7 +137,6 @@ const CoordinateDetails = (props) => {
   };
 
   // When we have a coordinate it shows and edit or delete button and all items under that coordinate (lat, long, leaveTime and availableSeats)
-  // Why is the button on top and on the bottom? xx
   return (
     <View style={styles.container}>
       {Object.keys(initialState).map((key, index) => {

@@ -1,12 +1,12 @@
 {
   "expo": {
-    "name": "keapp",
-    "slug": "keapp",
+    "name": "RideSaver",
+    "slug": "RideSaver",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/RideSaverLogoSmall.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -21,7 +21,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/RideSaverLogoSmall.png",
         "backgroundColor": "#FFFFFF"
       }
     },

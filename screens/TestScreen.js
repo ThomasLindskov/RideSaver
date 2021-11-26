@@ -9,9 +9,10 @@ import {
 } from 'react-native';
 import firebase from 'firebase';
 import { auth, db } from '../firebase';
-import { GlobalStyles, Colors, BrandColors } from '../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
-// TestScreen only used in testing
+// This is testscreen, currently used to showcase how the app function with different groups/organisations
+// For future iterations, users will automaticly grouped by their email address (which should be for the company/organisation)
 const TestScreen = () => {
   const [groups, setGroups] = useState();
 
@@ -43,7 +44,6 @@ const TestScreen = () => {
   }, []);
 
   const handleSelectGroup = (id) => {
-    /*Her søger vi direkte i vores array af biler og finder bil objektet som matcher idet vi har tilsendt*/
     const group = Object.entries(groups).find(
       (group) => group[0] === id /*id*/
     );
@@ -58,17 +58,20 @@ const TestScreen = () => {
   const groupArray = Object.values(groups);
   const groupKeys = Object.keys(groups);
 
-  // If a user is logged in they wiil se this screen with their email
+  // If a user is logged in they will se this screen with their email
   return (
     <View style={GlobalStyles.container}>
       <Text style={GlobalStyles.header}>Test screen</Text>
       <Text style={{ color: BrandColors.Primary }}>
-        This is the testScreen of: {firebase.auth().currentUser.email}
-        Here you can change your groups
+        This is a test screen, and you are logged in as:{' '}
+        {firebase.auth().currentUser.email}
+        This page illustrates how the app divides users into groups. Press one
+        of the groups below, go to the map screen and update, to see rides for
+        this group.
       </Text>
       <FlatList
         data={groupArray}
-        // Vi bruger groupKeys til at finde ID
+        // We use groupKeys to find by ID
         keyExtractor={(item, index) => groupKeys[index]}
         renderItem={({ item, index }) => {
           return (

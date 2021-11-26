@@ -1,21 +1,5 @@
 import { StyleSheet } from 'react-native';
 
-export const Colors = {
-  bck: '#CAE9FF', // Light/white blue
-  hdb: 'purple', // Header background xx find color
-  shb: 'pink', // Subheader color xx find color
-  log: '#64EE85', // Logo green color
-  prm: '#1B4965', // Dark blue
-  scn: '#62B6CB', // Colorful blue (more turkish)
-  trt: '#CB7762', // Random orange
-  dgr: 'red', // For errors
-  scs: 'green', // For success
-  hov: '#5FA8D3', // Lighter colorful blue (more blue)
-  lgt: '#BEE9E8', // Light/white green
-  blk: '#000', // Black
-  wht: '#FFF', // White
-};
-
 export const BrandColors = {
   //60%
   PrimaryDark: '#081F2E', // Text color: All whites, Two lightest secondary
@@ -68,10 +52,15 @@ export const GlobalStyles = StyleSheet.create({
   },
   logout: { marginRight: 10 },
   ul: { fontSize: 12, margin: 5 },
+  
   columnView: {
     flex: 1,
     marginTop: 40,
     marginHorizontal: 10,
+    display: 'inline',
   },
   pin: {},
+  pinText: {
+
+  }
 });

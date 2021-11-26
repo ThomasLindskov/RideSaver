@@ -52,7 +52,7 @@ const TabNavigator = ({ navigation }) => {
                 })
                 .catch((error) => alert(error.message));
             }}
-            title='Logout'
+            title="Logout"
             color={BrandColors.PrimaryLight}
           />
         </View>
@@ -66,7 +66,7 @@ const TabNavigator = ({ navigation }) => {
       screenOptions={{ tabBarActiveTintColor: BrandColors.PrimaryLight }}
     >
       <Tab.Screen
-        name='Info'
+        name="Info"
         component={InfoScreen}
         options={{
           headerTintColor: BrandColors.White,
@@ -90,7 +90,7 @@ const TabNavigator = ({ navigation }) => {
           headerRight: () => LogoutButton(),
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name='help-circle-outline'
+              name="help-circle-outline"
               color={
                 focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
               }
@@ -100,7 +100,7 @@ const TabNavigator = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name='Profile'
+        name="Profile"
         component={ProfileScreen}
         options={{
           headerTintColor: BrandColors.White,
@@ -124,7 +124,7 @@ const TabNavigator = ({ navigation }) => {
           headerRight: () => LogoutButton(),
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name='person-circle-outline'
+              name="person-circle-outline"
               color={
                 focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
               }
@@ -134,7 +134,7 @@ const TabNavigator = ({ navigation }) => {
         }}
       />
       <Tab.Screen
-        name='Map'
+        name="Map"
         component={MapScreen}
         initialParams={{ group: group }}
         options={{
@@ -159,7 +159,7 @@ const TabNavigator = ({ navigation }) => {
           headerRight: () => LogoutButton(),
           tabBarIcon: ({ focused }) => (
             <Ionicons
-              name='globe'
+              name="globe"
               color={
                 focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
               }
@@ -168,42 +168,6 @@ const TabNavigator = ({ navigation }) => {
           ),
         }}
       />
-      {
-      //Here is the link to the coordinate stack navigator, but is not used in this version of the app. 
-      /*<Tab.Screen
-        name='List'
-        component={CoordinateStackNavigator}
-        options={{
-          headerTintColor: BrandColors.White,
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: BrandColors.PrimaryDark,
-          },
-          // Remove figma balls inden aflevering xx
-          headerLeft: () => (
-            <TouchableWithoutFeedback
-              onPress={() => {
-                Alert.alert('figma balls');
-              }}
-            >
-              <Image
-                style={GlobalStyles.logo}
-                source={require('../../assets/RideSaverLogo.png')}
-              />
-            </TouchableWithoutFeedback>
-          ),
-          headerRight: () => LogoutButton(),
-          tabBarIcon: ({ focused }) => (
-            <Ionicons
-              name='location-outline'
-              color={
-                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
-              }
-              size={20}
-            />
-          ),
-        }}
-      />*/}
     </Tab.Navigator>
   );
 };

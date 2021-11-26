@@ -13,7 +13,6 @@ import { auth } from '../firebase';
 import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
-
   //Two variables used for providing email and password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,7 +34,7 @@ const LoginScreen = ({ navigation }) => {
 
   //This handles login
   const handleLogin = () => {
-    //Uses firebase method sign in user if in auth in firebase. 
+    //Uses firebase method sign in user if in auth in firebase.
     auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
@@ -63,13 +62,13 @@ const LoginScreen = ({ navigation }) => {
         </View>
         <Text style={styles.header}>Welcome to RideSaver, please log in!</Text>
         <TextInput
-          placeholder='Email'
+          placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
           style={styles.input}
         />
         <TextInput
-          placeholder='Password'
+          placeholder="Password"
           value={password}
           onChangeText={(text) => setPassword(text)}
           style={styles.input}
