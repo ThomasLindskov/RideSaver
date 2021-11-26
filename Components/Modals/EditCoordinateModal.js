@@ -5,27 +5,27 @@ import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-//import Geocoder from 'react-native-geocoding';
-//import { API_KEY } from '../../config';
 
-// Geocoder.init('AIzaSyC8UVX6Sq2nxphNaOQsBTk1gu3nFfLkDmk', { language: 'en' });
 
-// Is passed props which are deconstructed to get access to navigation and route
-// Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
+// We could have made add coordinate and edit coordinate to be one, but this makes the code a little more simple
 const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
-  // Initial state oject with 4 basic attributes and state for adding a new coordinate
+  // Initial state oject with 3
   const initialState = {
     address: '',
     date: '',
     availableSeats: '',
   };
+    // Here we take in the different variables we want to use
+  // A userDate made from the data picker
+
+  //Joined users are not used.
   const [joinedUsers, setjoinedUsers] = useState([]);
   const [newCoordinate, setNewCoordinate] = useState(initialState);
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [userDate, setUserDate] = useState(new Date(coordinate.date));
 
-
+  //Get the mode to show in date picker, depending if you press change time or date
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
@@ -45,58 +45,34 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     setUserDate(currentDate);
   };
 
-  // This component is used for editing and adding new coordinates, and if the route prop passed was 'Edit Coordinate' we set isEditCoordinate which is used later
+  // This modal is used for editing
 
-  // useEffect hook runs if we are here to edit, and can update through initialState
   useEffect(() => {
+    //Here we find the joined users, which are on the coordinate, which is not used right now, but is supposed to be showing in this modal
     setNewCoordinate(coordinate);
     if (coordinate.userjoined) {
       setjoinedUsers(Object.keys(coordinate.userjoined));
     }
   }, []);
 
-  // const getAddress = async () => {
-  //   let { status } = await Location.requestForegroundPermissionsAsync(); // Get the location permission from the user and extract the 'status' key from it.
-  //   if (status !== 'granted') {
-  //     alert('permission denied!');
-  //     return;
-  //   }
-  //   let address = Location.reverseGeoCodeAsync({
-  //     latitude: newCoordinate.lat,
-  //     longtitude: newCoordinate.long,
-  //   });
-  //   return address;
-  // };
-
-  // getAddress().then((result) => console.log(result));
-
-  // const geoCodeReverse = () => {
-  //   Geocoder.from(Number(newCoordinate.lat), Number(newCoordinate.long))
-  //     .then((json) => {
-  //       var addressComponent = json.results[0].address_components[0];
-  //       console.log(addressComponent);
-  //     })
-  //     .catch((error) => console.warn(error));
-  // };
-  // console.log('GeoCoderTest', geoCodeReverse());
-
-  // Update state for initalState in textinput field
+  // When receving input if puts it in a newcordinate object. 
   const changeTextInput = (key, event) => {
     setNewCoordinate({ ...newCoordinate, [key]: event });
   };
 
-  // Save and set as newCoordinate if the length of data inputted is not 0 else, alert error
+
   const handleSave = () => {
+
+    //If this happens, it handles it. 
     if (newCoordinate.userid != auth.currentUser.uid) {
       return Alert.alert('Not your ride');
     }
 
-    //FIND UD AF HVORDAN FANDEN VI OPDATERE ADRESSE
-
+    //Gets the variables we need. Lat and long are included for future use, but will always be the value of the pressed coordinate
     const date = userDate
     const id = newCoordinate.id;
     const {  availableSeats } = newCoordinate;
-    const { latitude, longitude } = coordinate
+    const { latitude, longitude } = coordinate;
     if (
       latitude.length === 0 ||
       latitude.length === 0 ||
@@ -107,17 +83,17 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     }
 
     // If we want to edit the coordinate we request the id from firebase and use .update to update the attributes of the initalState object
-
+    
     try {
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
         .update({ latitude, longitude, date, availableSeats });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
+      // Alert after updating info, this only updates lat and long, address cannot be edited yet. 
       Alert.alert('Your info has been updated');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
-    // If we don't want to edit, but to add new coordinate, this will run
+    // This closes the modal
     handleClose();
   };
 
@@ -131,7 +107,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     }
   };
 
-  // Removes coordinate from firebase database and navigates back or catch an error and alerts the message
+  // Removes coordinate from firebase database and navigates back or catch an error and console.logs the message
   const handleDelete = () => {
     const id = coordinate.id;
     try {
@@ -158,7 +134,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     );
   }
 
-  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
+  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? 
   return (
     <Modal
       visible={isOpen}
@@ -173,6 +149,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
           if (typeof newCoordinate[key] == 'number') {
             newCoordinate[key] = newCoordinate[key].toString();
           }
+          //Address and date keys, need some formatting. 
           if (key == 'address') {
             return (
               <View key={index}>

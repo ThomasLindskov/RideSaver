@@ -14,67 +14,59 @@ import Modal from 'react-native-modal';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 
-// Is passed props which are deconstructed to get access to navigation and route
-// Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
+//Modal for use in Map Screen to make a coordinate. 
 const AddCoordinateModal = ({
   isOpen,
   handleClose,
   coordinate,
   setUserMarkerCoordinate,
-  address
+  address,
+  group
 }) => {
-  // Initial state oject with 4 basic attributes and state for adding a new coordinate
+  // Here we take in the different variables we want to use
+  // A userDate made from the data picker
   const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [availableSeats, setAvailableSeats] = useState();
 
-  // useEffect hook runs if we are here to edit, and can update through initialState
+  // Use effect not used yet. 
   useEffect(() => {
 
   }, []);
 
+  //Get the mode to show in date picker, depending if you press change time or date
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
   };
 
+  //For the date
   const showDatepicker = () => {
     showMode('date');
   };
 
+  //For the time
   const showTimepicker = () => {
     showMode('time');
   };
 
+  //This creates the ride
   const createRide = async (event) => {
-    handleClose();
-    let groupid;
 
-    await db
-      .ref('userData/' + auth.currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          groupid = snapshot.val().group;
-        } else {
-          console.log('No data available');
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
+    //Here we make t
     let newDate = userDate.toString();
     try {
+      //Here we push the new coordinate into the coordinate object. 
       db.ref('coordinates/').push({
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
         address: address,
         userid: auth.currentUser.uid,
         availableSeats: availableSeats,
-        groupId: groupid,
+        groupId: group,
         date: newDate,
+        //Should deconstruct the address later, to only use the things we use. 
         address: {
           city: address[0].city,
           country: address[0].country,
@@ -89,20 +81,22 @@ const AddCoordinateModal = ({
       console.log(`Error: ${error.message}`);
     }
 
+    //Here we set the userMarker to null, so the yellow marker disappers
     setUserMarkerCoordinate(null);
+    //Her ligger vi modallen. 
+    handleClose();
   };
 
+  //When changing the date, we set the date as userDate
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || userDate;
     setShow(Platform.OS === 'ios');
     setUserDate(currentDate);
   };
 
-  // This component is used for editing and adding new coordinates, and if the route prop passed was 'Edit Coordinate' we set isEditCoordinate which is used later
 
-  // Update state for initalState in textinput field
-
-  if (!coordinate) {
+  //If address is null, then we show a loading modal
+  if (!address) {
     return (
       <Modal
         visible={isOpen}
@@ -117,7 +111,7 @@ const AddCoordinateModal = ({
       </Modal>
     );
   }
-  // This shows coordinates by their id, and creates a TextInput field for each attribute of initialState? xx
+  //Here we return the modal which is seen in the MapScreen
   return (
     <Modal
       visible={isOpen}

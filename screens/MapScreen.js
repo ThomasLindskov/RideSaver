@@ -189,7 +189,17 @@ const MapScreen = ({ route }) => {
   };
 
   if(!coordinates || !group || !currentLocation) {
-    return <Text>Loading...</Text>;
+    return (
+      <View>
+    <Text>Loading...</Text>
+    <Button
+        onPress={() => {getCoordinates()}}
+        title='Reload map (Test button)'
+        color={BrandColors.SecondaryDark}
+        accessibilityLabel='Reload map'
+      />
+    </View>
+    );
   }
 
   const userMarker =
@@ -278,6 +288,7 @@ const MapScreen = ({ route }) => {
             coordinate={userMarkerCoordinate}
             address = {markerAddress}
             setUserMarkerCoordinate={setUserMarkerCoordinate}
+            group = {group}
           />
         }
         {modalInsert}

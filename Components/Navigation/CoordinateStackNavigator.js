@@ -2,11 +2,12 @@
 import React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import AddCoordinate from '../EditCoordinate';
-import CoordinateListScreen from '../../screens/CoordinateListScreen';
-import CoordinateDetails from '../CoordinateDetails';
+import AddCoordinate from '../Notused/EditCoordinate';
+import CoordinateListScreen from '../../screens/Notused/CoordinateListScreen';
+import CoordinateDetails from '../Notused/CoordinateDetails';
 import firebase from 'firebase';
 import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
+
 
 const CoordinateStackNavigator = () => {
   const Stack = createStackNavigator();

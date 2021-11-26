@@ -13,10 +13,13 @@ import { auth } from '../firebase';
 import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
+
+  //Two variables used for providing email and password
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
   useEffect(() => {
+    //If the user is already logged in go to HomeScreen, which is a reference to the tab navigator
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         navigation.replace('HomeScreen');
@@ -25,11 +28,14 @@ const LoginScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
+  //Go to the register screen should you want to register
   const handleRegister = () => {
     navigation.navigate('Register');
   };
 
+  //This handles login
   const handleLogin = () => {
+    //Uses firebase method sign in user if in auth in firebase. 
     auth
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
