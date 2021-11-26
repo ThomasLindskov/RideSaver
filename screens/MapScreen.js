@@ -24,11 +24,7 @@ const MapScreen = ({ route }) => {
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
   const [userMarkerCoordinate, setUserMarkerCoordinate] = useState(null);
 
-  const [location, setLocation] = useState({
-    latitude: 55.666388,
-    longitude: 12.623887,
-  });
-
+  //State for modals, coordinates, addresses, groups and currentlocation
   const [modalVisible, setModalVisible] = useState(false);
   const [modalInsert, setModalInsert] = useState();
   const [coordinates, setCoordinates] = useState([]);
@@ -114,7 +110,7 @@ const MapScreen = ({ route }) => {
   const handleLongPress = async (event) => {
     const coordinate = event.nativeEvent.coordinate;
 
-    //Skal testes på Iphone da Mikkels virkede anderledes.
+    //Skal testes på Iphone da Mikkels virkede anderledes xx.
     await Location.reverseGeocodeAsync(coordinate).then((data) => {
       setMarkerAddress(data);
     });
@@ -124,6 +120,7 @@ const MapScreen = ({ route }) => {
     setModalVisible(true);
   };
 
+  //Change the pin color depending on if the logged in user created it or not
   const getPinColor = (userid) => {
     if (userid == auth.currentUser.uid) {
       return 'blue';
@@ -177,15 +174,27 @@ const MapScreen = ({ route }) => {
   };
 
   if (!coordinates || !group || !currentLocation) {
-    return <Text>Loading...</Text>;
+    return (
+      <View>
+        <Text>Loading...</Text>
+        <Button
+          onPress={() => {
+            getCoordinates();
+          }}
+          title="Reload map (Test button)"
+          color={BrandColors.SecondaryDark}
+          accessibilityLabel="Reload map"
+        />
+      </View>
+    );
   }
 
   const userMarker =
     userMarkerCoordinate != null ? (
       <Marker
-        title='Temporary marker'
-        description='This is where ride info will go'
-        pinColor='yellow'
+        title="Temporary marker"
+        description="This is where ride info will go"
+        pinColor="yellow"
         coordinate={userMarkerCoordinate}
       />
     ) : null;
@@ -196,9 +205,9 @@ const MapScreen = ({ route }) => {
         onPress={() => {
           getCoordinates();
         }}
-        title='Reload map'
+        title="Reload map"
         color={BrandColors.SecondaryDark}
-        accessibilityLabel='Reload map'
+        accessibilityLabel="Reload map"
       />
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
@@ -224,13 +233,12 @@ const MapScreen = ({ route }) => {
         }}
         onLongPress={handleLongPress}
       >
-        {/* 2 predefined markers */}
+        {/* Marker for the organisation*/}
         {!group ? null : (
           <Marker
             title={group.organisation}
             description={`The office of ${group.organisation}`}
-            pinColor='purple'
-            image={require('../assets/Office2Medium.png')}
+            pinColor="white"
             coordinate={{
               latitude: Number(group.latitude),
               longitude: Number(group.longitude),
@@ -250,8 +258,7 @@ const MapScreen = ({ route }) => {
             return (
               <Marker
                 title={dateString}
-                description='Press here to get more info.'
-                image={require('../assets/Car2Medium.png')}
+                description="Press here to get more info."
                 key={index}
                 onCalloutPress={() => {
                   getModal(coordinate);
@@ -265,8 +272,7 @@ const MapScreen = ({ route }) => {
             );
           }
         })}
-        {/* Mapping through userMarkerCoordinates array and outputs each one, this should be updated to not be an empty array,
-        but import existing coordinates from firebase. */}
+        {/* Mapping through userMarkerCoordinates array and outputs each one*/}
         {userMarker}
       </MapView>
       <View>
@@ -277,6 +283,7 @@ const MapScreen = ({ route }) => {
             coordinate={userMarkerCoordinate}
             address={markerAddress}
             setUserMarkerCoordinate={setUserMarkerCoordinate}
+            group={group}
           />
         }
         {modalInsert}

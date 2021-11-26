@@ -14,21 +14,22 @@ import Modal from 'react-native-modal';
 import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-// Is passed props which are deconstructed to get access to navigation and route
-// Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
+// We could have made add coordinate and edit coordinate to be one, but this makes the code a little more simple
 const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
-  // Initial state oject with 4 basic attributes and state for adding a new coordinate
+  // Initial state oject with 3
   const initialState = {
     address: '',
     date: '',
     availableSeats: '',
   };
+  // Here we take in the different variables we want to use
   const [joinedUsers, setjoinedUsers] = useState([]);
   const [newCoordinate, setNewCoordinate] = useState(initialState);
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [userDate, setUserDate] = useState(new Date(coordinate.date));
 
+  //Get the mode to show in date picker, depending if you press change time or date
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
@@ -48,25 +49,26 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     setUserDate(currentDate);
   };
 
-  // useEffect hook runs if we are here to edit, and can update through initialState
   useEffect(() => {
+    //Here we find the joined users, which are on the coordinate, which is not used right now, but is supposed to be showing in this modal
     setNewCoordinate(coordinate);
     if (coordinate.userjoined) {
       setjoinedUsers(Object.keys(coordinate.userjoined));
     }
   }, []);
 
+  // When receving input if puts it in a newcordinate object.
   const changeTextInput = (key, event) => {
     setNewCoordinate({ ...newCoordinate, [key]: event });
   };
 
   const handleSave = () => {
+    //If this happens, it handles it.
     if (newCoordinate.userid != auth.currentUser.uid) {
       return Alert.alert('Not your ride');
     }
 
-    //FIND UD AF HVORDAN FANDEN VI OPDATERE ADRESSE xx
-
+    //Gets the variables we need. Lat and long are included for future use, but will always be the value of the pressed coordinate
     const date = userDate;
     const id = newCoordinate.id;
     const { availableSeats } = newCoordinate;
@@ -86,12 +88,12 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
         .update({ latitude, longitude, date, availableSeats });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
+      // Alert after updating info, this only updates lat and long, address cannot be edited yet.
       Alert.alert('Your info has been updated');
     } catch (error) {
       console.log(`Error: ${error.message}`);
     }
-    // If we don't want to edit, but to add new coordinate, this will run
+    // This closes the modal
     handleClose();
   };
 
@@ -105,7 +107,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     }
   };
 
-  // Removes coordinate from firebase database and navigates back or catch an error and alerts the message
+  // Removes coordinate from firebase database and navigates back or catch an error and console.logs the message
   const handleDelete = () => {
     const id = coordinate.id;
     try {
@@ -120,21 +122,22 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     return (
       <Modal
         visible={isOpen}
-        animationType='slide'
+        animationType="slide"
         transparent={true}
         onRequestClose={() => {
           handleClose();
         }}
       >
         <Text>Loading...</Text>
-        <Button title='Close' onPress={() => handleClose()} />
+        <Button title="Close" onPress={() => handleClose()} />
       </Modal>
     );
   }
+
   return (
     <Modal
       visible={isOpen}
-      animationType='slide'
+      animationType="slide"
       transparent={true}
       onRequestClose={() => {
         handleClose();
@@ -145,6 +148,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
           if (typeof newCoordinate[key] == 'number') {
             newCoordinate[key] = newCoordinate[key].toString();
           }
+          //Address and date keys, need some formatting.
           if (key == 'address') {
             return (
               <View key={index}>
@@ -187,11 +191,11 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
                 </TouchableOpacity>
                 {show && (
                   <DateTimePicker
-                    testID='dateTimePicker'
+                    testID="dateTimePicker"
                     value={userDate}
                     mode={mode}
                     is24Hour={true}
-                    display='default'
+                    display="default"
                     onChange={onChange}
                   />
                 )}
@@ -219,14 +223,14 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
 
         {/*This button use handleClose() from MapScreen to remove the modal from the screen  */}
         <Button
-          title='Close'
+          title="Close"
           color={BrandColors.Primary}
           onPress={() => {
             handleClose();
           }}
         />
 
-        {/*This button use confirmDelete() and deletes the ride   */}
+        {/*This button use confirmDelete() and deletes the ride */}
         <Button
           title={'Delete ride'}
           color={BrandColors.Primary}

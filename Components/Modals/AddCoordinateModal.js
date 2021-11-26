@@ -14,71 +14,52 @@ import Modal from 'react-native-modal';
 import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
-// Is passed props which are deconstructed to get access to navigation and route
-// Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed
+//Modal for use in Map Screen to make a coordinate.
 const AddCoordinateModal = ({
   isOpen,
   handleClose,
   coordinate,
   setUserMarkerCoordinate,
   address,
+  group,
 }) => {
+  // Here we take in the different variables we want to use
+  // A userDate made from the data picker
   const [userDate, setUserDate] = useState(new Date());
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [availableSeats, setAvailableSeats] = useState();
 
-  // const cord = {
-  //   latitude: coordinate.latitude,
-  //   longitude: coordinate.longitude,
-  // };
-  // console.log(geoConverter(cord));
-  // console.log(coordinate);
-  // console.log(address);
-
-  useEffect(() => {}, []);
-
+  //Get the mode to show in date picker, depending if you press change time or date
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
   };
 
+  //For the date
   const showDatepicker = () => {
     showMode('date');
   };
 
+  //For the time
   const showTimepicker = () => {
     showMode('time');
   };
 
+  //This creates the ride
   const createRide = async (event) => {
-    handleClose();
-    let groupid;
-
-    await db
-      .ref('userData/' + auth.currentUser.uid)
-      .get()
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          groupid = snapshot.val().group;
-        } else {
-          console.log('No data available');
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
     let newDate = userDate.toString();
     try {
+      //Here we push the new coordinate into the coordinate object.
       db.ref('coordinates/').push({
         latitude: coordinate.latitude,
         longitude: coordinate.longitude,
         address: address,
         userid: auth.currentUser.uid,
         availableSeats: availableSeats,
-        groupId: groupid,
+        groupId: group,
         date: newDate,
+        //Should deconstruct the address later, to only use the things we use.
         address: {
           city: address[0].city,
           country: address[0].country,
@@ -93,34 +74,40 @@ const AddCoordinateModal = ({
       console.log(`Error: ${error.message}`);
     }
 
+    //Here we set the userMarker to null, so the yellow marker disappers
     setUserMarkerCoordinate(null);
+    //Here the modal is closed
+    handleClose();
   };
 
+  //When changing the date, we set the date as userDate
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || userDate;
     setShow(Platform.OS === 'ios');
     setUserDate(currentDate);
   };
 
-  if (!coordinate) {
+  //If address is null, then we show a loading modal
+  if (!address) {
     return (
       <Modal
         visible={isOpen}
-        animationType='slide'
+        animationType="slide"
         transparent={true}
         onRequestClose={() => {
           handleClose();
         }}
       >
         <Text>Loading...</Text>
-        <Button title='Close' onPress={() => handleClose()} />
+        <Button title="Close" onPress={() => handleClose()} />
       </Modal>
     );
   }
+  //Here we return the modal which is seen in the MapScreen
   return (
     <Modal
       visible={isOpen}
-      animationType='slide'
+      animationType="slide"
       transparent={true}
       onRequestClose={() => {
         handleClose();
@@ -154,11 +141,11 @@ const AddCoordinateModal = ({
 
         {show && (
           <DateTimePicker
-            testID='dateTimePicker'
+            testID="dateTimePicker"
             value={userDate}
             mode={mode}
             is24Hour={true}
-            display='default'
+            display="default"
             onChange={onChange}
           />
         )}
@@ -166,8 +153,8 @@ const AddCoordinateModal = ({
           style={GlobalStyles.input}
           onChangeText={setAvailableSeats}
           value={availableSeats}
-          placeholder='Seats in car'
-          keyboardType='numeric'
+          placeholder="Seats in car"
+          keyboardType="numeric"
         />
 
         <Pressable

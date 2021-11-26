@@ -10,8 +10,8 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import { GlobalStyles, Colors } from '../styles/GlobalStyles';
-import { auth, db } from '../firebase';
+import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
+import { auth, db } from '../../firebase';
 
 // Is passed props which are deconstructed to get access to navigation and route
 // Navigation is used in CoordinateStackNavigator, route is to return different views whether 'Edit Coordinate' or 'Add Coordinate' was the route prop passed

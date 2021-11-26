@@ -12,11 +12,15 @@ import { auth, db } from '../firebase';
 import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
+
+  //Three variables used for providing email, password and name
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
+
   useEffect(() => {
+      //If the user is already logged in go to HomeScreen, which is a reference to the tab navigator
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         navigation.replace('HomeScreen');
@@ -25,13 +29,18 @@ const LoginScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
+
+  //This handles register
   const handleRegister = () => {
+    //first we create the user
     auth
       .createUserWithEmailAndPassword(email, password)
       .then((user) => {
         const userCredentials = user.user;
         if (user && name) {
           try {
+            //If the user and name if there, set some data in the userData object
+            //We do this because you cannot add properties to the auth object, so we make them in this. 
             db.ref('userData/' + userCredentials.uid).set({
               name: name,
               group: 1,
@@ -44,7 +53,8 @@ const LoginScreen = ({ navigation }) => {
       })
       .catch((error) => alert(error.message));
   };
-
+  
+  //Go to the login screen should you want to login
   const handleLogin = () => {
     navigation.navigate('Login');
   };

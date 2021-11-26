@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
 import firebase from 'firebase';
-import { GlobalStyles, Colors } from '../styles/GlobalStyles';
+import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
 import { VideoExportPreset } from 'expo-image-picker';
 import { set } from 'react-native-reanimated';
-import { auth, db } from '../firebase';
+import { auth, db } from '../../firebase';
 
 // Passed props which are deconstructed to acces navigation and route
 const CoordinateDetails = (props) => {

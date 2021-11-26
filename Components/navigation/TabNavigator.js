@@ -168,7 +168,9 @@ const TabNavigator = ({ navigation }) => {
           ),
         }}
       />
-      {/*<Tab.Screen
+      {
+      //Here is the link to the coordinate stack navigator, but is not used in this version of the app. 
+      /*<Tab.Screen
         name='List'
         component={CoordinateStackNavigator}
         options={{
