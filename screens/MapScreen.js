@@ -11,7 +11,7 @@ import {
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
-import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 import { auth, db } from '../firebase';
 import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
 import AddCoordinateModal from '../Components/Modals/AddCoordinateModal';
@@ -31,6 +31,7 @@ const MapScreen = ({ route }) => {
   const [markerAddress, setMarkerAddress] = useState();
   const [group, setGroup] = useState();
   const [currentLocation, setCurrentLocation] = useState(null);
+  const [groupId, setGroupId] = useState();
 
   // Alerts user to give locationpermission
   const getLocationPermission = async () => {
@@ -64,6 +65,7 @@ const MapScreen = ({ route }) => {
       .then((snapshot) => {
         if (snapshot.exists()) {
           groupid = snapshot.val().group;
+          setGroupId(groupid);
         } else {
           console.log('No data available');
         }
@@ -103,7 +105,8 @@ const MapScreen = ({ route }) => {
       });
 
     setCoordinates(coordinates);
-    getGroup(groupid);
+    getGroup(groupid)
+    
   };
 
   // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
@@ -173,10 +176,9 @@ const MapScreen = ({ route }) => {
     }
   };
 
-  if (!coordinates || !group || !currentLocation) {
+  if (!group || !currentLocation) {
     return (
       <View>
-        <Text>Loading...</Text>
         <Button
           onPress={() => {
             getCoordinates();
@@ -185,6 +187,7 @@ const MapScreen = ({ route }) => {
           color={BrandColors.SecondaryDark}
           accessibilityLabel="Reload map"
         />
+        <Text >Loading...</Text>
       </View>
     );
   }
@@ -283,7 +286,7 @@ const MapScreen = ({ route }) => {
             coordinate={userMarkerCoordinate}
             address={markerAddress}
             setUserMarkerCoordinate={setUserMarkerCoordinate}
-            group={group}
+            group={groupId}
           />
         }
         {modalInsert}

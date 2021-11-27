@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import firebase from 'firebase';
 import { auth, db } from '../firebase';
-import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 // This is testscreen, currently used to showcase how the app function with different groups/organisations
 // For future iterations, users will automaticly grouped by their email address (which should be for the company/organisation)

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
-import { GlobalStyles, BrandColors } from '../../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 // We could have made add coordinate and edit coordinate to be one, but this makes the code a little more simple
@@ -79,7 +79,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
       date.length === 0 ||
       availableSeats.length === 0
     ) {
-      return console.log('Error with input');
+      return Alert.alert('Error with input');
     }
 
     // If we want to edit the coordinate we request the id from firebase and use .update to update the attributes of the initalState object
@@ -91,7 +91,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
       // Alert after updating info, this only updates lat and long, address cannot be edited yet.
       Alert.alert('Your info has been updated');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
     // This closes the modal
     handleClose();
@@ -114,7 +114,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
       db.ref(`coordinates/` + id).remove();
       handleClose();
     } catch (error) {
-      console.log(error.message);
+      Alert.alert(error.message);
     }
   };
 
@@ -154,15 +154,11 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
               <View key={index}>
                 <View style={styles.row}>
                   <Text style={{ fontWeight: 'bold' }}>Street: </Text>
-                  <Text
-                    value={`${coordinate[key].street} ${coordinate[key].name}`}
-                  />
+                  <Text>{`${coordinate[key].street} ${coordinate[key].name}`} </Text>
                 </View>
                 <View style={styles.row}>
                   <Text style={{ fontWeight: 'bold' }}>City: </Text>
-                  <Text
-                    value={`${coordinate[key].city}`}
-                  />
+                  <Text>{`${coordinate[key].city}`} </Text>
                 </View>
               </View>
             );
@@ -213,24 +209,25 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
           }
         })}
         {/*This button use handleSave() to save the changes in the ride */}
-        <View style={{ marginVertical: 5 }}>
-          <Button
-            title={'Save changes'}
-            color={BrandColors.Primary}
-            onPress={() => handleSave()}
-          />
+        <View style={{flexDirection: 'row'}}>
+          <View style={{ marginVertical: 5, marginRight: 5}}>
+            <Button
+              title={'Save changes'}
+              color={BrandColors.Primary}
+              onPress={() => handleSave()}
+            />
+          </View>
+          {/*This button use handleClose() from MapScreen to remove the modal from the screen  */}
+          <View style={{ marginVertical: 5 }}>
+            <Button
+              title="Close"
+              color={BrandColors.Primary}
+              onPress={() => {
+                handleClose();
+              }}
+            />
+          </View>
         </View>
-        {/*This button use handleClose() from MapScreen to remove the modal from the screen  */}
-        <View style={{ marginVertical: 5 }}>
-          <Button
-            title="Close"
-            color={BrandColors.Primary}
-            onPress={() => {
-              handleClose();
-            }}
-          />
-        </View>
-
         {/*This button use confirmDelete() and deletes the ride */}
         <View style={{ marginVertical: 5 }}>
           <Button

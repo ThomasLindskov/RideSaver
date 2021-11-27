@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
-import { GlobalStyles, BrandColors } from '../../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 
 // Passed  which are deconstructed to acces navigation and route
 const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
@@ -41,7 +41,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       // Alert after updating info
       Alert.alert('You joined the ride!');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
 
     //Here we throw in userjoined into the coordinate, this could also be done in the one above.
@@ -52,7 +52,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
 
       Alert.alert('You joined the ride!');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
     //Close the modal
     handleClose();
@@ -79,7 +79,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       // Alert after updating info
       Alert.alert('You joined the ride!');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
 
     try {
@@ -89,7 +89,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       // Alert after updating info
       Alert.alert('You cancelled your seat');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
     //Close the modal
     handleClose();
@@ -140,7 +140,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
   const buttons = () => {
     if (joinedUsers.includes(auth.currentUser.uid)) {
       return (
-        <View style={{ marginVertical: 10 }}>
+        <View style={{ marginVertical: 5}}>
           <Button
             title="Cancel Ride"
             color={BrandColors.Primary}
@@ -150,7 +150,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       );
     } else {
       return (
-        <View style={{ marginVertical: 10 }}>
+        <View style={{ marginVertical: 5}}>
           <Button
             title="Join Ride"
             color={BrandColors.Primary}
@@ -206,14 +206,20 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
             );
           }
         })}
-        {buttons()}
-        <Button
-          title="Close"
-          color={BrandColors.Primary}
-          onPress={() => {
-            handleClose();
-          }}
-        />
+        <View style={{flexDirection: 'row'}}>
+          <View style={{ marginVertical: 5, marginRight: 5}}>
+            <Button
+              title="Close"
+              color={BrandColors.Primary}
+              style={{marginVertical: 5}}
+              onPress={() => {
+                handleClose();
+              }}
+            />
+          </View>
+          {buttons()}
+          
+        </View>
       </View>
     </Modal>
   );

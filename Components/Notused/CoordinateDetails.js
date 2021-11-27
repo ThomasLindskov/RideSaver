@@ -44,7 +44,7 @@ const CoordinateDetails = (props) => {
       db.ref(`coordinates/` + id).remove();
       navigation.goBack({ changed: true });
     } catch (error) {
-      console.log(error.message);
+      Alert.alert(error.message);
     }
   };
 
@@ -63,7 +63,7 @@ const CoordinateDetails = (props) => {
         .update({ availableSeats: coordinate.availableSeats });
       Alert.alert('You joined the ride!');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
 
     try {
@@ -72,7 +72,7 @@ const CoordinateDetails = (props) => {
         .set({ 0: true });
       Alert.alert('You joined the ride!');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
     navigation.navigate('Coordinate List');
   };
@@ -96,7 +96,7 @@ const CoordinateDetails = (props) => {
         .update({ availableSeats: coordinate.availableSeats });
       Alert.alert('You joined the ride!');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
 
     try {
@@ -105,7 +105,7 @@ const CoordinateDetails = (props) => {
         .remove();
       Alert.alert('You cancelled your seat');
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
 
     navigation.navigate('Coordinate List');

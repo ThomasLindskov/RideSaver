@@ -1,7 +1,7 @@
 // Importing modules and components
 import React from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
-import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const InfoScreen = () => {
   return (

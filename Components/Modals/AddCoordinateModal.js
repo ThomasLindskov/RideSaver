@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
-import { GlobalStyles, BrandColors } from '../../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 //Modal for use in Map Screen to make a coordinate.
@@ -71,7 +71,7 @@ const AddCoordinateModal = ({
         },
       });
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
 
     //Here we set the userMarker to null, so the yellow marker disappers
@@ -162,19 +162,20 @@ const AddCoordinateModal = ({
           placeholder="Plesae insert number of seats"
           keyboardType="numeric"
         />
-
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={() => handleClose()}
-        >
-          <Text style={styles.textStyle}>Close</Text>
-        </Pressable>
-        <Pressable
-          style={[styles.button, styles.buttonClose]}
-          onPress={() => createRide()}
-        >
-          <Text style={styles.textStyle}>Create ride</Text>
-        </Pressable>
+        <View style={{flexDirection: 'row'}}>
+          <Pressable
+            style={[styles.button, styles.buttonClose]}
+            onPress={() => handleClose()}
+          >
+            <Text style={styles.textStyle}>Close</Text>
+          </Pressable>
+          <Pressable
+            style={[styles.button, styles.buttonSave] }
+            onPress={() => createRide()}
+          >
+            <Text style={styles.textStyle}>Create ride</Text>
+          </Pressable>
+        </View>
       </View>
     </Modal>
   );
@@ -206,6 +207,10 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   buttonClose: {
+    backgroundColor: BrandColors.Primary,
+    marginRight: 5
+  },
+  buttonSave: {
     backgroundColor: BrandColors.Primary,
   },
   textStyle: {

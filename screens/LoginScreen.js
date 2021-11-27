@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import { auth } from '../firebase';
-import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
   //Two variables used for providing email and password
@@ -39,7 +39,7 @@ const LoginScreen = ({ navigation }) => {
       .signInWithEmailAndPassword(email, password)
       .then((userCredentials) => {
         const user = userCredentials.user;
-        console.log('Logged in with: ', user.email);
+        Alert.alert('Logged in with: ', user.email);
       })
       .catch((error) => alert(error.message));
   };

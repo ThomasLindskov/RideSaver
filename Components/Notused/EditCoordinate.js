@@ -52,7 +52,7 @@ const EditCoordinate = ({ route, navigation }) => {
       date.length === 0 ||
       availableSeats.length === 0
     ) {
-      return console.log('Error with input');
+      return Alert.alert('Error with input');
     }
 
     // If we want to edit the coordinate we request the id from firebase and use .update to update the attributes of the initalState object
@@ -66,7 +66,7 @@ const EditCoordinate = ({ route, navigation }) => {
       const coordinate = [id, newCoordinate];
       navigation.navigate('Coordinate Details', { coordinate });
     } catch (error) {
-      console.log(`Error: ${error.message}`);
+      Alert.alert(`Error: ${error.message}`);
     }
     // If we don't want to edit, but to add new coordinate, this will run
   };

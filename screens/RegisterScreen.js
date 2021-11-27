@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import { auth, db } from '../firebase';
-import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
   //Three variables used for providing email, password and name
@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }) => {
               group: 1,
             });
           } catch (error) {
-            console.log(`Error: ${error.message}`);
+            Alert.alert(`Error: ${error.message}`);
           }
         }
         console.log('Registered user with email: ', userCredentials.uid);
