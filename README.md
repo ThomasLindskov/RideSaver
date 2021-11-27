@@ -26,7 +26,7 @@ _Creating a greener future for Denmark_
 
 ### Screendumps fra appen
 
-![Login screen](/assets/app/LoginScreen.jpg | width=50)  
+![Login screen]<img src='/assets/app/LoginScreen.jpg' width='400' height='790'>  
 ![Register screen](/assets/app/RegisterScreen.jpg | width=100)  
 ![Map screen](/assets/app/MapScreen.jpg | width=200)  
 ![Join Ride](/assets/app/JoinRide.jpg)  
