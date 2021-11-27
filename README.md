@@ -4,6 +4,9 @@
 
 The app uses a stack of React Native, Firebase and Firebase Realtime Database and has the following dependencies:
 
+![Dependencies](/assets/app/Dependencies.jng)  
+
+
 To run the app run the following commands in the terminal:
 
 ```
@@ -24,14 +27,13 @@ _Creating a greener future for Denmark_
 
 ### Screendumps fra appen
 
-![Login screen](https://link.to.picture.com/picture1.jpg)  
-![Home screen](https://link.to.picture.com/picture2.jpg)  
-![Map screen](https://link.to.picture.com/picture3.jpg)  
-![Ride details](https://link.to.picture.com/picture4.jpg)  
-![Profile screen](https://link.to.picture.com/picture5.jpg)
-
-xx
-for more info https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax relative links
+![Login screen](/assets/app/LoginScreen.jng)  
+![Register screen](/assets/app/RegisterScreen.jpg)  
+![Map screen](/assets/app/MapScreen.jpg)  
+![Join Ride](/assets/app/JoinRide.jpg)  
+![Profile screen](/assets/app/ProfileScreen.jpg)
+![Info screen](/assets/app/InfoScreen.jpg)  
+![Create Ride](/assets/app/AddRide.jpg)  
 
 ## Component structure
 
