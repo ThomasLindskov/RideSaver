@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import firebase from 'firebase';
 import { auth, db } from '../firebase';
-import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
 
 // This is testscreen, currently used to showcase how the app function with different groups/organisations
 // For future iterations, users will automaticly grouped by their email address (which should be for the company/organisation)
@@ -62,9 +62,11 @@ const TestScreen = () => {
   return (
     <View style={GlobalStyles.container}>
       <Text style={GlobalStyles.header}>Test screen</Text>
-      <Text style={{ color: BrandColors.Primary }}>
+      <Text style={{ color: BrandColors.Primary, margin: 5 }}>
         This is a test screen, and you are logged in as:{' '}
         {firebase.auth().currentUser.email}
+      </Text>
+      <Text style={{ margin: 5 }}>
         This page illustrates how the app divides users into groups. Press one
         of the groups below, go to the map screen and update, to see rides for
         this group.

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
-import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../../Styles/GlobalStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 // We could have made add coordinate and edit coordinate to be one, but this makes the code a little more simple
@@ -153,17 +153,15 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
             return (
               <View key={index}>
                 <View style={styles.row}>
-                  <Text style={styles.label}>Street</Text>
+                  <Text style={{ fontWeight: 'bold' }}>Street: </Text>
                   <Text
                     value={`${coordinate[key].street} ${coordinate[key].name}`}
-                    style={styles.input}
                   />
                 </View>
                 <View style={styles.row}>
-                  <Text style={styles.label}>City</Text>
+                  <Text style={{ fontWeight: 'bold' }}>City: </Text>
                   <Text
                     value={`${coordinate[key].city}`}
-                    style={styles.input}
                   />
                 </View>
               </View>
@@ -171,7 +169,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
           } else if (key == 'date') {
             return (
               <View key={index}>
-                <Text style={styles.modalText}>Departure Time</Text>
+                <Text style={styles.modalText}>Departure Time: </Text>
                 <View style={styles.pickedDateContainer}>
                   <Text>
                     {userDate.toString().split(' ').splice(0, 5).join(' ')}
@@ -179,13 +177,13 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
                 </View>
                 <TouchableOpacity
                   onPress={showDatepicker}
-                  style={{ marginTop: 5 }}
+                  style={styles.button}
                 >
                   <Text>Choose date</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={showTimepicker}
-                  style={{ marginTop: 5 }}
+                  style={styles.button}
                 >
                   <Text>Choose departure time</Text>
                 </TouchableOpacity>
@@ -203,39 +201,44 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
             );
           } else {
             return (
-              <View style={styles.row} key={index}>
-                <Text style={styles.label}>{key}</Text>
+              <View key={index}>
+                <Text style={{ fontWeight: 'bold' }}>Available seats: </Text>
                 <TextInput
                   value={newCoordinate[key]}
+                  style={GlobalStyles.input}
                   onChangeText={(event) => changeTextInput(key, event)}
-                  style={styles.input}
                 />
               </View>
             );
           }
         })}
         {/*This button use handleSave() to save the changes in the ride */}
-        <Button
-          title={'Save changes'}
-          color={BrandColors.Primary}
-          onPress={() => handleSave()}
-        />
-
+        <View style={{ marginVertical: 5 }}>
+          <Button
+            title={'Save changes'}
+            color={BrandColors.Primary}
+            onPress={() => handleSave()}
+          />
+        </View>
         {/*This button use handleClose() from MapScreen to remove the modal from the screen  */}
-        <Button
-          title="Close"
-          color={BrandColors.Primary}
-          onPress={() => {
-            handleClose();
-          }}
-        />
+        <View style={{ marginVertical: 5 }}>
+          <Button
+            title="Close"
+            color={BrandColors.Primary}
+            onPress={() => {
+              handleClose();
+            }}
+          />
+        </View>
 
         {/*This button use confirmDelete() and deletes the ride */}
-        <Button
-          title={'Delete ride'}
-          color={BrandColors.Primary}
-          onPress={() => confirmDelete()}
-        />
+        <View style={{ marginVertical: 5 }}>
+          <Button
+            title={'Delete ride'}
+            color={BrandColors.Primary}
+            onPress={() => confirmDelete()}
+          />
+        </View>
       </View>
     </Modal>
   );
@@ -264,11 +267,23 @@ const styles = StyleSheet.create({
     padding: 5,
     backgroundColor: BrandColors.WhiteDark,
     borderRadius: 2,
+    marginBottom: 5,
   },
   modalText: {
     marginBottom: 15,
     marginTop: 15,
     textAlign: 'center',
     fontWeight: 'bold',
+  },
+  button: {
+    margin: 5,
+    backgroundColor: BrandColors.WhiteLight,
+    width: '100%',
+    borderColor: BrandColors.PrimaryLight,
+    borderWidth: 2,
+    marginTop: 5,
+    padding: 5,
+    alignItems: 'center',
+    borderRadius: 10,
   },
 });

@@ -3,13 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { Image, View, TouchableWithoutFeedback, Alert } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ProfileScreen from '../../screens/TestScreen';
+import ProfileScreen from '../../Screens/TestScreen';
 import { auth, db } from '../../firebase';
 import { Button } from 'react-native';
-import MapScreen from '../../screens/MapScreen';
-import CoordinateStackNavigator from './CoordinateStackNavigator';
-import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
-import InfoScreen from '../../screens/InfoScreen';
+import MapScreen from '../../Screens/MapScreen';
+import { GlobalStyles, BrandColors } from '../../Styles/GlobalStyles';
+import InfoScreen from '../../Screens/InfoScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -74,19 +73,6 @@ const TabNavigator = ({ navigation }) => {
           headerStyle: {
             backgroundColor: BrandColors.PrimaryDark,
           },
-          // Remove figma balls inden aflevering xx
-          headerLeft: () => (
-            <TouchableWithoutFeedback
-              onPress={() => {
-                Alert.alert('figma balls');
-              }}
-            >
-              <Image
-                style={GlobalStyles.logo}
-                source={require('../../assets/RideSaverLogo.png')}
-              />
-            </TouchableWithoutFeedback>
-          ),
           headerRight: () => LogoutButton(),
           tabBarIcon: ({ focused }) => (
             <Ionicons
@@ -108,19 +94,6 @@ const TabNavigator = ({ navigation }) => {
           headerStyle: {
             backgroundColor: BrandColors.PrimaryDark,
           },
-          // Remove figma balls inden aflevering xx
-          headerLeft: () => (
-            <TouchableWithoutFeedback
-              onPress={() => {
-                Alert.alert('figma balls');
-              }}
-            >
-              <Image
-                style={GlobalStyles.logo}
-                source={require('../../assets/RideSaverLogo.png')}
-              />
-            </TouchableWithoutFeedback>
-          ),
           headerRight: () => LogoutButton(),
           tabBarIcon: ({ focused }) => (
             <Ionicons
@@ -143,19 +116,6 @@ const TabNavigator = ({ navigation }) => {
           headerStyle: {
             backgroundColor: BrandColors.PrimaryDark,
           },
-          // Remove figma balls inden aflevering xx
-          headerLeft: () => (
-            <TouchableWithoutFeedback
-              onPress={() => {
-                Alert.alert('figma balls');
-              }}
-            >
-              <Image
-                style={GlobalStyles.logo}
-                source={require('../../assets/RideSaverLogo.png')}
-              />
-            </TouchableWithoutFeedback>
-          ),
           headerRight: () => LogoutButton(),
           tabBarIcon: ({ focused }) => (
             <Ionicons

@@ -120,19 +120,18 @@ const CoordinateDetails = (props) => {
     if (auth.currentUser.uid == coordinate.userid) {
       return (
         <View>
-          <Button title='Edit' onPress={() => handleEdit()} />
-          <Button title='Delete' onPress={() => confirmDelete()} />
+          <Button title="Edit" onPress={() => handleEdit()} />
+          <Button title="Delete" onPress={() => confirmDelete()} />
         </View>
       );
-      //
     } else if (joinedUsers.includes(auth.currentUser.uid)) {
       return (
         <View>
-          <Button title='Cancel Seat' onPress={() => handleRemoveRide()} />
+          <Button title="Cancel Seat" onPress={() => handleRemoveRide()} />
         </View>
       );
     } else {
-      return <Button title='Join Ride' onPress={() => handleJoinRide()} />;
+      return <Button title="Join Ride" onPress={() => handleJoinRide()} />;
     }
   };
 

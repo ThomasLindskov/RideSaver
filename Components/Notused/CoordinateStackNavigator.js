@@ -1,13 +1,10 @@
 // Importing modules, components and screens
 import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import AddCoordinate from '../Notused/EditCoordinate';
+import AddCoordinate from './EditCoordinate';
 import CoordinateListScreen from '../../screens/Notused/CoordinateListScreen';
-import CoordinateDetails from '../Notused/CoordinateDetails';
-import firebase from 'firebase';
-import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
-
+import CoordinateDetails from './CoordinateDetails';
+import { Colors } from '../../Styles/GlobalStyles';
 
 const CoordinateStackNavigator = () => {
   const Stack = createStackNavigator();
@@ -23,7 +20,7 @@ const CoordinateStackNavigator = () => {
             backgroundColor: Colors.bck,
           },
         }}
-        name='Coordinate List'
+        name="Coordinate List"
         component={CoordinateListScreen}
         initialParams={{ changed: false }}
       />
@@ -35,7 +32,7 @@ const CoordinateStackNavigator = () => {
             backgroundColor: Colors.bck,
           },
         }}
-        name='Coordinate Details'
+        name="Coordinate Details"
         component={CoordinateDetails}
       />
       <Stack.Screen
@@ -46,7 +43,7 @@ const CoordinateStackNavigator = () => {
             backgroundColor: Colors.bck,
           },
         }}
-        name='Edit Coordinate'
+        name="Edit Coordinate"
         component={AddCoordinate}
       />
     </Stack.Navigator>

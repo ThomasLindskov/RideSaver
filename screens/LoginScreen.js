@@ -10,7 +10,7 @@ import {
   Image,
 } from 'react-native';
 import { auth } from '../firebase';
-import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
   //Two variables used for providing email and password

@@ -11,7 +11,7 @@ import {
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
-import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
 import { auth, db } from '../firebase';
 import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
 import AddCoordinateModal from '../Components/Modals/AddCoordinateModal';
@@ -238,7 +238,7 @@ const MapScreen = ({ route }) => {
           <Marker
             title={group.organisation}
             description={`The office of ${group.organisation}`}
-            pinColor="white"
+            pinColor={BrandColors.Secondary}
             coordinate={{
               latitude: Number(group.latitude),
               longitude: Number(group.longitude),

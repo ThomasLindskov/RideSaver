@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Platform, Button, Alert } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
-import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../../Styles/GlobalStyles';
 
 // Passed  which are deconstructed to acces navigation and route
 const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
@@ -140,9 +140,9 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
   const buttons = () => {
     if (joinedUsers.includes(auth.currentUser.uid)) {
       return (
-        <View>
+        <View style={{ marginVertical: 10 }}>
           <Button
-            title="Cancel Seat"
+            title="Cancel Ride"
             color={BrandColors.Primary}
             onPress={() => handleRemoveRide()}
           />
@@ -150,11 +150,13 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       );
     } else {
       return (
-        <Button
-          title="Join Ride"
-          color={BrandColors.Primary}
-          onPress={() => handleJoinRide()}
-        />
+        <View style={{ marginVertical: 10 }}>
+          <Button
+            title="Join Ride"
+            color={BrandColors.Primary}
+            onPress={() => handleJoinRide()}
+          />
+        </View>
       );
     }
   };
@@ -170,15 +172,15 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       }}
     >
       <View style={styles.modalView}>
-        <Text style={styles.label}> Person:{nameOfUser} </Text>
+        <Text style={{ fontWeight: 'bold' }}> Driver: {nameOfUser} </Text>
         {Object.keys(initialState).map((key, index) => {
           //We make different formating for different keys
           //We need more data when the key is a address
           if (key == 'address') {
             return (
               <View style={styles.row} key={index}>
-                <Text style={styles.label}>{key}</Text>
-                <Text style={styles.label}>
+                <Text style={{ fontWeight: 'bold' }}>Address: </Text>
+                <Text style={{ width: '80%' }}>
                   {`${coordinate[key].street} ${coordinate[key].name} ${coordinate[key].city} ${coordinate[key].postalCode}`}{' '}
                 </Text>
               </View>
@@ -191,15 +193,15 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
             })}`;
             return (
               <View style={styles.row} key={index}>
-                <Text style={styles.label}>{key}</Text>
-                <Text style={styles.label}> {dateString} </Text>
+                <Text style={{ fontWeight: 'bold' }}>Date:</Text>
+                <Text> {dateString} </Text>
               </View>
             );
           } else {
             return (
               <View style={styles.row} key={index}>
-                <Text style={styles.label}>{key}</Text>
-                <Text style={styles.label}> {coordinate[key]} </Text>
+                <Text style={{ fontWeight: 'bold' }}>Number of seats: </Text>
+                <Text> {coordinate[key]} </Text>
               </View>
             );
           }
@@ -240,5 +242,35 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
+  },
+  buttonContainer: {
+    width: '60%',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 40,
+  },
+  button: {
+    backgroundColor: BrandColors.PrimaryLight,
+    width: '100%',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  buttonOutline: {
+    backgroundColor: BrandColors.WhiteLight,
+    marginTop: 5,
+    borderColor: BrandColors.PrimaryLight,
+    borderWidth: 2,
+  },
+
+  buttonText: {
+    color: BrandColors.WhiteLight,
+    fontWeight: '700',
+    fontSize: 16,
+  },
+  buttonOutlineText: {
+    color: BrandColors.PrimaryLight,
+    fontWeight: '700',
+    fontSize: 16,
   },
 });

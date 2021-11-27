@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
-import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../../Styles/GlobalStyles';
 import DateTimePicker from '@react-native-community/datetimepicker';
 
 //Modal for use in Map Screen to make a coordinate.
@@ -125,18 +125,23 @@ const AddCoordinateModal = ({
         >
           Create Ride
         </Text>
-        <Text>Ride from: {address}</Text>
-        <Text style={styles.modalText}>Departure Time</Text>
+        <Text style={styles.modalText}>Departure Time: </Text>
         <View style={styles.pickedDateContainer}>
           <Text>{userDate.toString().split(' ').splice(0, 5).join(' ')}</Text>
         </View>
-        <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
-          <Text>Choose date</Text>
+        <TouchableOpacity
+          onPress={showDatepicker}
+          style={[styles.button, styles.buttonClose]}
+        >
+          <Text style={styles.textStyle}>Choose date</Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
-          <Text>Choose departure time</Text>
+        <TouchableOpacity
+          onPress={showTimepicker}
+          style={[styles.button, styles.buttonClose]}
+        >
+          <Text style={styles.textStyle}>Choose departure time</Text>
         </TouchableOpacity>
-
+        <Text style={{ fontWeight: 'bold', marginTop: 5 }}>Address: </Text>
         <Text>{`${address[0].street} ${address[0].name} ${address[0].city} ${address[0].postalCode}`}</Text>
 
         {show && (
@@ -149,11 +154,12 @@ const AddCoordinateModal = ({
             onChange={onChange}
           />
         )}
+        <Text style={{ fontWeight: 'bold', marginTop: 5 }}>Seats in car: </Text>
         <TextInput
           style={GlobalStyles.input}
           onChangeText={setAvailableSeats}
           value={availableSeats}
-          placeholder="Seats in car"
+          placeholder="Plesae insert number of seats"
           keyboardType="numeric"
         />
 

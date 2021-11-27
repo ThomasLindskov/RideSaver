@@ -52,15 +52,18 @@ export const GlobalStyles = StyleSheet.create({
   },
   logout: { marginRight: 10 },
   ul: { fontSize: 12, margin: 5 },
-  
+
   columnView: {
     flex: 1,
-    marginTop: 40,
-    marginHorizontal: 10,
-    display: 'inline',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   pin: {},
   pinText: {
-
-  }
+    fontSize: 12,
+    width: '80%',
+    paddingLeft: 5,
+    paddingVertical: 15,
+  },
 });

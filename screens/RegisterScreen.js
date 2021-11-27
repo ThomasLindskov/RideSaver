@@ -9,18 +9,16 @@ import {
   View,
 } from 'react-native';
 import { auth, db } from '../firebase';
-import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
+import { GlobalStyles, BrandColors } from '../Styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
-
   //Three variables used for providing email, password and name
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
 
-
   useEffect(() => {
-      //If the user is already logged in go to HomeScreen, which is a reference to the tab navigator
+    //If the user is already logged in go to HomeScreen, which is a reference to the tab navigator
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         navigation.replace('HomeScreen');
@@ -28,7 +26,6 @@ const LoginScreen = ({ navigation }) => {
     });
     return unsubscribe;
   }, []);
-
 
   //This handles register
   const handleRegister = () => {
@@ -40,7 +37,7 @@ const LoginScreen = ({ navigation }) => {
         if (user && name) {
           try {
             //If the user and name if there, set some data in the userData object
-            //We do this because you cannot add properties to the auth object, so we make them in this. 
+            //We do this because you cannot add properties to the auth object, so we make them in this.
             db.ref('userData/' + userCredentials.uid).set({
               name: name,
               group: 1,
@@ -53,7 +50,7 @@ const LoginScreen = ({ navigation }) => {
       })
       .catch((error) => alert(error.message));
   };
-  
+
   //Go to the login screen should you want to login
   const handleLogin = () => {
     navigation.navigate('Login');
@@ -72,19 +69,19 @@ const LoginScreen = ({ navigation }) => {
           Use your company email when signing up!
         </Text>
         <TextInput
-          placeholder='Name'
+          placeholder="Name"
           value={name}
           onChangeText={(text) => setName(text)}
           style={styles.input}
         />
         <TextInput
-          placeholder='Email'
+          placeholder="Email"
           value={email}
           onChangeText={(text) => setEmail(text)}
           style={styles.input}
         />
         <TextInput
-          placeholder='Password'
+          placeholder="Password"
           value={password}
           onChangeText={(text) => setPassword(text)}
           style={styles.input}
