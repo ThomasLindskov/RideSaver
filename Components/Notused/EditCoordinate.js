@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import { GlobalStyles, Colors } from '../../Styles/GlobalStyles';
+import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
 import { auth, db } from '../../firebase';
 
 // Is passed props which are deconstructed to get access to navigation and route
@@ -61,7 +61,6 @@ const EditCoordinate = ({ route, navigation }) => {
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
         .update({ latitude, longitude, date, availableSeats });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
       Alert.alert('Your info has been updated');
       const coordinate = [id, newCoordinate];
       navigation.navigate('Coordinate Details', { coordinate });

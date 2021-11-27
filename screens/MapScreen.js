@@ -13,11 +13,11 @@ import * as Location from 'expo-location';
 import * as Haptics from 'expo-haptics';
 import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 import { auth, db } from '../firebase';
-import EditCoordinateModal from '../Components/Modals/EditCoordinateModal';
-import AddCoordinateModal from '../Components/Modals/AddCoordinateModal';
+import EditCoordinateModal from '../components/modals/EditCoordinateModal';
+import AddCoordinateModal from '../components/modals/AddCoordinateModal';
 import { Accuracy } from 'expo-location';
 
-import CoordinateDetailsModal from '../Components/Modals/CoordinateDetailsModal';
+import CoordinateDetailsModal from '../components/modals/CoordinateDetailsModal';
 
 const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
@@ -105,8 +105,7 @@ const MapScreen = ({ route }) => {
       });
 
     setCoordinates(coordinates);
-    getGroup(groupid)
-    
+    getGroup(groupid);
   };
 
   // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
@@ -187,7 +186,7 @@ const MapScreen = ({ route }) => {
           color={BrandColors.SecondaryDark}
           accessibilityLabel="Reload map"
         />
-        <Text >Loading...</Text>
+        <Text>Loading...</Text>
       </View>
     );
   }

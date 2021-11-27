@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import AddCoordinate from './EditCoordinate';
 import CoordinateListScreen from '../../screens/Notused/CoordinateListScreen';
 import CoordinateDetails from './CoordinateDetails';
-import { Colors } from '../../Styles/GlobalStyles';
+import { Colors } from '../../styles/GlobalStyles';
 
 const CoordinateStackNavigator = () => {
   const Stack = createStackNavigator();
