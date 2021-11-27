@@ -4,7 +4,8 @@
 
 The app uses a stack of React Native, Firebase and Firebase Realtime Database and has the following dependencies:
 
-![Dependencies](/assets/app/Dependencies.png)
+<img src='/assets/app/Dependencies.PNG' >  
+
 
 To run the app run the following commands in the terminal:
 
@@ -26,19 +27,12 @@ _Creating a greener future for Denmark_
 
 ### Screendumps fra appen
 
-Login Screen
 <img src='/assets/app/LoginScreen.jpg' width='400' height='790'>  
-Register Screen
 <img src='/assets/app/RegisterScreen.jpg' width='400' height='790'>
-Map Screen
 <img src='/assets/app/MapScreen.jpg' width='400' height='790'> 
-Join Ride
 <img src='/assets/app/JoinRide.jpg' width='400' height='790'>  
-Add Ride
 <img src='/assets/app/AddRide.jpg' width='400' height='790'>  
-Info Screen
 <img src='/assets/app/InfoScreen.jpg' width='400' height='790'>  
-Profile Screen
 <img src='/assets/app/ProfileScreen.jpg' width='400' height='790'>  
 
 ## Component structure
