@@ -1,4 +1,4 @@
-# ** [Brand navn] **
+# ** RideSaver **
 
 ### Ridesharing app for companies to offer to their employees.
 
@@ -41,15 +41,20 @@ for more info https://docs.github.com/en/github/writing-on-github/getting-starte
 
 1. App.js
    - Components
+     - Modals
+       - AddCoordinateModal.js
+       - CoordinateDetailsModal.js
+       - EditCoordinateModal.js
      - Navigation
        - CoordinateStackNavigator.js
        - TabNavigator.js
-     - AddCoordinate.js
-     - CoordinateDetails.js
    - Screens
-     - CoordinateScreen.js
-     - HomeScreen.js
+     - InfoScreen.js
      - LoginScreen.js
      - MapScreen.js
-     - ProfileScreen.js
+     - RegisterScreen.js
+     - TestScreen.js
+   - styles
+     - GlobalStyles.js
 2. firebase.js
+
