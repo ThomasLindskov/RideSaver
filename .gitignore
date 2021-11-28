@@ -11,7 +11,9 @@ web-build/
 config.env
 /config
 .env
+package-lock.json
 
 # macOS
 .DS_Store
 .idea
+config.js

@@ -3,52 +3,35 @@ import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
-  Text,
   SafeAreaView,
   Dimensions,
   Button,
-  Modal,
-  Pressable,
-  TouchableOpacity,
-  Picker,
+  Text,
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { Accuracy } from 'expo-location';
 import * as Haptics from 'expo-haptics';
-import Constants from 'expo-constants';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from 'react-native-dropdown-picker';
+import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
+import { auth, db } from '../firebase';
+import EditCoordinateModal from '../components/modals/EditCoordinateModal';
+import AddCoordinateModal from '../components/modals/AddCoordinateModal';
+import { Accuracy } from 'expo-location';
 
-const MapScreen = () => {
+import CoordinateDetailsModal from '../components/modals/CoordinateDetailsModal';
+
+const MapScreen = ({ route }) => {
   // State for creating markers on the map, setting the default location etc.
   const [hasLocationPermission, setHasLocationPermission] = useState(false);
-  const [currentLocation, setCurrentLocation] = useState(null);
-  const [userMarkerCoordinates, setUserMarkerCoordinates] = useState([]);
-  const [selectedCoordinate, setSelectedCoordinate] = useState(null);
-  const [selectedAddress, setSelectedAddress] = useState(null);
-  const [location, setLocation] = useState({
-    latitude: 55.666388,
-    longitude: 12.623887,
-  });
+  const [userMarkerCoordinate, setUserMarkerCoordinate] = useState(null);
 
+  //State for modals, coordinates, addresses, groups and currentlocation
   const [modalVisible, setModalVisible] = useState(false);
-
-  const [date, setDate] = useState(new Date());
-  const [mode, setMode] = useState('date');
-  const [show, setShow] = useState(false);
-
-  //State for dropdownpicker
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState(null);
-  const [numSeats, setNumSeats] = useState([
-    { label: 0, value: 0 },
-    { label: 1, value: 1 },
-    { label: 2, value: 2 },
-    { label: 3, value: 3 },
-    { label: 4, value: 4 },
-    { label: 5, value: 5 },
-  ]);
+  const [modalInsert, setModalInsert] = useState();
+  const [coordinates, setCoordinates] = useState([]);
+  const [markerAddress, setMarkerAddress] = useState();
+  const [group, setGroup] = useState();
+  const [currentLocation, setCurrentLocation] = useState(null);
+  const [groupId, setGroupId] = useState();
 
   // Alerts user to give locationpermission
   const getLocationPermission = async () => {
@@ -57,14 +40,6 @@ const MapScreen = () => {
     });
   };
 
-  // The useEffect hook runs everytime the page updates, which means if something happens,
-  // getLocationPermission will run again to check if we have location permission
-  useEffect(() => {
-    const response = getLocationPermission();
-  });
-
-  // Only used for getting coordinates from current location shown on map not a marker
-  // Maybe remove this function xx
   const updateLocation = async () => {
     await Location.getCurrentPositionAsync({
       accuracy: Accuracy.Balanced,
@@ -73,126 +48,174 @@ const MapScreen = () => {
     });
   };
 
+  // The useEffect hook runs everytime the page updates, which means if something happens,
+  // getLocationPermission will run again to check if we have location permission
+  useEffect(() => {
+    const response = getLocationPermission();
+    getCoordinates();
+    updateLocation();
+  }, [modalInsert, modalVisible]);
+
+  const getCoordinates = async () => {
+    let groupid;
+
+    await db
+      .ref('userData/' + auth.currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          groupid = snapshot.val().group;
+          setGroupId(groupid);
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    let coordinates = [];
+    await db
+      .ref('coordinates/')
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          snapshot.forEach((coordinate) => {
+            if (coordinate.val().groupId == groupid) {
+              let newObj = {
+                id: coordinate.key,
+                availableSeats: coordinate.val().availableSeats,
+                date: coordinate.val().date,
+                groupId: coordinate.val().groupId,
+                latitude: coordinate.val().latitude,
+                longitude: coordinate.val().longitude,
+                userid: coordinate.val().userid,
+                userjoined: coordinate.val().userjoined,
+                address: coordinate.val().address,
+              };
+              coordinates.push(newObj);
+            }
+          });
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    setCoordinates(coordinates);
+    getGroup(groupid);
+  };
+
   // When the map is long pressed we set a coordinate and updates the userMarkerCoordinates array
-  const handleLongPress = (event) => {
+  const handleLongPress = async (event) => {
     const coordinate = event.nativeEvent.coordinate;
-    setUserMarkerCoordinates((userMarkerCoordinates) => [
-      ...userMarkerCoordinates,
-      coordinate,
-    ]);
+
+    //Skal testes på Iphone da Mikkels virkede anderledes xx.
+    await Location.reverseGeocodeAsync(coordinate).then((data) => {
+      setMarkerAddress(data);
+    });
+    setUserMarkerCoordinate(coordinate);
     // Haptics creates a vibration for longpress
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+    setModalVisible(true);
   };
 
-  // When creating a new coordinate this sets a selectedadress which is run on line 130-136
-  const handleSelectMarker = async (coordinate) => {
-    setSelectedCoordinate(coordinate);
-    await Location.reverseGeocodeAsync(coordinate).then((data) => {
-      setSelectedAddress(data);
-    });
+  //Change the pin color depending on if the logged in user created it or not
+  const getPinColor = (userid) => {
+    if (userid == auth.currentUser.uid) {
+      return 'blue';
+    } else {
+      return 'red';
+    }
   };
 
-  // Close infobox for specific coordinate.
-  const closeInfoBox = () =>
-    setSelectedCoordinate(null) && setSelectedAddress(null);
+  const handleClose = () => {
+    setModalInsert(null);
+  };
 
-  // If no hasLocationPermission === null we return null
-  // If there is an error we return a text asking to change settings
-  // Otherwise the button for update location is shown (which is the function we might not need xx)
-  const RenderCurrentLocation = (props) => {
-    if (props.hasLocationPermission === null) {
-      return null;
+  const handleNewClose = () => {
+    setModalVisible(false);
+  };
+
+  const getGroup = async (groupid) => {
+    await db
+      .ref('groups/' + groupid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          setGroup(snapshot.val());
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
+  const getModal = (coordinate) => {
+    if (coordinate.userid != auth.currentUser.uid) {
+      setModalInsert(
+        <CoordinateDetailsModal
+          isOpen={true}
+          handleClose={handleClose}
+          coordinate={coordinate}
+        />
+      );
+    } else {
+      setModalInsert(
+        <EditCoordinateModal
+          isOpen={true}
+          handleClose={handleClose}
+          coordinate={coordinate}
+        />
+      );
     }
-    if (props.hasLocationPermission === false) {
-      return <Text>No location access. Go to settings to change</Text>;
-    }
+  };
+
+  if (!group || !currentLocation) {
     return (
       <View>
         <Button
-          style={styles.container}
-          title='update location'
-          onPress={updateLocation}
+          onPress={() => {
+            getCoordinates();
+          }}
+          title="Reload map (Test button)"
+          color={BrandColors.SecondaryDark}
+          accessibilityLabel="Reload map"
         />
-        {currentLocation && (
-          <Text>
-            {`Lat: ${currentLocation.latitude},\nLong:${currentLocation.longitude}`}
-          </Text>
-        )}
+        <Text>Loading...</Text>
       </View>
     );
-  };
+  }
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
-    setDate(currentDate);
-  };
+  const userMarker =
+    userMarkerCoordinate != null ? (
+      <Marker
+        title="Temporary marker"
+        description="This is where ride info will go"
+        pinColor="yellow"
+        coordinate={userMarkerCoordinate}
+      />
+    ) : null;
 
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode('date');
-  };
-
-  const showTimepicker = () => {
-    showMode('time');
-  };
-
-  //   const handleChangeText = (name, event) => {
-  //     setUserMarkerCoordinates({ ...userMarkerCoordinates, [name]: event });
-  //   };
-
-  //   <TextInput
-  //   style={styles.input}
-  //   onChangeText={(event) => handleChangeText(key, event)}
-  //   value={userMarkerCoordinates[key]}
-  // />
-
-  // initialRegion={{
-  //   latitude: 55.666388,
-  //   longitude: 12.623887,
-  //   latitudeDelta: 0.0922,
-  //   longitudeDelta: 0.0421,
-  // }}
-
-  // <DialogInput
-  //   title={'Create Ride'}
-  //   message={'Do you want to create a ride from your current location?'}
-  //   hintInput={'Add comment to your ride'}
-  //   submitInput={(inputText) => {
-  //     this.sendInput(inputText);
-  //   }}
-  //   closeDialog={() => {
-  //     this.showDialog(false);
-  //   }}
-  // />;
-
-  // <TextInput
-  //             style={styles.input}
-  //             placeholder='Choose number of available seats'
-  //             value={number}
-  //             onChangeText={onChangeNumber}
-  //             keyboardType='numeric'
-  //           />
-
-
-    // RenderCurrentLocation might not be needed xx
   return (
     <SafeAreaView style={styles.container}>
-      <RenderCurrentLocation
-        props={{
-          hasLocationPermission: hasLocationPermission,
-          currentLocation: currentLocation,
+      <Button
+        onPress={() => {
+          getCoordinates();
         }}
+        title="Reload map"
+        color={BrandColors.SecondaryDark}
+        accessibilityLabel="Reload map"
       />
       {/* Mapview shows the current location and adds a coordinate onLongPress */}
       <MapView
         initialRegion={{
-          latitude: location.latitude,
-          longitude: location.longitude,
+          latitude: currentLocation.latitude,
+          longitude: currentLocation.longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
@@ -212,122 +235,61 @@ const MapScreen = () => {
         }}
         onLongPress={handleLongPress}
       >
-        {/* 3 predefined markers */}
-        <Marker
-          title='Hjem'
-          description='Her bor jeg'
-          coordinate={{
-            latitude: 55.66663192214644,
-            longitude: 12.623913456074268,
-          }}
-        />
-        <Marker
-          title='Babistan'
-          description='bab'
-          coordinate={{
-            latitude: 55.667885358340435,
-            longitude: 12.548816787109843,
-          }}
-        />
-        <Marker
-          title='Spunk'
-          description='ad'
-          coordinate={{
-            latitude: 55.6713715888453,
-            longitude: 12.560422585260284,
-          }}
-        />
-        {/* Mapping through userMarkerCoordinates array and outputs each one, this should be updated to not be an empty array,
-        but import existing coordinates from firebase. */}
-        {userMarkerCoordinates.map((coordinate, index) => (
+        {/* Marker for the organisation*/}
+        {!group ? null : (
           <Marker
-            coordinate={coordinate}
-            key={index.toString()}
-            onPress={() => handleSelectMarker(coordinate)}
+            title={group.organisation}
+            description={`The office of ${group.organisation}`}
+            pinColor={BrandColors.Secondary}
+            coordinate={{
+              latitude: Number(group.latitude),
+              longitude: Number(group.longitude),
+            }}
           />
-        ))}
-      </MapView>
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert('Modal has been closed.');
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <Text
-              style={{
-                textAlign: 'center',
-                marginTop: 10,
-                marginBottom: 10,
-                fontSize: 25,
-                fontWeight: 'bold',
-              }}
-            >
-              Create Ride
-            </Text>
-            <Text style={styles.modalText}>Departure Time</Text>
-            <View style={styles.pickedDateContainer}>
-              <Text>{date.toString().split(' ').splice(0, 5).join(' ')}</Text>
-            </View>
-            <TouchableOpacity onPress={showDatepicker} style={{ marginTop: 5 }}>
-              <Text>Choose date</Text>
-            </TouchableOpacity>
-            <TouchableOpacity onPress={showTimepicker} style={{ marginTop: 5 }}>
-              <Text>Choose departure time</Text>
-            </TouchableOpacity>
+        )}
 
-            {show && (
-              <DateTimePicker
-                testID='dateTimePicker'
-                value={date}
-                mode={mode}
-                is24Hour={true}
-                display='default'
-                onChange={onChange}
+        {coordinates.map((coordinate, index) => {
+          let formattedDate = new Date(Date.parse(coordinate.date));
+          let dateString = `${formattedDate.toLocaleString('default', {
+            month: 'short',
+          })}`;
+          let isUserjoined = !coordinate.userjoined
+            ? null
+            : coordinate.userjoined[auth.currentUser.uid];
+          if (coordinate.availableSeats > 0 || isUserjoined) {
+            return (
+              <Marker
+                title={dateString}
+                description="Press here to get more info."
+                key={index}
+                onCalloutPress={() => {
+                  getModal(coordinate);
+                }}
+                pinColor={getPinColor(coordinate.userid)}
+                coordinate={{
+                  latitude: Number(coordinate.latitude),
+                  longitude: Number(coordinate.longitude),
+                }}
               />
-            )}
-
-            <Text style={styles.modalText}>Number of seats</Text>
-            <DropDownPicker
-              open={open}
-              value={value}
-              numSeats={numSeats}
-              min={1}
-              setOpen={setOpen}
-              setValue={setValue}
-              setNumSeats={setNumSeats}
-            />
-            <Pressable
-              style={[styles.button, styles.buttonClose]}
-              onPress={() => setModalVisible(!modalVisible)}
-            >
-              <Text style={styles.textStyle}>Close</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-      <Pressable
-        style={[styles.button, styles.buttonOpen]}
-        onPress={() => setModalVisible(true)}
-      >
-        <Text style={styles.textStyle}>Create Ride</Text>
-      </Pressable>
-{/* Shows info about a selected coordinate, and closes onPress of button*/}
-      {selectedCoordinate && selectedAddress && (
-        <View style={styles.infoBox}>
-          <Text style={styles.infoText}>
-            {selectedCoordinate.latitude}, {selectedCoordinate.longitude}
-          </Text>
-          <Text style={styles.infoText}>
-            Name: {selectedAddress[0].name} Region: {selectedAddress[0].region}
-          </Text>
-          <Button title='close' onPress={closeInfoBox} />
-        </View>
-      )}
+            );
+          }
+        })}
+        {/* Mapping through userMarkerCoordinates array and outputs each one*/}
+        {userMarker}
+      </MapView>
+      <View>
+        {
+          <AddCoordinateModal
+            isOpen={modalVisible}
+            handleClose={handleNewClose}
+            coordinate={userMarkerCoordinate}
+            address={markerAddress}
+            setUserMarkerCoordinate={setUserMarkerCoordinate}
+            group={groupId}
+          />
+        }
+        {modalInsert}
+      </View>
     </SafeAreaView>
   );
 };
@@ -338,27 +300,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 8,
-    paddingTop: Constants.statusBarHeight,
+    padding: 0,
+  },
+  header: {
+    ...GlobalStyles.header,
+    color: BrandColors.SecondaryDark,
   },
   map: {
     flex: 1,
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height,
-  },
-  infoBox: {
-    height: 200,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: 'yellow',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flex: 1,
-  },
-  infoText: {
-    fontSize: 15,
   },
   input: {
     borderWidth: 1,
@@ -366,12 +317,12 @@ const styles = StyleSheet.create({
   },
   modalView: {
     margin: 30,
-    backgroundColor: 'white',
+    backgroundColor: BrandColors.WhiteLight,
     borderRadius: 20,
     padding: 35,
     marginTop: 70,
     alignItems: 'center',
-    shadowColor: '#000',
+    shadowColor: BrandColors.GreyDark,
     shadowOffset: {
       width: 0,
       height: 2,
@@ -386,14 +337,11 @@ const styles = StyleSheet.create({
     elevation: 2,
     marginTop: 15,
   },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    backgroundColor: BrandColors.SecondaryDark,
   },
   textStyle: {
-    color: 'white',
+    color: BrandColors.WhiteLight,
     fontWeight: 'bold',
     textAlign: 'center',
   },
@@ -405,7 +353,7 @@ const styles = StyleSheet.create({
   },
   pickedDateContainer: {
     padding: 5,
-    backgroundColor: '#eee',
+    backgroundColor: BrandColors.WhiteDark,
     borderRadius: 2,
   },
 });

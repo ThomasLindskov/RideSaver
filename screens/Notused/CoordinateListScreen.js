@@ -1,23 +1,65 @@
 // Importing modules
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import firebase from 'firebase';
+import { auth, db } from '../../firebase';
 
 // Is passed navigation as a prop as it is used in the CoordinateStackNavigator
-const CoordinateListScreen = ({ navigation }) => {
-  const [coordinates, setCoordinates] = useState();
+const CoordinateListScreen = ({ navigation, route }) => {
+  const [coordinates, setCoordinates] = useState([]);
 
   // useEffect hook updates on change and checks if any coordinates are in the firebase database
   useEffect(() => {
-    if (!coordinates) {
-      firebase
-        .database()
-        .ref('/Coordinates')
-        .on('value', (snapshot) => {
-          setCoordinates(snapshot.val());
-        });
-    }
-  }, []);
+    getCoordinates();
+  });
+
+  const getCoordinates = async () => {
+    let groupid;
+
+    await db
+      .ref('userData/' + auth.currentUser.uid)
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          groupid = snapshot.val().group;
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    let coordinates = [];
+    await db
+      .ref('coordinates/')
+      .get()
+      .then((snapshot) => {
+        if (snapshot.exists()) {
+          snapshot.forEach((coordinate) => {
+            if (coordinate.val().groupId == groupid) {
+              let newObj = {
+                id: coordinate.key,
+                availableSeats: coordinate.val().availableSeats,
+                date: coordinate.val().date,
+                groupId: coordinate.val().groupId,
+                latitude: coordinate.val().latitude,
+                longitude: coordinate.val().longitude,
+                userid: coordinate.val().userid,
+                userjoined: coordinate.val().userjoined,
+              };
+              coordinates.push(newObj);
+            }
+          });
+        } else {
+          console.log('No data available');
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+    setCoordinates(coordinates);
+  };
 
   // If no coordinates return loading
   if (!coordinates) {
@@ -47,7 +89,7 @@ const CoordinateListScreen = ({ navigation }) => {
             onPress={() => handleSelectCoordinate(coordinateKeys[index])}
           >
             <Text>
-              {item.leaveTime} {item.availableSeats}
+              {item.date} {item.latitude} {item.longitude}
             </Text>
           </TouchableOpacity>
         );

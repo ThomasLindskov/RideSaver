@@ -2,16 +2,6 @@
 // Import firebase
 import firebase from 'firebase';
 
-// Setting up admin access to the firebase database so we can access it without constantly updating the rules
-const { initializeApp } = require('firebase-admin/app');
-
-// Not done with this - xx https://firebase.google.com/docs/admin/setup#windows
-
-initializeApp({
-  credential: applicationDefault(),
-  databaseURL: 'https://<DATABASE_NAME>.firebaseio.com'
-});
-
 
 // Firebase configuration for project
 const firebaseConfig = {
@@ -33,6 +23,9 @@ if (firebase.apps.length === 0) {
   app = firebase.app();
 }
 
+//we export both the auth and the db objects, which we get from these two functions. 
 const auth = firebase.auth();
+const db = firebase.database();
 
-export { auth };
+
+export { auth, db };

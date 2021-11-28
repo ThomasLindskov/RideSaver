@@ -1,14 +1,14 @@
 // Importing modules, screens and components used for the bootom tab navigator
 import React, { useEffect, useState } from 'react';
+import { Image, View, TouchableWithoutFeedback, Alert } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import ProfileScreen from '../../screens/ProfileScreen';
-import HomeScreen from '../../screens/HomeScreen';
-import LoginScreen from '../../screens/LoginScreen';
-import { auth } from '../../firebase';
+import ProfileScreen from '../../screens/TestScreen';
+import { auth, db } from '../../firebase';
 import { Button } from 'react-native';
 import MapScreen from '../../screens/MapScreen';
-import CoordinateStackNavigator from './CoordinateStackNavigator';
+import { GlobalStyles, BrandColors } from '../../styles/GlobalStyles';
+import InfoScreen from '../../screens/InfoScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,6 +16,7 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = ({ navigation }) => {
   // We set an initial state of loggedIn to false, to use firebase to check whether a user is logged in or not
   const [user, setUser] = useState({ loggedIn: false });
+  const [group, setGroup] = useState();
 
   // Check the login state of a user - This is code from firebase
   function onAuthStateChange(callback) {
@@ -36,110 +37,97 @@ const TabNavigator = ({ navigation }) => {
     };
   }, []);
 
-  //TabScreen for loggin in, which is only shown if loggedIn: false
-  const loginTab = () => {
-    if (!user.loggedIn) {
-      return (
-        <Tab.Screen
-          name="Log In"
-          component={LoginScreen}
-          options={{
-            headerTintColor: '#E7C4B1',
-            headerTitleAlign: 'center',
-            headerStyle: {
-              backgroundColor: '#131200',
-            },
-            headerRight: () => LogoutButton(),
-            tabBarIcon: () => <Ionicons name="home-outline" size={20} />,
-          }}
-        />
-      );
-    } else {
-      // If loggedIn is not false, a TabScreen is shown for the profile screen.
-      return (
-        <Tab.Screen
-          name="Profile"
-          component={ProfileScreen}
-          options={{
-            headerTintColor: '#E7C4B1',
-            headerTitleAlign: 'center',
-            headerStyle: {
-              backgroundColor: '#131200',
-            },
-            headerRight: () => LogoutButton(),
-            tabBarIcon: () => (
-              <Ionicons name="person-circle-outline" size={20} />
-            ),
-          }}
-        />
-      );
-    }
-  };
-
   // The logout button is shown if a user is logged in and changes the loggedIn state if pressed, and navigates to homescreen
   const LogoutButton = () => {
     if (user.loggedIn) {
       return (
-        <Button
-          onPress={() => {
-            auth
-              .signOut()
-              .then(() => {
-                navigation.replace('HomeScreen');
-              })
-              .catch((error) => alert(error.message));
-          }}
-          title="Logout"
-          color="#000"
-        />
+        <View style={{ marginRight: 10 }}>
+          <Button
+            onPress={() => {
+              auth
+                .signOut()
+                .then(() => {
+                  navigation.replace('Login');
+                })
+                .catch((error) => alert(error.message));
+            }}
+            title="Logout"
+            color={BrandColors.PrimaryLight}
+          />
+        </View>
       );
     }
   };
 
   //Show Homescreen, MapScreen and CoordinateStackNavigator regardless of loggedIn status
   return (
-    <Tab.Navigator screenOptions={{ tabBarActiveTintColor: '#CE8964' }}>
+    <Tab.Navigator
+      screenOptions={{ tabBarActiveTintColor: BrandColors.PrimaryLight }}
+    >
       <Tab.Screen
-        name="Home"
-        component={HomeScreen}
+        name="Info"
+        component={InfoScreen}
         options={{
-          headerTintColor: '#E7C4B1',
+          headerTintColor: BrandColors.White,
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#131200',
+            backgroundColor: BrandColors.PrimaryDark,
           },
           headerRight: () => LogoutButton(),
-          tabBarIcon: () => <Ionicons name="home-outline" size={20} />,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="help-circle-outline"
+              color={
+                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
+              }
+              size={20}
+            />
+          ),
         }}
       />
-
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerTintColor: BrandColors.White,
+          headerTitleAlign: 'center',
+          headerStyle: {
+            backgroundColor: BrandColors.PrimaryDark,
+          },
+          headerRight: () => LogoutButton(),
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="person-circle-outline"
+              color={
+                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
+              }
+              size={20}
+            />
+          ),
+        }}
+      />
       <Tab.Screen
         name="Map"
         component={MapScreen}
+        initialParams={{ group: group }}
         options={{
-          headerTintColor: '#E7C4B1',
+          headerTintColor: BrandColors.White,
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#131200',
+            backgroundColor: BrandColors.PrimaryDark,
           },
           headerRight: () => LogoutButton(),
-          tabBarIcon: () => <Ionicons name="globe" size={20} />,
+          tabBarIcon: ({ focused }) => (
+            <Ionicons
+              name="globe"
+              color={
+                focused ? BrandColors.PrimaryLight : BrandColors.PrimaryDark
+              }
+              size={20}
+            />
+          ),
         }}
       />
-      <Tab.Screen
-        name="Coordinates"
-        component={CoordinateStackNavigator}
-        options={{
-          headerTintColor: '#E7C4B1',
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: '#131200',
-          },
-          headerRight: () => LogoutButton(),
-          tabBarIcon: () => <Ionicons name="location-outline" size={20} />,
-        }}
-      />
-      {loginTab()}
     </Tab.Navigator>
   );
 };

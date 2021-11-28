@@ -7,15 +7,15 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-  Image,
 } from 'react-native';
-import { auth } from '../firebase';
+import { auth, db } from '../firebase';
 import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
 const LoginScreen = ({ navigation }) => {
-  //Two variables used for providing email and password
+  //Three variables used for providing email, password and name
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
 
   useEffect(() => {
     //If the user is already logged in go to HomeScreen, which is a reference to the tab navigator
@@ -27,21 +27,33 @@ const LoginScreen = ({ navigation }) => {
     return unsubscribe;
   }, []);
 
-  //Go to the register screen should you want to register
+  //This handles register
   const handleRegister = () => {
-    navigation.navigate('Register');
-  };
-
-  //This handles login
-  const handleLogin = () => {
-    //Uses firebase method sign in user if in auth in firebase.
+    //first we create the user
     auth
-      .signInWithEmailAndPassword(email, password)
-      .then((userCredentials) => {
-        const user = userCredentials.user;
-        Alert.alert('Logged in with: ', user.email);
+      .createUserWithEmailAndPassword(email, password)
+      .then((user) => {
+        const userCredentials = user.user;
+        if (user && name) {
+          try {
+            //If the user and name if there, set some data in the userData object
+            //We do this because you cannot add properties to the auth object, so we make them in this.
+            db.ref('userData/' + userCredentials.uid).set({
+              name: name,
+              group: 1,
+            });
+          } catch (error) {
+            Alert.alert(`Error: ${error.message}`);
+          }
+        }
+        console.log('Registered user with email: ', userCredentials.uid);
       })
       .catch((error) => alert(error.message));
+  };
+
+  //Go to the login screen should you want to login
+  const handleLogin = () => {
+    navigation.navigate('Login');
   };
 
   return (
@@ -50,17 +62,18 @@ const LoginScreen = ({ navigation }) => {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <View style={styles.inputContainer}>
-        <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Image
-            source={require('../assets/Logo.png')}
-            style={{
-              height: 64,
-              width: 456,
-              margin: 10,
-            }}
-          />
-        </View>
-        <Text style={styles.header}>Welcome to RideSaver, please log in!</Text>
+        <Text style={styles.header}>
+          Welcome to RideSaver, please register!
+        </Text>
+        <Text style={styles.buttonOutlineText}>
+          Use your company email when signing up!
+        </Text>
+        <TextInput
+          placeholder="Name"
+          value={name}
+          onChangeText={(text) => setName(text)}
+          style={styles.input}
+        />
         <TextInput
           placeholder="Email"
           value={email}
@@ -77,15 +90,15 @@ const LoginScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity onPress={handleLogin} style={styles.button}>
-          <Text style={styles.buttonText}>Login</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity
           onPress={handleRegister}
           style={[styles.button, styles.buttonOutline]}
         >
           <Text style={styles.buttonOutlineText}>Register</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={handleLogin} style={styles.button}>
+          <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>
@@ -97,7 +110,11 @@ export default LoginScreen;
 const styles = StyleSheet.create({
   container: {
     ...GlobalStyles.container,
-    backgroundColor: BrandColors.Primary,
+    backgroundColor: BrandColors.Secondary,
+  },
+  header: {
+    ...GlobalStyles.header,
+    color: BrandColors.GreyDark,
   },
   inputContainer: {
     width: '80%',
@@ -109,7 +126,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 5,
     color: BrandColors.GreyDark,
-    borderColor: BrandColors.Secondary,
+    borderColor: BrandColors.Primary,
     borderWidth: 2,
   },
 
@@ -120,7 +137,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   button: {
-    backgroundColor: BrandColors.PrimaryLight,
+    backgroundColor: BrandColors.Primary,
     width: '100%',
     padding: 15,
     borderRadius: 10,
@@ -130,7 +147,8 @@ const styles = StyleSheet.create({
   buttonOutline: {
     backgroundColor: BrandColors.WhiteLight,
     marginTop: 5,
-    borderColor: BrandColors.PrimaryLight,
+    marginBottom: 5,
+    borderColor: BrandColors.Primary,
     borderWidth: 2,
   },
 
@@ -140,15 +158,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   buttonOutlineText: {
-    color: BrandColors.PrimaryLight,
+    color: BrandColors.GreyDark,
     fontWeight: '700',
     fontSize: 16,
-  },
-  header: {
-    alignItems: 'center',
-    fontWeight: 'bold',
-    paddingBottom: 20,
-    fontSize: 18,
-    color: BrandColors.WhiteLight,
   },
 });
