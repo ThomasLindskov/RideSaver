@@ -46,7 +46,7 @@ _Creating a greener future for Denmark_
      - navigation
        - CoordinateStackNavigator.js
        - TabNavigator.js
-   - Screens
+   - screens
      - InfoScreen.js
      - LoginScreen.js
      - MapScreen.js
