@@ -4,7 +4,8 @@
 
 The app uses a stack of React Native, Firebase and Firebase Realtime Database and has the following dependencies:
 
-xx we need to update package.json (why do we have camera and medialibrary??)
+<img src='/assets/app/Dependencies.PNG' >  
+
 
 To run the app run the following commands in the terminal:
 
@@ -22,30 +23,27 @@ or press the 'w' in the console to open in web (not created or tested for webvie
 
 ## App Vision
 
-_Give companies the choice of a greener future_
-
-xx her tilføjer vi nogle billeder fra appen
+_Creating a greener future for Denmark_
 
 ### Screendumps fra appen
 
-![Login screen](https://link.to.picture.com/picture1.jpg)  
-![Home screen](https://link.to.picture.com/picture2.jpg)  
-![Map screen](https://link.to.picture.com/picture3.jpg)  
-![Ride details](https://link.to.picture.com/picture4.jpg)  
-![Profile screen](https://link.to.picture.com/picture5.jpg)
-
-xx
-for more info https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax relative links
+<img src='/assets/app/LoginScreen.jpg' width='400' height='790'>  
+<img src='/assets/app/RegisterScreen.jpg' width='400' height='790'>
+<img src='/assets/app/MapScreen.jpg' width='400' height='790'> 
+<img src='/assets/app/JoinRide.jpg' width='400' height='790'>  
+<img src='/assets/app/AddRide.jpg' width='400' height='790'>  
+<img src='/assets/app/InfoScreen.jpg' width='400' height='790'>  
+<img src='/assets/app/ProfileScreen.jpg' width='400' height='790'>  
 
 ## Component structure
 
 1. App.js
-   - Components
-     - Modals
+   - components
+     - modals
        - AddCoordinateModal.js
        - CoordinateDetailsModal.js
        - EditCoordinateModal.js
-     - Navigation
+     - navigation
        - CoordinateStackNavigator.js
        - TabNavigator.js
    - Screens
@@ -57,4 +55,3 @@ for more info https://docs.github.com/en/github/writing-on-github/getting-starte
    - styles
      - GlobalStyles.js
 2. firebase.js
-

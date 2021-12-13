@@ -1,7 +1,6 @@
 // Importing modules
 import React, { useEffect, useState } from 'react';
 import { Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { get } from 'react-native/Libraries/Utilities/PixelRatio';
 import { auth, db } from '../../firebase';
 
 // Is passed navigation as a prop as it is used in the CoordinateStackNavigator

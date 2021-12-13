@@ -10,7 +10,7 @@ import {
   SafeAreaView,
   ScrollView,
 } from 'react-native';
-import { GlobalStyles, Colors } from '../../Styles/GlobalStyles';
+import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
 import { auth, db } from '../../firebase';
 
 // Is passed props which are deconstructed to get access to navigation and route
