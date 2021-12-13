@@ -100,6 +100,7 @@ const AddCoordinateModal = ({
     setUserDate(currentDate);
   };
 
+  //To show the address when android and ios.The maps return different values dependent on OS. 
   const showAddress = () => {
     if(Platform.OS === 'ios') {
       return ` ${address[0].name} ${address[0].city} ${address[0].postalCode}`
@@ -108,6 +109,7 @@ const AddCoordinateModal = ({
     }
   }
 
+  //To show date and time when android and ios. IOS can have only one button, android needs two. 
   const DateTimerPicker = () => {
     if(Platform.OS === 'ios') {
       return (
@@ -156,7 +158,7 @@ const AddCoordinateModal = ({
       </Modal>
     );
   }
-  //Here we return the modal which is seen in the MapScreen
+  //Here we return the modal which is called from the MapScreen
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <Modal

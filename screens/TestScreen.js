@@ -43,6 +43,7 @@ const TestScreen = () => {
     }
   }, []);
 
+  //Updates the group which is pressed.
   const handleSelectGroup = (id) => {
     const group = Object.entries(groups).find(
       (group) => group[0] === id /*id*/
@@ -68,7 +69,7 @@ const TestScreen = () => {
       </Text>
       <Text style={{ margin: 5 }}>
         This page illustrates how the app divides users into groups. Press one
-        of the groups below, go to the map screen and update, to see rides for
+        of the groups below, go to the map screen and press reload map, to see rides for
         this group.
       </Text>
       <FlatList

@@ -183,10 +183,8 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
               </View>
             );
           } else if (key == 'date') {
-            //The same here with date, it needs to be formatted to readable string
-
-            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', time: 'none' };
             let formattedDate = new Date(Date.parse(coordinate[key]));
+            //We need to do this because of IOS and Android
             let dateString = `${formattedDate.getDate()}-${formattedDate.getMonth()+1}-${formattedDate.getFullYear()}`;
 
             let timeString = `${formattedDate.toLocaleTimeString('default', {

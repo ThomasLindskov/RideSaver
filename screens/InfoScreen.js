@@ -3,6 +3,7 @@ import React from 'react';
 import { View, Text, Image, ScrollView } from 'react-native';
 import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 
+//This screen is a info screen, to give info how the map works. 
 const InfoScreen = () => {
   return (
     <ScrollView>

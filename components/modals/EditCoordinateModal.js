@@ -35,18 +35,22 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     setMode(currentMode);
   };
 
+  //For the date, used for Andriod
   const showDatepicker = () => {
     showMode('date');
   };
 
+  //For the time, used for Andriod
   const showTimepicker = () => {
     showMode('time');
   };
 
+  //For the time and date, used for IOS
   const showDateTimepicker = () => {
     showMode('datetime');
   };
 
+  //When changing the date, we set the date as userDate
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || userDate;
     setShow(Platform.OS === 'ios');
@@ -122,6 +126,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     }
   };
 
+  //To show date and time when android and ios. IOS can have only one button, android needs two. 
   const dateTimerPicker = () => {
     if(Platform.OS === 'ios') {
       return (
@@ -154,9 +159,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     }
   }
 
-
-
-
+  //If no coordinate is found, if will show a loading modal. 
   if (!newCoordinate) {
     return (
       <Modal

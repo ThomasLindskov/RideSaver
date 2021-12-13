@@ -14,7 +14,7 @@ import * as Haptics from 'expo-haptics';
 import { GlobalStyles, BrandColors } from '../styles/GlobalStyles';
 import { auth, db } from '../firebase';
 import EditCoordinateModal from '../components/modals/EditCoordinateModal';
-import AddCoordinateModal from '../components/modals/AddCoordinateModal';
+import AddCoordinateModal from '../components/modals/AddCordinateModal';
 import { Accuracy } from 'expo-location';
 
 import CoordinateDetailsModal from '../components/modals/CoordinateDetailsModal';
@@ -158,6 +158,7 @@ const MapScreen = ({ route }) => {
       });
   };
 
+  //If the modal is the users, it opens a different edit modal, if not a detail modal. 
   const getModal = (coordinate) => {
     if (coordinate.userid != auth.currentUser.uid) {
       setModalInsert(
@@ -178,6 +179,7 @@ const MapScreen = ({ route }) => {
     }
   };
 
+  //If no group, then show loading. 
   if (!group || !currentLocation) {
     return (
       <View>
@@ -194,6 +196,7 @@ const MapScreen = ({ route }) => {
     );
   }
 
+  //This a Temporary marker
   const userMarker =
     userMarkerCoordinate != null ? (
       <Marker
