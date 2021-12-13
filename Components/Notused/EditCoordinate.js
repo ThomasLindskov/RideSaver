@@ -61,7 +61,7 @@ const EditCoordinate = ({ route, navigation }) => {
       db.ref(`coordinates/${id}`)
         // Only choosen fields will be updated
         .update({ latitude, longitude, date, availableSeats });
-      // Alert after updating info and navigate back to 'Coordinate details' xx might need to be 'Coordinate Details'
+      // Alert after updating info and navigate back to 'Coordinate Details'
       Alert.alert('Your info has been updated');
       const coordinate = [id, newCoordinate];
       navigation.navigate('Coordinate Details', { coordinate });

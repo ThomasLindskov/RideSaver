@@ -67,9 +67,6 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
       return Alert.alert('This is your ride');
     }
 
-    if (coordinate.availableSeats == 0) {
-      return Alert.alert('No room on this ride');
-    }
 
     coordinate.availableSeats += 1;
     try {
@@ -77,7 +74,6 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
         // Only choosen fields will be updated
         .update({ availableSeats: coordinate.availableSeats });
       // Alert after updating info
-      Alert.alert('You joined the ride!');
     } catch (error) {
       Alert.alert(`Error: ${error.message}`);
     }
@@ -161,6 +157,7 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
     }
   };
 
+
   //Here we return the modal.
   return (
     <Modal
@@ -181,21 +178,33 @@ const CoordinateDetailsModal = ({ isOpen, handleClose, coordinate }) => {
               <View style={styles.row} key={index}>
                 <Text style={{ fontWeight: 'bold' }}>Address: </Text>
                 <Text style={{ width: '80%' }}>
-                  {`${coordinate[key].street} ${coordinate[key].name} ${coordinate[key].city} ${coordinate[key].postalCode}`}{' '}
+                {`${coordinate[key].name} ${coordinate[key].city} ${coordinate[key].postalCode}`}
                 </Text>
               </View>
             );
           } else if (key == 'date') {
             //The same here with date, it needs to be formatted to readable string
+
+            var options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', time: 'none' };
             let formattedDate = new Date(Date.parse(coordinate[key]));
-            let dateString = `${formattedDate.toLocaleString('default', {
-              month: 'short',
+            let dateString = `${formattedDate.getDate()}-${formattedDate.getMonth()+1}-${formattedDate.getFullYear()}`;
+
+            let timeString = `${formattedDate.toLocaleTimeString('default', {
+              hour12: false              
             })}`;
+
+
             return (
-              <View style={styles.row} key={index}>
-                <Text style={{ fontWeight: 'bold' }}>Date:</Text>
-                <Text> {dateString} </Text>
-              </View>
+              <View style key={index}>
+                <View style={styles.row}>
+                  <Text style={{ fontWeight: 'bold' }}>Date:</Text>
+                  <Text> {dateString} </Text>
+                </View>   
+                <View style={styles.row}>
+                  <Text style={{ fontWeight: 'bold' }}>Time:</Text>
+                  <Text> {timeString} </Text>
+                </View> 
+              </View>     
             );
           } else {
             return (

@@ -6,7 +6,7 @@ import AddCoordinate from '../EditCoordinate';
 import CoordinateListScreen from '../../screens/CoordinateListScreen';
 import CoordinateDetails from '../CoordinateDetails';
 import firebase from 'firebase';
-import { GlobalStyles, Colors } from '../../styles/GlobalStyles';
+import { GlobalStyles, Colors } from '../../../styles/GlobalStyles';
 
 const CoordinateStackNavigator = () => {
   const Stack = createStackNavigator();

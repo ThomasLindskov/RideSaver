@@ -50,6 +50,7 @@ const MapScreen = ({ route }) => {
 
   // The useEffect hook runs everytime the page updates, which means if something happens,
   // getLocationPermission will run again to check if we have location permission
+  //Useeffect also fires if value of modalInsert og modalVisible changes. 
   useEffect(() => {
     const response = getLocationPermission();
     getCoordinates();
@@ -73,6 +74,8 @@ const MapScreen = ({ route }) => {
       .catch((error) => {
         console.error(error);
       });
+
+    getGroup(groupid)
 
     let coordinates = [];
     await db
@@ -105,7 +108,6 @@ const MapScreen = ({ route }) => {
       });
 
     setCoordinates(coordinates);
-    getGroup(groupid)
     
   };
 
@@ -113,7 +115,6 @@ const MapScreen = ({ route }) => {
   const handleLongPress = async (event) => {
     const coordinate = event.nativeEvent.coordinate;
 
-    //Skal testes på Iphone da Mikkels virkede anderledes xx.
     await Location.reverseGeocodeAsync(coordinate).then((data) => {
       setMarkerAddress(data);
     });
@@ -140,6 +141,7 @@ const MapScreen = ({ route }) => {
     setModalVisible(false);
   };
 
+  //Used for getting the group which the user is in. 
   const getGroup = async (groupid) => {
     await db
       .ref('groups/' + groupid)
@@ -251,16 +253,16 @@ const MapScreen = ({ route }) => {
 
         {coordinates.map((coordinate, index) => {
           let formattedDate = new Date(Date.parse(coordinate.date));
-          let dateString = `${formattedDate.toLocaleString('default', {
-            month: 'short',
-          })}`;
+          //Needs to do this so it works and both Android and ios. 
+          let dateTimeString = `${formattedDate.toLocaleTimeString('default', {hour12: false})} ${formattedDate.getDate()}-${formattedDate.getMonth()+1}-${formattedDate.getFullYear()}`;
+          
           let isUserjoined = !coordinate.userjoined
             ? null
             : coordinate.userjoined[auth.currentUser.uid];
           if (coordinate.availableSeats > 0 || isUserjoined) {
             return (
               <Marker
-                title={dateString}
+                title={dateTimeString}
                 description="Press here to get more info."
                 key={index}
                 onCalloutPress={() => {

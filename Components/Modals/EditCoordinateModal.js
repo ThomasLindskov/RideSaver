@@ -43,6 +43,10 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     showMode('time');
   };
 
+  const showDateTimepicker = () => {
+    showMode('datetime');
+  };
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || userDate;
     setShow(Platform.OS === 'ios');
@@ -118,6 +122,41 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
     }
   };
 
+  const dateTimerPicker = () => {
+    if(Platform.OS === 'ios') {
+      return (
+      <View>
+        <TouchableOpacity
+          onPress={showDateTimepicker}
+          style={[styles.button, styles.buttonClose]}
+        >
+          <Text style={styles.textStyle}>Choose date and time</Text>
+        </TouchableOpacity>
+      </View>
+      )
+    } else {
+      return (
+        <View>
+          <TouchableOpacity
+            onPress={showDatepicker}
+            style={[styles.button, styles.buttonClose]}
+          >
+            <Text style={styles.textStyle}>Choose date</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={showTimepicker}
+            style={[styles.button, styles.buttonClose]}
+          >
+            <Text style={styles.textStyle}>Choose departure time</Text>
+          </TouchableOpacity>
+        </View>
+        )
+    }
+  }
+
+
+
+
   if (!newCoordinate) {
     return (
       <Modal
@@ -154,7 +193,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
               <View key={index}>
                 <View style={styles.row}>
                   <Text style={{ fontWeight: 'bold' }}>Street: </Text>
-                  <Text>{`${coordinate[key].street} ${coordinate[key].name}`} </Text>
+                  <Text>{coordinate[key].name} </Text>
                 </View>
                 <View style={styles.row}>
                   <Text style={{ fontWeight: 'bold' }}>City: </Text>
@@ -171,18 +210,7 @@ const EditCoordinateModal = ({ isOpen, handleClose, coordinate }) => {
                     {userDate.toString().split(' ').splice(0, 5).join(' ')}
                   </Text>
                 </View>
-                <TouchableOpacity
-                  onPress={showDatepicker}
-                  style={styles.button}
-                >
-                  <Text>Choose date</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={showTimepicker}
-                  style={styles.button}
-                >
-                  <Text>Choose departure time</Text>
-                </TouchableOpacity>
+                {dateTimerPicker()}
                 {show && (
                   <DateTimePicker
                     testID="dateTimePicker"

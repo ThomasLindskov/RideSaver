@@ -8,6 +8,8 @@ import {
   Button,
   Pressable,
   TouchableOpacity,
+  Keyboard,
+  TouchableWithoutFeedback 
 } from 'react-native';
 import { auth, db } from '../../firebase';
 import Modal from 'react-native-modal';
@@ -36,19 +38,38 @@ const AddCoordinateModal = ({
     setMode(currentMode);
   };
 
-  //For the date
+  //For the date, used for Andriod
   const showDatepicker = () => {
     showMode('date');
   };
 
-  //For the time
+  //For the time, used for Andriod
   const showTimepicker = () => {
     showMode('time');
+  };
+
+  //For the time and date, used for IOS
+  const showDateTimepicker = () => {
+    showMode('datetime');
   };
 
   //This creates the ride
   const createRide = async (event) => {
     let newDate = userDate.toString();
+    let formattedAddress = {
+          city: address[0].city,
+          country: address[0].country,
+          district: address[0].district,
+          isoCountryCode: address[0].isoCountryCode,
+          name: address[0].name,
+          postalCode: address[0].postalCode,
+          street: address[0].street,
+    }
+    
+    //If android we change the name to be the same as IOS. 
+    if(Platform.OS == 'android'){
+      formattedAddress.name = address[0].street + " " + address[0].name
+    }
     try {
       //Here we push the new coordinate into the coordinate object.
       db.ref('coordinates/').push({
@@ -60,15 +81,7 @@ const AddCoordinateModal = ({
         groupId: group,
         date: newDate,
         //Should deconstruct the address later, to only use the things we use.
-        address: {
-          city: address[0].city,
-          country: address[0].country,
-          district: address[0].district,
-          isoCountryCode: address[0].isoCountryCode,
-          name: address[0].name,
-          postalCode: address[0].postalCode,
-          street: address[0].street,
-        },
+        address: formattedAddress,
       });
     } catch (error) {
       Alert.alert(`Error: ${error.message}`);
@@ -86,6 +99,46 @@ const AddCoordinateModal = ({
     setShow(Platform.OS === 'ios');
     setUserDate(currentDate);
   };
+
+  const showAddress = () => {
+    if(Platform.OS === 'ios') {
+      return ` ${address[0].name} ${address[0].city} ${address[0].postalCode}`
+    } else {
+      return `${address[0].street} ${address[0].name} ${address[0].city} ${address[0].postalCode}`
+    }
+  }
+
+  const DateTimerPicker = () => {
+    if(Platform.OS === 'ios') {
+      return (
+      <View>
+        <TouchableOpacity
+          onPress={showDateTimepicker}
+          style={[styles.button, styles.buttonClose]}
+        >
+          <Text style={styles.textStyle}>Choose date and time</Text>
+        </TouchableOpacity>
+      </View>
+      )
+    } else {
+      return (
+        <View>
+          <TouchableOpacity
+            onPress={showDatepicker}
+            style={[styles.button, styles.buttonClose]}
+          >
+            <Text style={styles.textStyle}>Choose date</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={showTimepicker}
+            style={[styles.button, styles.buttonClose]}
+          >
+            <Text style={styles.textStyle}>Choose departure time</Text>
+          </TouchableOpacity>
+        </View>
+        )
+    }
+  }
 
   //If address is null, then we show a loading modal
   if (!address) {
@@ -105,6 +158,7 @@ const AddCoordinateModal = ({
   }
   //Here we return the modal which is seen in the MapScreen
   return (
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
     <Modal
       visible={isOpen}
       animationType="slide"
@@ -129,21 +183,11 @@ const AddCoordinateModal = ({
         <View style={styles.pickedDateContainer}>
           <Text>{userDate.toString().split(' ').splice(0, 5).join(' ')}</Text>
         </View>
-        <TouchableOpacity
-          onPress={showDatepicker}
-          style={[styles.button, styles.buttonClose]}
-        >
-          <Text style={styles.textStyle}>Choose date</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={showTimepicker}
-          style={[styles.button, styles.buttonClose]}
-        >
-          <Text style={styles.textStyle}>Choose departure time</Text>
-        </TouchableOpacity>
+     
         <Text style={{ fontWeight: 'bold', marginTop: 5 }}>Address: </Text>
-        <Text>{`${address[0].street} ${address[0].name} ${address[0].city} ${address[0].postalCode}`}</Text>
-
+        <Text>{showAddress()}</Text>
+        <View> 
+        {DateTimerPicker()}
         {show && (
           <DateTimePicker
             testID="dateTimePicker"
@@ -154,7 +198,8 @@ const AddCoordinateModal = ({
             onChange={onChange}
           />
         )}
-        <Text style={{ fontWeight: 'bold', marginTop: 5 }}>Seats in car: </Text>
+        </View>
+        <Text style={{ fontWeight: 'bold', marginTop: 5 }}>Seats in car: </Text>       
         <TextInput
           style={GlobalStyles.input}
           onChangeText={setAvailableSeats}
@@ -178,6 +223,7 @@ const AddCoordinateModal = ({
         </View>
       </View>
     </Modal>
+    </TouchableWithoutFeedback>
   );
 };
 
