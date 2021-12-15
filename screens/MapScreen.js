@@ -192,6 +192,7 @@ const MapScreen = ({ route }) => {
           accessibilityLabel="Reload map"
         />
         <Text>Loading...</Text>
+        <Text>If not working, make sure you have location permissions and reload the app</Text>
       </View>
     );
   }
