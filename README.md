@@ -3,7 +3,9 @@
 ### Ridesharing app for companies to offer to their employees.
 
 ### Video presentation of the app
-![](RideSaver.mp4)
+<video>
+  <source src="RideSaver.mp4" type="video/mp4">
+</video>
 
 The app uses a stack of React Native, Firebase and Firebase Realtime Database and has the following dependencies:
 
